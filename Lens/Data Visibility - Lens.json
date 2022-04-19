@@ -1,0 +1,543 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Search Visibility Transactions",
+        "description": "<h2>LENS GraphQL API</h2> <p> API is using GraphQL format to accept execution requests,",
+        "termsOfService": "https://www.ot.com/legal",
+        "contact": {
+            "name": "Steven Cline",
+            "email": "scline@opentext.com"
+        },
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "https://lens-graphql-api-dev.lens.cfcr-lab.bp-paas.otxlab.net"
+        }
+    ],
+    "paths": {
+        "/graphql": {
+            "post": {
+                "requestBody": {
+                    "description": "GraphQL expression",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucess Query execution",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Response": {
+                "properties": {
+                    "getTransactions": {
+                        "nullable": true,
+                        "properties": {
+                            "count": {
+                                "description": "number of retuned records",
+                                "nullable": true,
+                                "type": "integer"
+                            },
+                            "offset": {
+                                "description": "offset of retuned records",
+                                "nullable": true,
+                                "type": "integer"
+                            },
+                            "total": {
+                                "description": "totatal number of detected records",
+                                "nullable": true,
+                                "type": "integer"
+                            },
+                            "transactions": {
+                                "items": {
+                                    "properties": {
+                                        "arrivaltime": {
+                                            "description": "transaction arrival time",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "description": "transaction category",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "correlationid": {
+                                            "description": "processing correlation id",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "deliveryfilename": {
+                                            "description": "Delivery File Name",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "deliveryreceipt": {
+                                            "description": "Delivery Receipt",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "editype": {
+                                            "description": "transaction EDI type",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "envelopetype": {
+                                            "description": "transaction envelope type",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "fastatus": {
+                                            "description": "functional ack status",
+                                            "enum": [
+                                                "Accepted",
+                                                "AcceptedWithErrors",
+                                                "ManuallyAccepted",
+                                                "NoFaExpected",
+                                                "PartiallyAccepted",
+                                                "Rejected",
+                                                "Suppressed",
+                                                "TimedOut",
+                                                "WaitingForFa",
+                                                "Unknown"
+                                            ],
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "fastatusdate": {
+                                            "description": "fa status set date",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "firstbytetimestamp": {
+                                            "description": "transaction first timestamp",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "inagent": {
+                                            "description": "transaction in agent",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "informat": {
+                                            "description": "incomming data format",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "insize": {
+                                            "description": "incomming file size in bytes",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "lastbytetimestamp": {
+                                            "description": "last byte timestamp",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "outagent": {
+                                            "description": "transaction output agent",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "outformat": {
+                                            "description": "transaction output format",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "outsize": {
+                                            "description": "transaction output size in bytes",
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "payloadsizeinbytes": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "platform": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "priority": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "processingcell": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "processingcomputezone": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "processingregion": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "processingtime": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "receivefilename": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "receiveraddress": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "receivermailbox": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "receivername": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "senderaddress": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "senderfilename": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "sendermailbox": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "sendername": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "senderreference": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "sendertransactionid": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "servicetype": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "solutionid": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "standardversion": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "enum": [
+                                                "Batched",
+                                                "Completed",
+                                                "DeliveryInProgress",
+                                                "Failed",
+                                                "SentAsBatch",
+                                                "OnHold",
+                                                "DeliveryFailed",
+                                                "DeliveryDisabled",
+                                                "Processing",
+                                                "ReadyForPickup",
+                                                "Delivered",
+                                                "Duplicate",
+                                                "ValidationError",
+                                                "WaitingForConfirmation",
+                                                "Unknown"
+                                            ],
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "statusdate": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "transactionid": {
+                                            "nullable": false,
+                                            "type": "string"
+                                        },
+                                        "transactionlevel": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "nullable": true,
+                                            "type": "string"
+                                        },
+                                        "contentkeys": {
+                                            "items": {
+                                                "properties": {
+                                                    "key": {
+                                                        "nullable": true,
+                                                        "type": "string"
+                                                    },
+                                                    "value": {
+                                                        "nullable": true,
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "nullable": true,
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                }
+            },
+            "Request": {
+                "properties": {
+                    "getTransactions": {
+                        "nullable": true,
+                        "properties": {
+                            "transactions": {
+                                "properties": {
+                                    "arrivaltime": {
+                                        "description": "transaction arrival time",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "description": "transaction category",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "correlationid": {
+                                        "description": "processing correlation id",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "deliveryfilename": {
+                                        "description": "Delivery File Name",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "deliveryreceipt": {
+                                        "description": "Delivery Receipt",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "editype": {
+                                        "description": "transaction EDI type",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "envelopetype": {
+                                        "description": "transaction envelope type",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "fastatus": {
+                                        "description": "functional ack status",
+                                        "enum": [
+                                            "Accepted",
+                                            "AcceptedWithErrors",
+                                            "ManuallyAccepted",
+                                            "NoFaExpected",
+                                            "PartiallyAccepted",
+                                            "Rejected",
+                                            "Suppressed",
+                                            "TimedOut",
+                                            "WaitingForFa",
+                                            "Unknown"
+                                        ],
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "fastatusdate": {
+                                        "description": "fa status set date",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "firstbytetimestamp": {
+                                        "description": "transaction first timestamp",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "inagent": {
+                                        "description": "transaction in agent",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "informat": {
+                                        "description": "incomming data format",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "insize": {
+                                        "description": "incomming file size in bytes",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "lastbytetimestamp": {
+                                        "description": "last byte timestamp",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "outagent": {
+                                        "description": "transaction output agent",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "outformat": {
+                                        "description": "transaction output format",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "outsize": {
+                                        "description": "transaction output size in bytes",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "payloadsizeinbytes": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "platform": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "processingcell": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "processingcomputezone": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "processingregion": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "processingtime": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "receivefilename": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "receiveraddress": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "receivermailbox": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "receivername": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "senderaddress": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "senderfilename": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "sendermailbox": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "sendername": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "senderreference": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "sendertransactionid": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "servicetype": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "solutionid": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "standardversion": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "enum": [
+                                            "Batched",
+                                            "Completed",
+                                            "DeliveryInProgress",
+                                            "Failed",
+                                            "SentAsBatch",
+                                            "OnHold",
+                                            "DeliveryFailed",
+                                            "DeliveryDisabled",
+                                            "Processing",
+                                            "ReadyForPickup",
+                                            "Delivered",
+                                            "Duplicate",
+                                            "ValidationError",
+                                            "WaitingForConfirmation",
+                                            "Unknown"
+                                        ],
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "statusdate": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "transactionid": {
+                                        "nullable": false,
+                                        "type": "string"
+                                    },
+                                    "transactionlevel": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "nullable": true,
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
