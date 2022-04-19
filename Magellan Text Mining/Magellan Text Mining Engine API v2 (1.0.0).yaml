@@ -1,1 +1,692 @@
-{"swagger":"2.0","info":{"description":"Send text mining requests, receive content analytics. \n \n[Introduction to how to use and how to authenticate REST end points](/authenticate) \n \n [Introduction to Magellan Text Annotation Rest API Methods](/introduction) ","version":"1.0.0","title":"Magellan Text Mining Engine API v2","contact":{"name":"https://knowledge.opentext.com"},"license":{"name":"Copyright 2020 (c) OpenText","url":"/about"}},"basePath":"/rs","tags":[{"name":"Used to perform Content Analytics operations"}],"paths":{"/auth/login":{"post":{"summary":"Returns an RS API JWT token when security is enabled and using basic authentication","description":"","operationId":"login","consumes":["text/plain"],"parameters":[{"name":"Authorization","in":"header","required":false,"type":"string"}],"responses":{"200":{"description":"Success"}}}},"/v2":{"post":{"tags":["Used to perform Content Analytics operations"],"summary":"Send a Content Analytics request, Methods supported:1. Ping , 2. GetSupportedEncodings , 3. languagedetector , 4. nconceptextractor , 5. ncategorizer , 6. nfinder , 7. nsentiment , 8. nlikethis , 9. nsummarizer , ","description":"Returns Content Analytics result","operationId":"process","consumes":["application/xml","text/xml","application/json"],"produces":["application/xml","text/xml","application/json"],"parameters":[{"in":"body","name":"body","required":false,"schema":{"$ref":"#/definitions/ServerRequest"}},{"name":"aggregateChunkResults","in":"query","required":false,"type":"boolean","default":true}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Response"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/status":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Return the status of the Text Mining Engine.","description":"Returns the Text Mining Status","operationId":"getStatus","produces":["text/plain"],"parameters":[],"responses":{"200":{"description":"Success"}},"security":[{"Bearer":[]}]}},"/v2/data-version":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Retrieve the version of the Text Mining Engine data.","description":"Returns the Text Mining Engine Data version","operationId":"getDataVersion","produces":["application/json","application/xml","text/xml"],"parameters":[],"responses":{"200":{"description":"Success.","schema":{"$ref":"#/definitions/version"}},"500":{"description":"Failed to retrieve the Text Mining Engine data version.","schema":{"$ref":"#/definitions/OT2Response"}}},"security":[{"Bearer":[]}]}},"/v2/engine-version":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Retrieve the version of the Text Mining Engine.","description":"Returns the Text Mining Engine version","operationId":"getBinaryVersion","produces":["application/json","application/xml","text/xml"],"parameters":[],"responses":{"200":{"description":"Success.","schema":{"$ref":"#/definitions/version"}},"500":{"description":"Failed to retrieve the Text Mining Engine version.","schema":{"$ref":"#/definitions/OT2Response"}}},"security":[{"Bearer":[]}]}},"/v2/rs":{"post":{"tags":["Used to perform Content Analytics operations"],"summary":"Send a Content Analytics request, Methods supported:1. Ping , 2. GetSupportedEncodings , 3. languagedetector , 4. nconceptextractor , 5. ncategorizer , 6. nfinder , 7. nsentiment , 8. nlikethis , 9. nsummarizer , ","description":"Returns Content Analytics result","operationId":"processXmlRPCSupport","consumes":["application/xml","application/json","text/xml"],"produces":["application/xml","text/xml","application/json"],"parameters":[{"in":"body","name":"body","required":false,"schema":{"$ref":"#/definitions/ServerRequest"}},{"name":"aggregateChunkResults","in":"query","required":false,"type":"boolean","default":true}],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/Response"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/entitiesExtractor":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get languages and Authority Files supported by entitiesExtractor","description":"","operationId":"entitiesExtractorSupports","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/conceptExtractor":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get supported languages and modes by ConceptExtractor","description":"","operationId":"conceptExtractorSupports","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/categorizer":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get supported languages and knowledgebases by Categorizer","description":"","operationId":"categorizerSupports","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/languages":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get the list of languages supported by the TME engine","description":"","operationId":"languagesSupported","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/methods":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get the list of methods supported by the TME engine","description":"","operationId":"methodsSupported","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/summarizer":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get languages and knowledgebases supported by summarizer","description":"","operationId":"summarizerSupports","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}},"/v2/sentiment":{"get":{"tags":["Used to perform Content Analytics operations"],"summary":"Get languages and knowledgebases supported by sentiment","description":"","operationId":"sentimentSupports","produces":["application/xml","application/json"],"parameters":[],"responses":{"200":{"description":"Success","schema":{"$ref":"#/definitions/ServerResponse"}},"400":{"description":"Timeout"},"404":{"description":"Server not found"}},"security":[{"Bearer":[]}]}}},"securityDefinitions":{"Bearer":{"type":"apiKey","name":"authorization","in":"header"}},"definitions":{"EntityTag":{"type":"object","properties":{"value":{"type":"string"},"weak":{"type":"boolean"}}},"Link":{"type":"object","properties":{"type":{"type":"string"},"params":{"type":"object","additionalProperties":{"type":"string"}},"title":{"type":"string"},"uri":{"type":"string","format":"uri"},"uriBuilder":{"$ref":"#/definitions/UriBuilder"},"rel":{"type":"string"},"rels":{"type":"array","items":{"type":"string"}}}},"Locale":{"type":"object","properties":{"language":{"type":"string"},"displayName":{"type":"string"},"script":{"type":"string"},"country":{"type":"string"},"variant":{"type":"string"},"extensionKeys":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"unicodeLocaleAttributes":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"unicodeLocaleKeys":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"iso3Language":{"type":"string"},"iso3Country":{"type":"string"},"displayLanguage":{"type":"string"},"displayScript":{"type":"string"},"displayCountry":{"type":"string"},"displayVariant":{"type":"string"}}},"MediaType":{"type":"object","properties":{"type":{"type":"string"},"subtype":{"type":"string"},"parameters":{"type":"object","additionalProperties":{"type":"string"}},"wildcardType":{"type":"boolean"},"wildcardSubtype":{"type":"boolean"}}},"NewCookie":{"type":"object","properties":{"name":{"type":"string"},"value":{"type":"string"},"version":{"type":"integer","format":"int32"},"path":{"type":"string"},"domain":{"type":"string"},"comment":{"type":"string"},"maxAge":{"type":"integer","format":"int32"},"expiry":{"type":"string","format":"date-time"},"secure":{"type":"boolean"},"httpOnly":{"type":"boolean"}}},"Response":{"type":"object","properties":{"length":{"type":"integer","format":"int32"},"location":{"type":"string","format":"uri"},"language":{"$ref":"#/definitions/Locale"},"date":{"type":"string","format":"date-time"},"lastModified":{"type":"string","format":"date-time"},"headers":{"type":"object","additionalProperties":{"type":"array","items":{"type":"object"}}},"metadata":{"type":"object","additionalProperties":{"type":"array","items":{"type":"object"}}},"status":{"type":"integer","format":"int32"},"cookies":{"type":"object","additionalProperties":{"$ref":"#/definitions/NewCookie"}},"stringHeaders":{"type":"object","additionalProperties":{"type":"array","items":{"type":"string"}}},"links":{"type":"array","uniqueItems":true,"items":{"$ref":"#/definitions/Link"}},"statusInfo":{"$ref":"#/definitions/StatusType"},"entityTag":{"$ref":"#/definitions/EntityTag"},"entity":{"type":"object"},"mediaType":{"$ref":"#/definitions/MediaType"},"allowedMethods":{"type":"array","uniqueItems":true,"items":{"type":"string"}}}},"StatusType":{"type":"object","properties":{"family":{"type":"string","enum":["INFORMATIONAL","SUCCESSFUL","REDIRECTION","CLIENT_ERROR","SERVER_ERROR","OTHER"]},"statusCode":{"type":"integer","format":"int32"},"reasonPhrase":{"type":"string"}}},"UriBuilder":{"type":"object"},"Field":{"type":"object","properties":{"key":{"type":"string","xml":{"name":"Key"}},"value":{"type":"string","xml":{"name":"Value"}},"type":{"type":"string","xml":{"name":"Type"}}}},"Language":{"type":"object","required":["id"],"properties":{"id":{"type":"string"}}},"Method":{"type":"object","properties":{"id":{"type":"string"},"camelCaseName":{"type":"boolean"}}},"Part":{"type":"object","properties":{"name":{"type":"string"},"length":{"type":"integer","format":"int32"},"beginIndex":{"type":"integer","format":"int32"},"endIndex":{"type":"integer","format":"int32"},"textPart":{"type":"string"},"paragraphIndex":{"type":"integer","format":"int32"},"sentenceIndex":{"type":"integer","format":"int32"}}},"Position":{"type":"object","properties":{"length":{"type":"integer","format":"int32"},"beginIndex":{"type":"integer","format":"int32"},"endIndex":{"type":"integer","format":"int32"},"textPart":{"type":"string"},"paragraphIndex":{"type":"integer","format":"int32"},"sentenceIndex":{"type":"integer","format":"int32"}}},"ServerRequest":{"type":"object","properties":{"methods":{"type":"array","items":{"$ref":"#/definitions/Method"}},"id":{"type":"string"},"ruleWarning":{"type":"boolean"},"texts":{"type":"array","items":{"$ref":"#/definitions/Text"}},"groupIds":{"type":"array","items":{"type":"string"}},"enableRule":{"type":"boolean"}}},"Text":{"type":"object","properties":{"parts":{"type":"array","items":{"$ref":"#/definitions/Part"}},"blocks":{"type":"array","items":{"$ref":"#/definitions/Position"}},"id":{"type":"string"},"language":{"$ref":"#/definitions/Language"},"value":{"type":"string"},"metaData":{"type":"array","items":{"$ref":"#/definitions/Field"}}}},"version":{"type":"object","properties":{"versionString":{"type":"string"},"versionMajor":{"type":"integer","format":"int64"},"versionMinor":{"type":"integer","format":"int64"},"versionMicro":{"type":"integer","format":"int64"},"versionBuild":{"type":"integer","format":"int64"},"versionSnapshot":{"type":"boolean"}},"xml":{"name":"version","namespace":"http://dev.nstein.com/common/1.3"}},"OT2Response":{"type":"object","properties":{"status":{"type":"string"},"msg":{"type":"string"},"moreInfo":{"type":"string"},"errorCode":{"type":"string"}},"xml":{"name":"ot2Response"}},"Result":{"type":"object","properties":{"id":{"type":"string"}}},"ServerResponse":{"type":"object","properties":{"id":{"type":"string"},"errorMessage":{"type":"string"},"warnings":{"type":"array","items":{"type":"string"}},"errorCode":{"type":"integer","format":"int32"},"results":{"type":"array","items":{"$ref":"#/definitions/Result"}}}},"RuleEngineService":{"type":"object"}}}
+---
+swagger: '2.0'
+info:
+  description: |-
+    Send text mining requests, receive content analytics. 
+     
+    [Introduction to how to use and how to authenticate REST end points](/authenticate) 
+     
+     [Introduction to Magellan Text Annotation Rest API Methods](/introduction) 
+  version: 1.0.0
+  title: Magellan Text Mining Engine API v2
+  contact:
+    name: https://knowledge.opentext.com
+  license:
+    name: Copyright 2020 (c) OpenText
+    url: /about
+basePath: /rs
+tags:
+  - name: Used to perform Content Analytics operations
+paths:
+  /auth/login:
+    post:
+      summary: Returns an RS API JWT token when security is enabled and using basic authentication
+      description: ''
+      operationId: login
+      consumes:
+        - text/plain
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+  /v2:
+    post:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: 'Send a Content Analytics request, Methods supported:1. Ping , 2. GetSupportedEncodings , 3. languagedetector , 4. nconceptextractor , 5. ncategorizer , 6. nfinder , 7. nsentiment , 8. nlikethis , 9. nsummarizer , '
+      description: Returns Content Analytics result
+      operationId: process
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ServerRequest'
+        - name: aggregateChunkResults
+          in: query
+          required: false
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Response'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/status:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Return the status of the Text Mining Engine.
+      description: Returns the Text Mining Status
+      operationId: getStatus
+      produces:
+        - text/plain
+      parameters: []
+      responses:
+        '200':
+          description: Success
+      security:
+        - Bearer: []
+  /v2/data-version:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Retrieve the version of the Text Mining Engine data.
+      description: Returns the Text Mining Engine Data version
+      operationId: getDataVersion
+      produces:
+        - application/json
+        - application/xml
+        - text/xml
+      parameters: []
+      responses:
+        '200':
+          description: Success.
+          schema:
+            $ref: '#/definitions/version'
+        '500':
+          description: Failed to retrieve the Text Mining Engine data version.
+          schema:
+            $ref: '#/definitions/OT2Response'
+      security:
+        - Bearer: []
+  /v2/engine-version:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Retrieve the version of the Text Mining Engine.
+      description: Returns the Text Mining Engine version
+      operationId: getBinaryVersion
+      produces:
+        - application/json
+        - application/xml
+        - text/xml
+      parameters: []
+      responses:
+        '200':
+          description: Success.
+          schema:
+            $ref: '#/definitions/version'
+        '500':
+          description: Failed to retrieve the Text Mining Engine version.
+          schema:
+            $ref: '#/definitions/OT2Response'
+      security:
+        - Bearer: []
+  /v2/rs:
+    post:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: 'Send a Content Analytics request, Methods supported:1. Ping , 2. GetSupportedEncodings , 3. languagedetector , 4. nconceptextractor , 5. ncategorizer , 6. nfinder , 7. nsentiment , 8. nlikethis , 9. nsummarizer , '
+      description: Returns Content Analytics result
+      operationId: processXmlRPCSupport
+      consumes:
+        - application/xml
+        - application/json
+        - text/xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ServerRequest'
+        - name: aggregateChunkResults
+          in: query
+          required: false
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Response'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/entitiesExtractor:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get languages and Authority Files supported by entitiesExtractor
+      description: ''
+      operationId: entitiesExtractorSupports
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/conceptExtractor:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get supported languages and modes by ConceptExtractor
+      description: ''
+      operationId: conceptExtractorSupports
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/categorizer:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get supported languages and knowledgebases by Categorizer
+      description: ''
+      operationId: categorizerSupports
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/languages:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get the list of languages supported by the TME engine
+      description: ''
+      operationId: languagesSupported
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/methods:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get the list of methods supported by the TME engine
+      description: ''
+      operationId: methodsSupported
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/summarizer:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get languages and knowledgebases supported by summarizer
+      description: ''
+      operationId: summarizerSupports
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+  /v2/sentiment:
+    get:
+      tags:
+        - Used to perform Content Analytics operations
+      summary: Get languages and knowledgebases supported by sentiment
+      description: ''
+      operationId: sentimentSupports
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ServerResponse'
+        '400':
+          description: Timeout
+        '404':
+          description: Server not found
+      security:
+        - Bearer: []
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: authorization
+    in: header
+definitions:
+  EntityTag:
+    type: object
+    properties:
+      value:
+        type: string
+      weak:
+        type: boolean
+  Link:
+    type: object
+    properties:
+      type:
+        type: string
+      params:
+        type: object
+        additionalProperties:
+          type: string
+      title:
+        type: string
+      uri:
+        type: string
+        format: uri
+      uriBuilder:
+        $ref: '#/definitions/UriBuilder'
+      rel:
+        type: string
+      rels:
+        type: array
+        items:
+          type: string
+  Locale:
+    type: object
+    properties:
+      language:
+        type: string
+      displayName:
+        type: string
+      script:
+        type: string
+      country:
+        type: string
+      variant:
+        type: string
+      extensionKeys:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      unicodeLocaleAttributes:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      unicodeLocaleKeys:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      iso3Language:
+        type: string
+      iso3Country:
+        type: string
+      displayLanguage:
+        type: string
+      displayScript:
+        type: string
+      displayCountry:
+        type: string
+      displayVariant:
+        type: string
+  MediaType:
+    type: object
+    properties:
+      type:
+        type: string
+      subtype:
+        type: string
+      parameters:
+        type: object
+        additionalProperties:
+          type: string
+      wildcardType:
+        type: boolean
+      wildcardSubtype:
+        type: boolean
+  NewCookie:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+      version:
+        type: integer
+        format: int32
+      path:
+        type: string
+      domain:
+        type: string
+      comment:
+        type: string
+      maxAge:
+        type: integer
+        format: int32
+      expiry:
+        type: string
+        format: date-time
+      secure:
+        type: boolean
+      httpOnly:
+        type: boolean
+  Response:
+    type: object
+    properties:
+      length:
+        type: integer
+        format: int32
+      location:
+        type: string
+        format: uri
+      language:
+        $ref: '#/definitions/Locale'
+      date:
+        type: string
+        format: date-time
+      lastModified:
+        type: string
+        format: date-time
+      headers:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: object
+      metadata:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: object
+      status:
+        type: integer
+        format: int32
+      cookies:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/NewCookie'
+      stringHeaders:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
+      links:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/Link'
+      statusInfo:
+        $ref: '#/definitions/StatusType'
+      entityTag:
+        $ref: '#/definitions/EntityTag'
+      entity:
+        type: object
+      mediaType:
+        $ref: '#/definitions/MediaType'
+      allowedMethods:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+  StatusType:
+    type: object
+    properties:
+      family:
+        type: string
+        enum:
+          - INFORMATIONAL
+          - SUCCESSFUL
+          - REDIRECTION
+          - CLIENT_ERROR
+          - SERVER_ERROR
+          - OTHER
+      statusCode:
+        type: integer
+        format: int32
+      reasonPhrase:
+        type: string
+  UriBuilder:
+    type: object
+  Field:
+    type: object
+    properties:
+      key:
+        type: string
+        xml:
+          name: Key
+      value:
+        type: string
+        xml:
+          name: Value
+      type:
+        type: string
+        xml:
+          name: Type
+  Language:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+  Method:
+    type: object
+    properties:
+      id:
+        type: string
+      camelCaseName:
+        type: boolean
+  Part:
+    type: object
+    properties:
+      name:
+        type: string
+      length:
+        type: integer
+        format: int32
+      beginIndex:
+        type: integer
+        format: int32
+      endIndex:
+        type: integer
+        format: int32
+      textPart:
+        type: string
+      paragraphIndex:
+        type: integer
+        format: int32
+      sentenceIndex:
+        type: integer
+        format: int32
+  Position:
+    type: object
+    properties:
+      length:
+        type: integer
+        format: int32
+      beginIndex:
+        type: integer
+        format: int32
+      endIndex:
+        type: integer
+        format: int32
+      textPart:
+        type: string
+      paragraphIndex:
+        type: integer
+        format: int32
+      sentenceIndex:
+        type: integer
+        format: int32
+  ServerRequest:
+    type: object
+    properties:
+      methods:
+        type: array
+        items:
+          $ref: '#/definitions/Method'
+      id:
+        type: string
+      ruleWarning:
+        type: boolean
+      texts:
+        type: array
+        items:
+          $ref: '#/definitions/Text'
+      groupIds:
+        type: array
+        items:
+          type: string
+      enableRule:
+        type: boolean
+  Text:
+    type: object
+    properties:
+      parts:
+        type: array
+        items:
+          $ref: '#/definitions/Part'
+      blocks:
+        type: array
+        items:
+          $ref: '#/definitions/Position'
+      id:
+        type: string
+      language:
+        $ref: '#/definitions/Language'
+      value:
+        type: string
+      metaData:
+        type: array
+        items:
+          $ref: '#/definitions/Field'
+  version:
+    type: object
+    properties:
+      versionString:
+        type: string
+      versionMajor:
+        type: integer
+        format: int64
+      versionMinor:
+        type: integer
+        format: int64
+      versionMicro:
+        type: integer
+        format: int64
+      versionBuild:
+        type: integer
+        format: int64
+      versionSnapshot:
+        type: boolean
+    xml:
+      name: version
+      namespace: http://dev.nstein.com/common/1.3
+  OT2Response:
+    type: object
+    properties:
+      status:
+        type: string
+      msg:
+        type: string
+      moreInfo:
+        type: string
+      errorCode:
+        type: string
+    xml:
+      name: ot2Response
+  Result:
+    type: object
+    properties:
+      id:
+        type: string
+  ServerResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      errorMessage:
+        type: string
+      warnings:
+        type: array
+        items:
+          type: string
+      errorCode:
+        type: integer
+        format: int32
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Result'
+  RuleEngineService:
+    type: object
