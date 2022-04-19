@@ -1,0 +1,674 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the specification for the API invoked by the OTDS REST-based push connector.",
+    "version": "1.0.0",
+    "title": "OTDS REST push connector"
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "localhost:8080",
+  "basePath": "/sample/api",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication to this API"
+    },
+    {
+      "name": "members",
+      "description": "Operations on members (users and groups)"
+    },
+    {
+      "name": "metadata",
+      "description": "Metadata information (OPTIONAL)"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "security": [ ],
+        "tags": [
+          "auth"
+        ],
+        "summary": "Authenticate to the API",
+        "description": "OTDS will invoke this to get a token to pass to the API as the authentication token in the 'token' header on all requests",
+        "operationId": "authenticate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Auth parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthParams"
+            }
+          }
+        ],
+        "responses": {
+		  "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/AuthResponse"
+            }
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+	"/members": {
+	  "get": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Get a member or all members",
+		"description": "Returns members in the resource.",
+		"operationId": "getMembers",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "where_type",
+            "in": "query",
+            "description": "member type (user or group)",
+            "required": true,
+            "type": "string",
+            "enum": ["user", "group"]
+          },
+		  {
+            "name": "where_name",
+            "in": "query",
+            "description": "member name. OTDS will always provide a specific name, except if requesting all members in the resource. That is only done if the resource is consolidated and the admin selects to delete unkown users/groups in the resource.",
+            "required": false,
+            "type": "string"
+          },
+		  {
+            "name": "where_partition",
+            "in": "query",
+            "description": "member's partition in OTDS. Can be ignored by the resource if it is not relevant. This never needs to be returned by a resource.",
+            "required": false,
+            "type": "string"
+          },
+		  {
+            "name": "limit",
+            "in": "query",
+            "description": "maximum number of members to return. Provided only when searching for all members.",
+            "required": false,
+            "type": "integer"
+          },
+		  {
+            "name": "after",
+            "in": "query",
+            "description": "cookie returned on last response when paginating through all members",
+            "required": false,
+            "type": "string"
+          }
+		],
+		"responses": {
+          "200": {
+            "description": "Success",
+			"schema": {
+              "$ref": "#/definitions/GetMembersResponse"
+            }
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+		  "404": {
+		    "description": "Member with specified name is not found"
+		  }
+        },
+	  },
+	  "post": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Create a member",
+		"description": "Create a user or group. The ID of the member will not be provided since it is defined by the resource.",
+		"operationId": "createMember",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+		    "in": "body",
+            "name": "body",
+			"description": "Member to create",
+			"required": true,
+            "schema": {
+              "$ref": "#/definitions/Member"
+            }
+		  }
+		],
+		"responses": {
+          "201": {
+            "description": "Success: the URL to the object must be returned in the Location HTTP header"
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+		  "409": {
+		    "desription": "Member already exists (as per its name)"
+		  }
+        }
+	  }
+	},
+	"/members/{id}": {
+	  "get": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Get a member by its ID",
+		"description": "Get a user or group by ID",
+		"operationId": "getMember",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "id",
+            "in": "path",
+            "description": "id of the member to get",
+            "required": true,
+            "type": "string"
+          }
+		],
+		"responses": {
+          "200": {
+            "description": "Success",
+			"schema": {
+              "$ref": "#/definitions/Member"
+            }
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+		  "404": {
+		    "description": "Member not found"
+		  }
+        }
+	  },
+	  "put": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Update a member",
+		"description": "Update a user or group",
+		"operationId": "updateMember",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "id",
+            "in": "path",
+            "description": "id of the member to be updated",
+            "required": true,
+            "type": "string"
+          },
+		  {
+		    "in": "body",
+            "name": "body",
+			"description": "Complete member object",
+			"required": true,
+            "schema": {
+              "$ref": "#/definitions/Member"
+            }
+		  }
+		],
+		"responses": {
+          "204": {
+            "description": "Success"
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  }
+        }
+	  },
+	  "delete": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Delete a member",
+		"description": "Delete a user or group",
+		"operationId": "deleteMember",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "id",
+            "in": "path",
+            "description": "id of the member to be deleted",
+            "required": true,
+            "type": "string"
+          }
+		],
+		"responses": {
+          "204": {
+            "description": "Success"
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  }
+        }
+	  }
+	},
+	"/members/{groupId}/members": {
+	  "get": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Get a group's members",
+		"description": "Get a group's members",
+		"operationId": "getGroupMembers",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "groupId",
+            "in": "path",
+            "description": "id of the group",
+            "required": true,
+            "type": "string"
+          },
+		  {
+		    "name": "limit",
+			"in": "query",
+			"description": "maximum number of group members to return per request (i.e. the page size)",
+			"required": true,
+			"type": "integer"
+		  },
+		  {
+		    "name": "after",
+			"in": "query",
+			"description": "ID of the group member obtained on the previous page.",
+			"required": false,
+			"type": "integer"
+		  }
+		],
+		"responses": {
+          "200": {
+            "description": "Success",
+			"schema": {
+              "$ref": "#/definitions/GroupMembers"
+            }
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+          "404": {
+            "description": "Group not found"
+          }
+        }
+	  },
+	  "post": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Add members to a group",
+		"description": "Add members to a group",
+		"operationId": "addGroupMembers",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "groupId",
+            "in": "path",
+            "description": "id of the group",
+            "required": true,
+            "type": "string"
+          },
+		  {
+            "in": "body",
+            "name": "body",
+            "description": "Group members",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupMembers"
+            }
+          }
+		],
+		"responses": {
+          "204": {
+            "description": "Success"
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+          "404": {
+            "description": "Group not found"
+          }
+        }
+	  }
+	},
+	"/members/{groupId}/members/deletionset": {
+	  "post": {
+        "security": [ {"token": []} ],
+	    "tags": [
+          "members"
+        ],
+		"summary": "Remove members from a group",
+		"description": "Remove members from a group",
+		"operationId": "deleteGroupMembers",
+		"consumes": [
+		  "application/json"
+		],
+		"produces": [
+		  "application/json"
+		],
+		"parameters": [
+		  {
+            "name": "groupId",
+            "in": "path",
+            "description": "id of the group",
+            "required": true,
+            "type": "string"
+          },
+		  {
+            "in": "body",
+            "name": "body",
+            "description": "Group members",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupMembers"
+            }
+          }
+		],
+		"responses": {
+          "204": {
+            "description": "Success"
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+          "404": {
+            "description": "Group not found"
+          }
+        }
+	  }
+	},
+    "/metadata/defaultmappings": {
+      "get": {
+        "tags": [
+          "metadata"
+        ],
+        "summary": "Get default mappings for users and groups (OPTIONAL)",
+        "description": "Returns the Resource<->OTDS attribute mappings to display by default. This is optional - OTDS will show only the --NAME-- mapping by default otherwise.",
+        "operationId": "getDefaultMappings",
+        "consumes": [
+		  "application/json"
+		],
+		"produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "where_type",
+            "in": "query",
+            "description": "member type (user or group)",
+            "required": true,
+            "type": "string",
+            "enum": ["user", "group"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/MappingsResponse"
+            }
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+		  "404": {
+		    "description": "Not implemented. OTDS will only display the --NAME-- attribute mapping."
+		  }
+        }
+      }
+    },
+	"/metadata/features": {
+	  "get": {
+	    "tags": [
+          "metadata"
+        ],
+        "summary": "Get features to describe behavior supported/required by the connector (OPTIONAL)",
+        "description": "Returns a set of name-value pairs. This is optional to enable certain behavior on OTDS. No features are currently defined.",
+        "operationId": "getFeatures",
+		"consumes": [
+		  "application/json"
+		],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/FeaturesResponse"
+            }
+          },
+		  "400": {
+            "description": "Invalid request"
+          },
+		  "401": {
+		    "description": "Not authenticated or auth token expired"
+		  },
+		  "404": {
+		    "description": "Not implemented - use default behavior in all cases."
+		  }
+        }
+	  }
+	}
+  },
+  "securityDefinitions": {
+    "token": {
+      "type": "apiKey",
+      "name": "token",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "AuthParams": {
+	  "type": "object",
+	  "properties": {
+	    "user_name": {
+		  "type": "string"
+		},
+		"password": {
+		  "type": "string"
+		}
+	  }
+	},
+	"AuthResponse": {
+	  "type": "object",
+	  "properties": {
+	    "token": {
+		  "type": "string",
+          "description": "A token that OTDS should pass to the API as the authentication token in the 'token' header on all requests"
+		}
+	  }
+	},
+	"MappingsResponse": {
+	  "type": "object",
+	  "properties": {
+	    "mappings": {
+		  "type": "array",
+		  "items": {
+            "$ref": "#/definitions/Mapping"
+          }
+		}
+	  }
+	},
+	"Mapping": {
+	  "type": "object",
+	  "properties": {
+	    "resourceAttr": {
+		  "type": "string"
+		},
+		"format": {
+		  "type": "string"
+		},
+		"otdsAttrs": {
+		  "type": "array",
+		  "items": {
+		    "type": "string"
+		  }
+		}
+	  }
+	},
+	"FeaturesResponse": {
+	  "type": "object",
+	  "properties": {
+	    "features": {
+		  "type": "array",
+		  "items": {
+            "$ref": "#/definitions/Feature"
+          }
+		}
+	  }
+	},
+	"Feature": {
+	  "type": "object",
+	  "properties": {
+	    "name": {
+		  "type": "string"
+		},
+		"value": {
+		  "type": "string"
+		}
+	  }
+	},
+	"Attribute": {
+	  "type": "object",
+	  "properties": {
+	    "attr_name": {
+		  "type": "string"
+		},
+		"attr_values": {
+		  "type": "array",
+		  "items": {
+		    "type": "string"
+		  }
+		}
+	  }
+	},
+	"Member": {
+	  "type": "object",
+	  "properties": {
+	    "partition": {
+		  "type": "string"
+		},
+		"name": {
+		  "type": "string",
+		  "description": "the name of the member (defined by OTDS)"
+		},
+		"id": {
+		  "type": "string",
+		  "description": "the ID of the member (defined by the resource)"
+		},
+		"type": {
+		  "type": "string",
+		  "enum": [
+            "user",
+            "group"
+          ]
+		},
+		"attrs": {
+		  "type": "array",
+		  "items": {
+		    "$ref": "#/definitions/Attribute"
+		  }
+		}
+	  }
+	},
+	"GetMembersResponse": {
+	  "type": "object",
+	  "properties": {
+	    "cookie": {
+		  "type": "string",
+		  "description": "used for pagination - return it only when OTDS is requesting all members. OTDS will send the cookie on a subsequent search request."
+		},
+		"members": {
+		  "type": "array",
+		  "items": {
+            "$ref": "#/definitions/Member"
+          }
+		}
+	  }
+	},
+	"GroupMembers": {
+	  "type": "object",
+	  "properties": {
+	    "members": {
+		  "type": "array",
+		  "description": "IDs of the group members",
+		  "items": {
+		    "type": "string"
+		  }
+		}
+	  }
+	}
+  }
+}
