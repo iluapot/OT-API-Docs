@@ -1,0 +1,2405 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Administration API",
+        "description": "Manage an Organization's applications, tenants, authentication handlers and users",
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "https://na-1-dev.api.opentext.com/admin/api/v1",
+            "description": "Build & Test",
+            "variables": {}
+        },
+        {
+            "url": "https://na-1.api.opentext.com/admin/api/v1",
+            "description": "NA Production",
+            "variables": {}
+        }
+    ],
+    "tags": [
+        {
+            "name": "Apps",
+            "description": "Create, retrieve, update, and delete apps."
+        },
+        {
+            "name": "TenantUsers",
+            "description": "Create, retrieve, update, and delete tenant users."
+        },
+        {
+            "name": "Tenant",
+            "description": "Create, retrieve, update, and delete tenants."
+        },
+        {
+            "name": "OrganizationAuthenticator",
+            "description": "Create, retrieve, update, and delete organization authenticator."
+        },
+        {
+            "name": "TenantAuthenticator",
+            "description": "Create, retrieve, update, and delete tenant authenticator."
+        },
+        {
+            "name": "Organization",
+            "description": "Actions relating to organization."
+        }
+    ],
+    "paths": {
+        "/organizations/{organizationId}/tenants/{tenantId}/users/{userId}": {
+            "get": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Get user",
+                "description": "Retrieve existing user by ID",
+                "operationId": "getUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenantUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Update user",
+                "description": "Update existing user by ID",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TenantUser"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenantUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Delete user",
+                "description": "Delete existing user by ID",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/authenticators/{authenticatorId}": {
+            "get": {
+                "tags": [
+                    "TenantAuthenticator"
+                ],
+                "summary": "Get tenant authenticator",
+                "description": "Retrieve tenant authenticator",
+                "operationId": "getTenantAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "TenantAuthenticator"
+                ],
+                "summary": "Update tenant authenticator",
+                "description": "Update existing tenant authenticator",
+                "operationId": "updateTenantAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Authenticator"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "TenantAuthenticator"
+                ],
+                "summary": "Delete tenant authenticator",
+                "description": "Remove existing tenant authenticator",
+                "operationId": "deleteTenantAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/apps/{appId}/users/{userId}": {
+            "put": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Subscribe user",
+                "description": "Subscribes user to app",
+                "operationId": "subscribeUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Unsubscribe user",
+                "description": "Unsubscribe user from app",
+                "operationId": "unsubscribeUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/apps/{appId}": {
+            "put": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Add app",
+                "description": "Add app to tenant",
+                "operationId": "subscribeTenant",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Remove app",
+                "description": "Remove app from tenant",
+                "operationId": "unsubscribeTenant",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}": {
+            "get": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Get tenant",
+                "description": "Retrieve tenant by ID",
+                "operationId": "getTenant",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenant"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Update tenant",
+                "description": "Update existing tenant from provided payload",
+                "operationId": "updateTenant",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tenant"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenant"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Delete tenant",
+                "description": "Remove tenant by ID",
+                "operationId": "deleteTenant",
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "SUSPEND",
+                                "DISABLE",
+                                "ENABLE",
+                                "INITIATE_DELETE",
+                                "APPROVE_DELETE",
+                                "QUICK_DELETE",
+                                "IMMEDIATE_DELETE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "gracePeriod",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/authenticators/{authenticatorId}": {
+            "get": {
+                "tags": [
+                    "OrganizationAuthenticator"
+                ],
+                "summary": "Get organization authenticator",
+                "description": "Retrieve authenticator by ID",
+                "operationId": "getAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "OrganizationAuthenticator"
+                ],
+                "summary": "Update organization authenticator",
+                "description": "Update authenticator by ID",
+                "operationId": "updateAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Authenticator"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "OrganizationAuthenticator"
+                ],
+                "summary": "Delete organization authenticator",
+                "description": "Remove authenticator by ID",
+                "operationId": "deleteAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authenticatorId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/apps/{appId}": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Get app",
+                "description": "Retrieve existing application by ID",
+                "operationId": "getApp",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelApp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Update app",
+                "description": "Update existing app from provided payload",
+                "operationId": "updateApp",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/App"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelApp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Delete app",
+                "description": "Remove existing app by ID",
+                "operationId": "deleteApp",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/users": {
+            "get": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Get all users",
+                "description": "Retrieve all users for tenant",
+                "operationId": "getUsers",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelTenantUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Create user",
+                "description": "Create a new user from provided JSON",
+                "operationId": "addUser",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sendMail",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TenantUser"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenantUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/authenticators": {
+            "post": {
+                "tags": [
+                    "TenantAuthenticator"
+                ],
+                "summary": "Create tenant authenticator",
+                "description": "Create existing tenant authenticator",
+                "operationId": "createTenantAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Authenticator"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants": {
+            "get": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Get tenants",
+                "description": "Retrieve all tenants for organization",
+                "operationId": "getTenants",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelTenant"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Create tenant",
+                "description": "Create a new tenant from provided payload",
+                "operationId": "createTenant",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tenant"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelTenant"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/authenticators": {
+            "post": {
+                "tags": [
+                    "OrganizationAuthenticator"
+                ],
+                "summary": "Create organization authenticator",
+                "description": "Create authenticator for organization",
+                "operationId": "createAuthenticator",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Authenticator"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelAuthenticator"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/apps": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Get apps",
+                "description": "Retrieve all applications for organization",
+                "operationId": "getApps",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelApp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Create app",
+                "description": "Create new app from provided payload",
+                "operationId": "createApp",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/App"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelApp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/clients/{clientId}": {
+            "patch": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "Update service client",
+                "description": "Update organization service client",
+                "operationId": "updateServiceClient",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "activate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Client"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelClient"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/apps/{appId}/clients/{clientId}": {
+            "patch": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Update service client",
+                "description": "Update service client",
+                "operationId": "updateServiceClient_1",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "activate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Client"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntityModelClient"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/tenants/{tenantId}/apps/{appId}/users": {
+            "get": {
+                "tags": [
+                    "TenantUsers"
+                ],
+                "summary": "Get all users subscribed to an app",
+                "description": "Retrieve all users for tenant that are subscribed to a given app",
+                "operationId": "getSubscribedUsers",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelTenantUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tenant": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/clients": {
+            "get": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "Get service clients",
+                "description": "Get organization service clients",
+                "operationId": "getServiceClient",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelClient"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organizationId}/apps/{appId}/tenants": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "summary": "Get tenants by appId",
+                "description": "Get a list of tenants an application is deployed to",
+                "operationId": "getApplicationTenants",
+                "parameters": [
+                    {
+                        "name": "organizationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectionModelEntityModelTenant"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "organization": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Error": {
+                "required": [
+                    "id",
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "readOnly": true
+            },
+            "TenantUser": {
+                "required": [
+                    "email",
+                    "firstName",
+                    "lastName"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "authenticatorId": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EntityModelTenantUser": {
+                "required": [
+                    "email",
+                    "firstName",
+                    "lastName"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "authenticatorId": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "rel": {
+                        "type": "string"
+                    },
+                    "href": {
+                        "type": "string"
+                    },
+                    "hreflang": {
+                        "type": "string"
+                    },
+                    "media": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "deprecation": {
+                        "type": "string"
+                    },
+                    "profile": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Authenticator": {
+                "required": [
+                    "name",
+                    "providerName",
+                    "providerUrl"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "providerName": {
+                        "type": "string"
+                    },
+                    "providerUrl": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "autoProvision": {
+                        "type": "boolean"
+                    },
+                    "providerNameIDFormat": {
+                        "type": "string"
+                    },
+                    "signSamlFlag": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "EntityModelAuthenticator": {
+                "required": [
+                    "name",
+                    "providerName",
+                    "providerUrl"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "providerName": {
+                        "type": "string"
+                    },
+                    "providerUrl": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "autoProvision": {
+                        "type": "boolean"
+                    },
+                    "providerNameIDFormat": {
+                        "type": "string"
+                    },
+                    "signSamlFlag": {
+                        "type": "boolean"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "Tenant": {
+                "required": [
+                    "associatedEmail",
+                    "displayName"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "associatedEmail": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EntityModelTenant": {
+                "required": [
+                    "associatedEmail",
+                    "displayName"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "associatedEmail": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "App": {
+                "required": [
+                    "displayName",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "serviceClients": {
+                        "type": "array",
+                        "readOnly": true,
+                        "items": {
+                            "$ref": "#/components/schemas/Client"
+                        }
+                    }
+                }
+            },
+            "Client": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "confidential": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "consumerKey": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "consumerSecret": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "redirectURLs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "readOnly": true
+            },
+            "EntityModelApp": {
+                "required": [
+                    "displayName",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "serviceClients": {
+                        "type": "array",
+                        "readOnly": true,
+                        "items": {
+                            "$ref": "#/components/schemas/Client"
+                        }
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "EntityModelClient": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "confidential": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "consumerKey": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "consumerSecret": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "redirectURLs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "CollectionModelEntityModelTenantUser": {
+                "type": "object",
+                "properties": {
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EntityModelTenantUser"
+                        }
+                    }
+                }
+            },
+            "CollectionModelEntityModelTenant": {
+                "type": "object",
+                "properties": {
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EntityModelTenant"
+                        }
+                    }
+                }
+            },
+            "CollectionModelEntityModelClient": {
+                "type": "object",
+                "properties": {
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EntityModelClient"
+                        }
+                    }
+                }
+            },
+            "CollectionModelEntityModelApp": {
+                "type": "object",
+                "properties": {
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EntityModelApp"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "organization": {
+                "type": "openIdConnect",
+                "openIdConnectUrl": "https://na-1-dev.api.opentext.com/organizations/$organizationId/.well-known/openid-configuration"
+            },
+            "tenant": {
+                "type": "openIdConnect",
+                "openIdConnectUrl": "https://na-1-dev.api.opentext.com/tenants/$tenantId/.well-known/openid-configuration"
+            }
+        }
+    }
+}
