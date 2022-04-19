@@ -1,0 +1,4003 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "OpenText Business Workspaces REST API",
+    "description": "OpenText Business Workspaces REST API (v1 and v2 calls).",
+    "version": "v1 and v2"
+  },
+  "host": "content_server_url",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authenticate user"
+    },
+    {
+      "name": "businessworkspaces",
+      "description": "Manage business workspace"
+    },
+    {
+      "name": "businessworkspacetypes",
+      "description": "Manage business workspace type"
+    },
+    {
+      "name": "configurationvolumes",
+      "description": "Get the configuration volumes"
+    },
+    {
+      "name": "forms",
+      "description": "Get forms for object creation and search"
+    },
+    {
+      "name": "nodes",
+      "description": "Manage nodes"
+    },
+    {
+      "name": "refnumbers",
+      "description": "Manage reference numbers"
+    },
+    {
+      "name": "pickers",
+      "description": "Get the picker info"
+    }
+  ],
+  "paths": {
+    "/v1/auth": {
+      "post": {
+        "operationId": "authenticate",
+        "summary": "Authenticate user",
+        "description": "Authenticates user with the given credentials, returning an OTCS ticket if authorized.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "description": "Login name",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "password",
+            "description": "Login password",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "domain",
+            "description": "Login domain",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AuthenticationInfo"
+            }
+          },
+          "400": {
+            "description": "Invalid parameter value specified"
+          },
+          "401": {
+            "description": "Invalid username/password specified"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/businessworkspaces/{bw_id}": {
+      "get": {
+        "operationId": "getBusinessWorkspaceInfoV1",
+        "summary": "Get business workspace",
+        "description": "Gets the business workspace specific data.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Node id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BusinessWorkspaceInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces": {
+      "get": {
+        "operationId": "getRecentlyBusinessWorkspaces",
+        "summary": "Search for business workspaces",
+        "description": "Gets the recently accessed business workspaces or searches for business workspaces.<br><br><b>NOTE: Using filtering can be slow depending on the used operators, amount of data in the system, system resources and so on. Filtering must therefore be tuned system specific with regards to the used columns, operators, etc..</b><br><br>",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "where_workspace_type_id",
+            "description": "Filter for a specific workspace type.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_workspace_type_name",
+            "description": "Workspace type name in supported language",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expanded_view",
+            "description": "Select between the collapsed view and the expanded view. The collapsed view returns the recently accessed business workspaces and the expanded view searches for business workspaces.",
+            "type": "boolean",
+            "required": false,
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "where_is_early",
+            "description": "Filter early workspaces",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_ext_system_id",
+            "description": "Filter based on external system ID",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_bo_type",
+            "description": "Filter based on business object type",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_bo_id",
+            "description": "Filter based on business object ID",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "sort",
+            "description": "Sort supports the prefixes 'asc_ 'and 'desc_' like sort=asc_name.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_name",
+            "description": "Filter for a specific column value. The parameters are concatenated using a logical 'AND' and the values are compared with the equals operator. If the data type is 'String' then the prefixes 'contains_' and 'startswith_' are supported like where_name=contains_Test.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_column_query",
+            "description": "Query to support filtering in a more generic way. The following BNF is supported: <p> &lt;query&gt;\t\t\t\t::= &lt;condition&gt; [&lt;sort&gt;] <p> &lt;condition&gt;\t\t\t::= &lt;expression&gt; (\"OR\" | \"AND\" &lt;expression&gt;)* <p> &lt;expression&gt;\t\t\t::= &lt;column_name&gt; &lt;operation&gt; | \"NOT\" &lt;condition&gt; | \"(\" &lt;condition&gt; \")\" <p> &lt;sort&gt;\t\t\t\t::= &lt;column_name&gt; (\"ASC\" | \"DESC\") <p> &lt;column_name&gt;\t\t\t::= &lt;char&gt;+ <p> &lt;operation&gt;\t\t\t::= &lt;string_operation&gt; | &lt;integer_operation&gt; | &lt;boolean_operation&gt; | &lt;date_operation&gt; <p> &lt;string_operation&gt;\t::= (\"=\" | \"LIKE\") &lt;string_literal&gt; <p> &lt;integer_operation&gt;\t::= (\">\" | \">=\" | \"<\" | \"<=\" | \"=\" | \"<>\") &lt;integer_literal&gt; <p> &lt;boolean_operation&gt;\t::= (\"=\" | \"<>\") &lt;boolean_literal&gt; <p> &lt;date_operation&gt;\t\t::= (\">\" | \">=\" | \"<\" | \"<=\" | \"=\" | \"<>\") (&lt;date_literal&gt; | &lt;date_time_literal&gt;) <p> &lt;string_literal&gt;\t\t::= \"&lt;char&gt;\" <p> &lt;integer_literal&gt;\t\t::= [-]&lt;digit&gt;+ <p> &lt;boolean_literal&gt;\t\t::= \"TRUE\" | \"FALSE\" <p> &lt;date_literal&gt;\t\t::= &lt;year&gt;\"-\"&lt;month&gt;\"-\"&lt;day&gt; <p> &lt;date_time_literal&gt;\t::= &lt;date_literal&gt;\"T\"&lt;hour&gt;\":\"&lt;minute&gt;\":\"&lt;second&gt; <p> &lt;year&gt;\t\t\t\t::= &lt;digit&gt;&lt;digit&gt;digit&gt;&lt;digit&gt; <p> &lt;month&gt;\t\t\t\t::= &lt;digit&gt;&lt;digit&gt; <p> &lt;day&gt;\t\t\t\t\t::= &lt;digit&gt;&lt;digit&gt; <p> &lt;hour&gt;\t\t\t\t::= &lt;digit&gt;&lt;digit&gt; <p> &lt;minute&gt;\t\t\t\t::= &lt;digit&gt;&lt;digit&gt; <p> &lt;second&gt;\t\t\t\t::= &lt;digit&gt;&lt;digit&gt; <p> &lt;char&gt;\t\t\t\t::= &lt;letter&gt; | &lt;digit&gt; | &lt;symbol&gt; <p> &lt;letter&gt;\t\t\t\t::= A | B | C | D | … | Z | a | b | … | z <p> &lt;digit&gt;\t\t\t\t::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9  <p> &lt;symbol&gt;\t\t\t\t::= \"|\" | \" \" | \"!\" | … | \"{\" | \"}\" | \"~\" <p> &lt;string_literal&gt;: the escape character is \" \\ \". The supported wildcard characters are \" * \" (zero or more characters) and \" ? \" (single character). <p> Example: <br><code>where_column_query=name LIKE '*Test' AND ( WNF_ATT_35S_2 > 2020-03-20 OR WNF_ATT_35S_3 = 2020-03-20T08:20:00 )</code>",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Limit the number of pages to retrieve (parameter 'limit' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Limit items on the page (parameter 'page' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_barcode",
+            "description": "Barcode",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_botype_node_id",
+            "description": "Business object type node IDs",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand_users",
+            "description": "Expand users (parameter 'action' must also be provided)",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. properties{id, parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "metadata",
+            "description": "Returns the metadata globally and with each found item",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          { 
+            "name": "global_metadata",
+            "description": "Returns the metadata globally",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/": {
+      "post": {
+        "operationId": "createBusinessWorkspace",
+        "summary": "Create business workspace",
+        "description": "Creates a business workspace or a business template.<br><br><b>NOTE: This can only be done passing the information as \"body\" using JSON format.</b><br><br>The supported name/value pairs are:<br><ul><li>\"parent_id\": &lt;integer&gt; - the parent ID.</li><li>\"template_id\": &lt;integer&gt; - the workspace template ID.</li><li>\"name\": \"&lt;string&gt;\" - the name.</li><li>\"name_multilingual\": \"&lt;name/value pairs&gt;\" - the multilingual name. Example: \"name_multilingual\": {\"en\":\"Name_en\",\"de\":\"Name_de\"</li><li>\"description\": \"&lt;string&gt;\" - the description.</li><li>\"description_multilingual\": \"&lt;name/value pairs&gt;\" - the multilingual description. Example: \"description_multilingual\": {\"en\":\"Description_en\",\"de\":\"Description_de\"</li><li>\"class_id\": &lt;integer&gt; - the classification ID.</li><li>\"bo_id\": \"&lt;string&gt;\" - the business object ID. </li><li>\"bo_type_id\": &lt;integer&gt; - the business object type ID.</li><li>\"bo_type\": \"&lt;string&gt;\" - the business object type. </li><li>\"ext_system_id\": \"&lt;string&gt;\" - the external system ID.</li><li>\"roles\": &lt;name/value pairs&gt; - the supported roles are: \"categories\", \"rmclassifications\" and \"securityclearances\".</li><li>\"ibo_workspace_id\": &lt;integer&gt; - the identical business workspace ID.</li><li>\"wksp_type_id\": &lt;integer&gt; - the business workspace type ID.</li></ul><br>The supported name/value pairs are optional. <br>If the \"bo_type_id\" is not provided, then the business object type ID is determined from the values of \"bo_type\" and \"ext_system_id\".<br>If the \"template_id\" is not provided, then the workspace template ID is determined from the values of \"bo_type_id\" and \"bo_id\".<br>If the \"template_id\" is provided, then the workspace type ID is determined from the value of \"template_id\", otherwise from \"wksp_type_id\".<br><br>Example to create an early business workspace:<br>body={\"parent_id\":14180,\"template_id\":14183,\"name\":\"John Doe\",\"description\":\"Business Workspace of John Doe\"}<br><br>Example to create a late business workspace:<br>body={\"bo_id\":\"171971\",\"bo_type_id\":43, \"template_id\":14183,\"name\":\"John Doe\",\"description\":\"Business Workspace of John Doe\",\"roles\":{\"rmclassifications\":{\"rmclassification_id\":[276653],\"status\":\"SECRET...SECRET\",\"status_date\": \"2021-06-04T00:00:00\",\"record_date\": \"2021-05-27T00:00:00\",\"rsi\": \"TEST\",\"official\": true}, \"categories\":{\"14177\":{\"14177_3\":\"Germany\",\"14177_4\":\"High Tech\"}}}}<br><br>Example to update a late business workspace:<br>body={\"ibo_workspace_id\":\"65443\",\"bo_id\":\"171971\",\"bo_type_id\":43, \"template_id\":14183,\"name\":\"John Doe\",\"description\":\"Business Workspace of John Doe\",\"roles\":{\"categories\":{\"14177\":{\"14177_3\":\"Germany\",\"14177_4\":\"High Tech\"}}}}<br><br>Example to create a business template:<br>body={\"wksp_type_id\":12, \"parent_id\": 78833, \"name\":\"Test Workspace Template\"}",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "description": "Body, for example: <br><code>{\"template_id\": 23234, \"name\": \"Test\", \"parent_id\": 23235, \"description\": \"\", \"roles\": {\"categories\": {\"23228\": {\"23228_2\": \"5654\",\"23228_3\": \"\"}}}}</code>",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2CreateBusinessWorkspaceResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}": {
+      "get": {
+        "operationId": "getBusinessWorkspaceInfo",
+        "summary": "Get business workspace",
+        "description": "Gets the business workspace specific data.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. properties{id, parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "include_icon",
+            "description": "Get widget icon content",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+		  {
+            "name": "bo_properties_only",
+            "description": "Check for business properties call",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesSpecificResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/relateditems": {
+      "get": {
+        "operationId": "getRelatedItems",
+        "summary": "Get related items of business workspace",
+        "description": "Gets the related items of a given business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "where_workspace_type_id",
+            "description": "Workspace type ID (Deprecated. Please use parameter where_workspace_type_ids.)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_workspace_type_ids",
+            "description": "Workspace type IDs",
+            "type": "array",
+            "required": false,
+            "in": "query",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "where_relationtype",
+            "description": "Filter by relation (child,parent)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_name",
+            "description": "Filter by workspace name (starts with)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "sort",
+            "description": "Sort supports the prefixes 'asc_ 'and 'desc_' like sort=asc_name.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Limit the number of pages to retrieve (parameter 'limit' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Limit items on the page (parameter 'page' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. expand=related_items{parent_id}",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand_users",
+            "description": "Expand users (parameter 'action' must also be provided)",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. fields=related_items{id, parent_id}",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "metadata",
+            "description": "Returns the metadata globally and with each found item",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "global_metadata",
+            "description": "Returns the metadata globally",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "post": {
+        "operationId": "addBusinessWorkspaceRelation",
+        "summary": "Add relation to the business workspace",
+        "description": "Adds the relation to the business workspace.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "rel_bw_id",
+            "description": "Related Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "rel_type",
+            "description": "Relation type (child,parent)",
+            "type": "string",
+            "required": false,
+            "in": "formData",
+            "default": "child"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2AddBusinessWorkspaceRelationResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/relateditems/{rel_bw_id}": {
+      "delete": {
+        "operationId": "deleteBusinessWorkspaceRelation",
+        "summary": "Delete relation of a business workspace",
+        "description": "Deletes the relation of business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "rel_bw_id",
+            "description": "Related Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "rel_type",
+            "description": "Relation type (child,parent)",
+            "type": "string",
+            "required": false,
+            "in": "query",
+            "default": "child"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2DeleteBusinessWorkspacesElementResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/relateditemspicklist": {
+      "get": {
+        "operationId": "getBusinessWorkspaces",
+        "summary": "Search for business workspaces to link",
+        "description": "Gets the business workspaces which can be added as related item to the business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "where_workspace_type_ids",
+            "description": "Workspace type IDs",
+            "type": "array",
+            "required": false,
+            "in": "query",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "where_rel_type",
+            "description": "Relation type (child,parent)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_name",
+            "description": "Filter for name, e.g. contains_Customer or starts_with_Customer",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Number of the page to retrieve, for example 5 (parameter 'limit' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Limit of items on the page, for examplle 20 (parameter 'page' must also be provided)",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand_users",
+            "description": "Expand users (parameter 'action' must also be provided)",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. properties{id, parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "metadata",
+            "description": "Returns the metadata globally and with each found item",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          { 
+            "name": "global_metadata",
+            "description": "Returns the metadata globally",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/icons": {
+      "post": {
+        "operationId": "CreateBusinessWorkspaceIcon",
+        "summary": "Add icon to business workspace",
+        "description": "Creates the icon of a business workspace.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "file_content_type",
+            "description": "Content type of the icon object (document)",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "file_filename",
+            "description": "File name of the icon object (document)",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "file_filelength",
+            "description": "File length of the icon object (document)",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "file",
+            "description": "Upload path of the icon",
+            "type": "file",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "icon_name",
+            "description": "Name of the icon object (document)",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "put": {
+        "operationId": "UpdateBusinessWorkspaceIcon",
+        "summary": "Update icon of business workspace",
+        "description": "Updates the icon of a given business workspace.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "file_content_type",
+            "description": "Content type of the icon object (document)",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "file_filename",
+            "description": "File name of the icon object (document)",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "file_filelength",
+            "description": "File length of the icon object (document)",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "file",
+            "description": "Upload path of the icon",
+            "type": "file",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2PutIconResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBusinessWorkspaceIcon",
+        "summary": "Delete icon of business workspace.",
+        "description": "Deletes the icon of a given business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesIconsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/roles": {
+      "get": {
+        "operationId": "getBusinessWorkspaceRoles",
+        "summary": "Get roles of a business workspace",
+        "description": "Gets the roles of a business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand",
+            "description": "Expand (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. roles{id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2GetBusinessWorkspacesRolesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "post": {
+        "operationId": "addBusinessWorkspaceRole",
+        "summary": "Add role to business workspace",
+        "description": "Adds the role to the business workspace.<br><br><b>NOTE: This can only be done passing the information as \"body\" using JSON format.</b><br><br>For example, add role \"Customer\" having \"see\" and \"see_contents\" permissions to business workspace with id \"8688\":<br>POST api/v2/businessworkspaces/8688/roles<br>body={\"permissions\":[\"see\",\"see_contents\"],\"name\":\"Customer\"}",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "name",
+            "description": "Role name",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "perms",
+            "description": "Permissions",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "permissions",
+            "description": "List of permissions:",
+            "type": "array",
+            "required": true,
+            "in": "formData",
+            "items": {
+              "type": "string",
+              "enum": [
+                "see",
+                "see_contents",
+                "modify",
+                "edit_attributes",
+                "add_items",
+                "reserve",
+                "add_major_version",
+                "delete_versions",
+                "delete",
+                "edit"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "description": "Description",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "leader",
+            "description": "Leader",
+            "type": "boolean",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "members",
+            "description": "IDs of participants to add to the role",
+            "type": "array",
+            "required": false,
+            "in": "formData",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "apply_to",
+            "description": "Apply permissions to: \"0\" - this item, \"1\" - sub items, \"2\" - this item and sub items, \"3\" - this item and immediate subitems",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "include_sub_types",
+            "description": "Special sub types to be included",
+            "type": "array",
+            "required": false,
+            "in": "formData",
+            "items": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2CreateBusinessWorkspacesRolesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/roles/{role_id}": {
+      "get": {
+        "operationId": "getBusinessWorkspaceRole",
+        "summary": "Get role of business workspace",
+        "description": "Gets the role of a business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand",
+            "description": "Expand (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. roles{id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. properties-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2GetBusinessWorkspacesRolesSpecificResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "put": {
+        "operationId": "updateBusinessWorkspaceRole",
+        "summary": "Update role of business workspace",
+        "description": "Updates the role of a business workspace.<br><br><b>NOTE: This can only be done passing the information as \"body\" using JSON format.</b><br><br>For example, set the permissions of role with id \"9349\" of business workspace with id \"8688\" to \"see\" and \"see_contents\".<br>PUT api/v2/businessworkspaces/8688/roles/9349<br>body={\"permissions\":[\"see\",\"see_contents\"]}",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "name",
+            "description": "Role name",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "perms",
+            "description": "Permissions",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "permissions",
+            "description": "List of permissions",
+            "type": "array",
+            "required": true,
+            "in": "formData",
+            "items": {
+              "type": "string",
+              "enum": [
+                "see",
+                "see_contents",
+                "modify",
+                "edit_attributes",
+                "add_items",
+                "reserve",
+                "add_major_version",
+                "delete_versions",
+                "delete",
+                "edit"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "description": "Description",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "leader",
+            "description": "Leader",
+            "type": "boolean",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "members",
+            "description": "IDs of participants to add to the role",
+            "type": "array",
+            "required": false,
+            "in": "formData",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "apply_to",
+            "description": "Apply permissions to: \"0\" - this item, \"1\" - sub items, \"2\" - this item and sub items, \"3\" - this item and immediate subitems",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "include_sub_types",
+            "description": "Special sub types to be included",
+            "type": "array",
+            "required": false,
+            "in": "formData",
+            "items": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2CreateBusinessWorkspacesRolesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteBusinessWorkspaceRole",
+        "summary": "Delete role of business workspace",
+        "description": "Deletes the role of a business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2DeleteBusinessWorkspacesElementResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/roles/{role_id}/members": {
+      "get": {
+        "operationId": "getRoleMembers",
+        "summary": "Get members of role",
+        "description": "Gets the members of a role.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand",
+            "description": "Expand (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. members{id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. members-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2GetBusinessWorkspacesRolesMembersResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "post": {
+        "operationId": "AddRoleMember",
+        "summary": "Add member to role",
+        "description": "Adds the member to a role.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "id",
+            "description": "Member ID",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesRolesMembersSpecificResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/roles/{role_id}/members/{member_id}": {
+      "get": {
+        "operationId": "getRoleMember",
+        "summary": "Get member of role",
+        "description": "Gets the member of a role.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "member_id",
+            "description": "Member ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand",
+            "description": "Expand (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fields",
+            "description": "Filter fields, e.g. members{id, parent_id} (parameter 'action' must also be provided)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "action",
+            "description": "Action, e.g. members-",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2BusinessWorkspacesRolesMembersSpecificResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteRoleMember",
+        "summary": "Delete member of role",
+        "description": "Deletes the member of a role.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Business workspace node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "role_id",
+            "description": "Role ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "member_id",
+            "description": "Member ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2DeleteBusinessWorkspacesElementResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v1/businessworkspacetypes/{workspace_type_id}": {
+      "get": {
+        "operationId": "getBusinessWorkspaceTypeInfo",
+        "summary": "Get business workspace type",
+        "description": "Gets the business workspace type.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "workspace_type_id",
+            "description": "Workspace type ID (internal ID, returned by /nodes/{id}/businessworkspace as workspace_type_id)",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BusinessWorkspaceTypeInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspacetypes"
+        ]
+      }
+    },
+    "/v1/businessworkspacetypes/{workspace_type_id}/widgets": {
+      "get": {
+        "operationId": "getBusinessWorkspaceSidebarWidgetsInfo",
+        "summary": "Get widgets of business workspace type",
+        "description": "Gets the configured classic ui side bar widgets of a business workspace type.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "workspace_type_id",
+            "description": "Workspace type ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "where_types",
+            "description": "Filter by widget types:",
+            "enum": [
+              "attributes",
+              "relatedbusinessworkspaces",
+              "recentchanges",
+              "businessreference",
+              "workitems"
+            ],
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_orientation",
+            "description": "Filter by widget orientation:",
+            "enum": [
+              "horizontal",
+              "vertical"
+            ],
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BusinessWorkspaceSidebarWidgetsInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspacetypes"
+        ]
+      }
+    },
+    "/v2/businessworkspacetypes": {
+      "get": {
+        "operationId": "getBusinessWorkspaceTypes",
+        "summary": "Get business workspace types",
+        "description": "Gets all business workspace types.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "External system ID",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "bo_type",
+            "description": "Business object ID",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand_templates",
+            "description": "Include workspace templates",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand_wksp_info",
+            "description": "Include workspace info",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "include_deleted",
+            "description": "Filter for deleted business workspace types",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_manual_creation",
+            "description": "Filter for manual creation",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "where_fixed_creation_location",
+            "description": "Filter for fixed creation location",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2GetBusinessWorkspaceTypesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "businessworkspacetypes"
+        ]
+      }
+    },
+    "/v2/configurationvolumes": {
+      "get": {
+        "operationId": "GetConfigurationVolumes",
+        "summary": "Get configured volumes",
+        "description": "Get all configuration volumes, the caller has permissions for.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ConfiguredVolumes"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "configurationvolumes"
+        ]
+      }
+    },
+    "/v2/forms/businessworkspaces/create": {
+      "get": {
+        "operationId": "getBusinessWorkspaceCreateForm",
+        "summary": "Get business workspace create form",
+        "description": "Gets the form for creating a business workspace. Either you have to provide the template_id or bo_type_id, or the combination of ext_system_id and bo_type.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "parent_id",
+            "description": "Parent ID",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "template_id",
+            "description": "Template ID",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "External system ID",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "bo_type",
+            "description": "Business object type",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "bo_type_id",
+            "description": "Business object type ID",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "bo_id",
+            "description": "Business object ID",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "completeWorkspace",
+            "description": "Completes a business workspace",
+            "type": "boolean",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V2GetFormsWorkspacesCreateResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "forms"
+        ]
+      }
+    },
+    "/v1/nodes/{id}/businessworkspace": {
+      "get": {
+        "operationId": "getBusinessWorkspaceRoot",
+        "summary": "Get business workspace root",
+        "description": "Gets the business workspace root node for the given node.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Node ID",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BusinessWorkspaceRootInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v1/nodes/{id}/businessworkspacetypes": {
+      "get": {
+        "operationId": "getNodeBusinessWorkspaceTypes",
+        "summary": "Get business workspace types",
+        "description": "Gets the business workspace types for the given node.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Node ID",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/V1GetNodesBusinessWorkspaceTypesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v1/nodes": {
+      "post": {
+        "operationId": "createNode",
+        "summary": "Create business workspace template",
+        "description": "Creates a business workspace template.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "description": "Subtype of the node",
+            "type": "integer",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "parent_id",
+            "description": "Parent node ID",
+            "type": "integer",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "name",
+            "description": "Name of the node",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "reference_type",
+            "description": "Workspace type ID",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "description",
+            "description": "Description of the node",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "external_create_date",
+            "description": "External create date",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "external_modify_date",
+            "description": "External modify date",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "external_source",
+            "description": "External source",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "file_system",
+              "mobile_device",
+              "scanner",
+              "fax",
+              "ftp",
+              "shared_drive",
+              "removable_disk",
+              "backup_media",
+              "optical_disk",
+              "onedrive",
+              "cloud_storage",
+              "camera",
+              "email_server",
+              "elink",
+              "opentext_core",
+              "edocs",
+              "sap",
+              "document_management",
+              "exchange_mailbox",
+              "notes_mailbox",
+              "outlook_pst",
+              "file_stream",
+              "mailbox_other"
+            ],
+            "in": "formData"
+          },
+          {
+            "name": "external_identity",
+            "description": "External identity",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "external_identity_type",
+            "description": "External identity type",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "email_address",
+              "domain_userid",
+              "generic_userid",
+              "name",
+              "last_name",
+              "windows_sid",
+              "guid",
+              "phone_number",
+              "ldap_name",
+              "exchange_mailboxid"
+            ],
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateWorkspaceTemplateResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v2/refnumbers": {
+      "post": {
+        "operationId": "GenerateReferenceNumber",
+        "summary": "Generate reference number",
+        "description": "This REST API action is meant for fetching a reference number either created or re-generated depending on the 'create' parameter which can be either set to 'true' or 'false'",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "create",
+            "description": "If it is set to 'true' then creates a reference number else re-generates a reference number",
+            "type": "boolean",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "category_id",
+            "description": "ID of the specific category for which the reference number is required",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "parent_id",
+            "description": "ID of the parent",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "attribute_keys",
+            "description": "List of keys for the dependent attributes in the category for the reference number generation (for testing syntax - 1,2,3)",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "attribute_values",
+            "description": "List of updated values for the dependent attributes in the category for the reference number generation (for testing syntax - VAL1,VAL2,VAL3)",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "cache_id",
+            "description": "ID of the cache to get the category frame while generating a reference number",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "rm_class_ids",
+            "description": "RM classification IDs",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "node_id",
+            "description": "ID of the node to which the reference number should be created",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "refnumbers"
+        ]
+      }
+    },
+    "/v2/pickers/{picker_type}": {
+      "get": {
+        "operationId": "DoPickerInfoCustomColumn",
+        "summary": "Get picker info",
+        "description": "Gets the picker info for a picker type.",
+        "parameters": [
+          {
+            "name": "picker_type",
+            "description": "The picker type, for example 'otconws_customcolumn' to get the picker info of a custom column.",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "object_id",
+            "description": "The object ID, for example the node ID of a custom column. Either object_id or config_id has to be provided.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "config_id",
+            "description": "The configuration ID, for example the column name of a custom column. Either object_id or config_id has to be provided.",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Authentication Required"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "tags": [
+          "pickers"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AuthenticationInfo": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "type": "string",
+          "description": "The valid authentication ticket"
+        }
+      }
+    },
+    "SearchFields": {
+      "type": "object",
+      "properties": {
+        "searchFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SearchFieldDescription"
+          }
+        }
+      }
+    },
+    "SearchFieldDescription": {
+      "type": "object",
+      "properties": {
+        "defaultValue": {
+          "type": "string"
+        },
+        "fieldId": {
+          "type": "string"
+        },
+        "iskeyField": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        },
+        "length": {
+          "type": "integer"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "values": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "GetWorkspaceNameResult": {
+      "type": "object",
+      "properties": {
+        "workspace_name": {
+          "type": "string"
+        },
+        "workspace_name_multilingual": {
+          "type": "object",
+          "$ref": "#/definitions/WkspMultiLingual"
+        }
+      }
+    },
+    "WkspMultiLingual": {
+      "type": "object",
+      "properties": {
+        "language_code (eg en)": {
+          "type": "string"
+        }
+      }
+    },
+    "V2CreateBusinessWorkspaceResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2IdResult"
+        }
+      }
+    },
+    "V2IdResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The item's unique object ID",
+          "type": "integer"
+        }
+      }
+    },
+    "V2BusinessWorkspacesResult": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "paging": {
+          "type": "object",
+          "description": "Paging information",
+          "$ref": "#/definitions/V2Paging"
+        },
+        "results": {
+          "description": "Results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V2BusinessWorkspaceResult"
+          }
+        },
+        "wksp_info": {
+          "type": "object",
+          "description": "Additional workspace type specific information",
+          "$ref": "#/definitions/V2BusinessWorkspaceTypeInfo"
+        }
+      }
+    },
+    "V2BusinessWorkspacesSpecificResult": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "description": "Results",
+          "type": "object",
+          "$ref": "#/definitions/V2BusinessWorkspaceSpecificResult"
+        }
+      }
+    },
+    "V2DataLinks": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2Links"
+        }
+      }
+    },
+    "V2Links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "object",
+          "description": "Self link",
+          "$ref": "#/definitions/V2Link"
+        }
+      }
+    },
+    "V2Link": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "Body"
+        },
+        "content_type": {
+          "type": "string",
+          "description": "Content type"
+        },
+        "href": {
+          "type": "string",
+          "description": "URL"
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name"
+        }
+      }
+    },
+    "V2Paging": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Limit"
+        },
+        "links": {
+          "type": "object",
+          "description": "Links",
+          "items": {}
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page"
+        },
+        "page_total": {
+          "type": "integer",
+          "description": "Page total"
+        },
+        "range_max": {
+          "type": "integer",
+          "description": "Range max"
+        },
+        "range_min": {
+          "type": "integer",
+          "description": "Range min"
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Total count"
+        }
+      }
+    },
+    "V2BusinessWorkspaceResult": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "Actions",
+          "$ref": "#/definitions/V2Actions"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2BusinessWorkspaceData"
+        }
+      }
+    },
+    "V2BusinessWorkspaceSpecificResult": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "Actions",
+          "$ref": "#/definitions/V2Actions"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2BusinessWorkspaceSpecificData"
+        }
+      }
+    },
+    "V2Actions": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Actions",
+          "$ref": "#/definitions/V2ActionsData"
+        },
+        "map": {
+          "type": "object",
+          "description": "Map",
+          "$ref": "#/definitions/V2ActionsMap"
+        },
+        "order": {
+          "type": "array",
+          "description": "Order",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "V2ActionsData": {
+      "type": "object",
+      "properties": {}
+    },
+    "V2ActionsMap": {
+      "type": "object",
+      "properties": {}
+    },
+    "V2BusinessWorkspaceData": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Properties",
+          "$ref": "#/definitions/V2BusinessWorkspaceProperties"
+        }
+      }
+    },
+    "V2BusinessWorkspaceSpecificData": {
+      "type": "object",
+      "properties": {
+        "business_properties": {
+          "type": "object",
+          "description": "Business properties",
+          "$ref": "#/definitions/V2BusinessWorkspaceBusinessProperties"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properties",
+          "$ref": "#/definitions/V2BusinessWorkspaceSpecificProperties"
+        },
+        "wksp_info": {
+          "type": "object",
+          "description": "Additional workspace type specific information",
+          "$ref": "#/definitions/V2BusinessWorkspaceTypeInfo"
+        },
+        "workspace_references": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "V2BusinessWorkspaceBusinessProperties": {
+      "type": "object",
+      "properties": {
+        "has_default_display": {
+          "type": "boolean"
+        },
+        "has_default_search": {
+          "type": "boolean"
+        },
+        "isEarly": {
+          "type": "boolean"
+        },
+        "workspace_type_id": {
+          "type": "integer"
+        },
+        "workspace_type_name": {
+          "type": "string"
+        },
+        "workspace_type_name_multilingual": {
+          "type": "object",
+          "$ref": "#/definitions/NameMultilingual"
+        }
+      }
+    },
+    "V2BusinessWorkspaceProperties": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "description": "Whether or not this item is a container",
+          "type": "boolean"
+        },
+        "create_date": {
+          "description": "(Can be time-zone aware) The date that the item was created",
+          "type": "string"
+        },
+        "create_user_id": {
+          "description": "The ID of the user who created the item",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Description of the item",
+          "type": "string"
+        },
+        "favorite": {
+          "description": "Indicates if this item has been favorited by the current user",
+          "type": "boolean"
+        },
+        "icon": {
+          "description": "The item's icon",
+          "type": "string"
+        },
+        "id": {
+          "description": "The item's unique object ID",
+          "type": "integer"
+        },
+        "modify_date": {
+          "description": "(Can be time-zone aware) The date on which the item was last modified",
+          "type": "string"
+        },
+        "modify_user_id": {
+          "description": "The ID of the user who modified the item",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the item",
+          "type": "string"
+        },
+        "original_id": {
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "The object ID of the item's parent",
+          "type": "integer"
+        },
+        "perm_add_major_version": {
+          "type": "boolean"
+        },
+        "perm_create": {
+          "type": "boolean"
+        },
+        "perm_delete": {
+          "type": "boolean"
+        },
+        "perm_delete_versions": {
+          "type": "boolean"
+        },
+        "perm_modify": {
+          "type": "boolean"
+        },
+        "perm_modify_attributes": {
+          "type": "boolean"
+        },
+        "perm_modify_permissions": {
+          "type": "boolean"
+        },
+        "perm_reserve": {
+          "type": "boolean"
+        },
+        "perm_see": {
+          "type": "boolean"
+        },
+        "perm_see_contents": {
+          "type": "boolean"
+        },
+        "reserved": {
+          "description": "Whether or not this item has been reserved",
+          "type": "boolean"
+        },
+        "reserved_date": {
+          "description": "(Can be time-zone aware) The date on which the item was reserved",
+          "type": "string"
+        },
+        "reserved_user_id": {
+          "description": "The ID of the user who has this item reserved",
+          "type": "integer"
+        },
+        "size": {
+          "description": "The number of items in this workspace",
+          "type": "integer"
+        },
+        "type": {
+          "description": "The item's type (unique number)",
+          "type": "integer"
+        },
+        "type_name": {
+          "description": "The item's type",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The user ID of the owner of this item",
+          "type": "integer"
+        },
+        "volume_id": {
+          "description": "The ID of the volume to which this item belongs",
+          "type": "integer"
+        },
+        "wnd_comments": {},
+        "wnd_comments_formatted": {},
+        "wnf_bo_type_id": {},
+        "wnf_bo_type_id_formatted": {},
+        "wnf_readydate": {},
+        "wnf_readydate_formatted": {},
+        "wnf_wksp_name_en": {
+          "type": "string"
+        },
+        "wnf_wksp_name_en_formatted": {
+          "type": "string"
+        },
+        "wnf_wksp_template_id": {
+          "type": "integer"
+        },
+        "wnf_wksp_type_id": {
+          "type": "integer"
+        },
+        "wnf_wksp_type_id_formatted": {
+          "type": "string"
+        }
+      }
+    },
+    "V2BusinessWorkspaceSpecificProperties": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "description": "Whether or not this item is a container",
+          "type": "boolean"
+        },
+        "container_size": {
+          "description": "The number of items in this container",
+          "type": "integer"
+        },
+        "create_date": {
+          "description": "(Can be time-zone aware) The date that the item was created",
+          "type": "string"
+        },
+        "create_user_id": {
+          "description": "The ID of the user who created the item",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Description of the item",
+          "type": "string"
+        },
+        "description_multilingual": {
+          "description": "Locale specific item description. One entry per language enabled in Content Server",
+          "type": "object",
+          "$ref": "#/definitions/DescriptionMultilingual"
+        },
+        "external_create_date": {
+          "description": "External create date",
+          "type": "string"
+        },
+        "external_identity": {
+          "description": "External identity",
+          "type": "string"
+        },
+        "external_identity_type": {
+          "description": "External identity type",
+          "type": "string"
+        },
+        "external_modify_date": {
+          "description": "External modify date",
+          "type": "string"
+        },
+        "external_source": {
+          "description": "External source",
+          "type": "string"
+        },
+        "favorite": {
+          "description": "Indicates if this item has been favorited by the current user",
+          "type": "boolean"
+        },
+        "guid": {
+          "description": "Globally unique ID",
+          "type": "string"
+        },
+        "icon": {
+          "description": "The item's icon",
+          "type": "string"
+        },
+        "icon_large": {
+          "description": "The item's icon (large)",
+          "type": "string"
+        },
+        "id": {
+          "description": "The item's unique object ID",
+          "type": "integer"
+        },
+        "modify_date": {
+          "description": "(Can be time-zone aware) The date on which the item was last modified",
+          "type": "string"
+        },
+        "modify_user_id": {
+          "description": "The ID of the user who modified the item",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the item",
+          "type": "string"
+        },
+        "name_multilingual": {
+          "description": "Locale specific item name. One entry per language enabled in Content Server",
+          "type": "object",
+          "$ref": "#/definitions/NameMultilingual"
+        },
+        "owner_group_id": {
+          "description": "The group ID of the owner of this item",
+          "type": "integer"
+        },
+        "owner_user_id": {
+          "description": "The user ID of the owner of this item",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "The object ID of the item's parent",
+          "type": "integer"
+        },
+        "reserved": {
+          "description": "Whether or not this item has been reserved",
+          "type": "boolean"
+        },
+        "reserved_date": {
+          "description": "(Can be time-zone aware) The date on which the item was reserved",
+          "type": "string"
+        },
+        "reserved_user_id": {
+          "description": "The ID of the user who has this item reserved",
+          "type": "integer"
+        },
+        "rm_enabled": {
+          "description": "Whether or not records management is enabled for this item",
+          "type": "boolean"
+        },
+        "size": {
+          "description": "The number of items in this workspace",
+          "type": "integer"
+        },
+        "type": {
+          "description": "The item's type (unique number)",
+          "type": "integer"
+        },
+        "type_name": {
+          "description": "The item's type",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The user ID of the owner of this item",
+          "type": "integer"
+        },
+        "versions_control_advanced": {
+          "description": "Whether or not newly added items to this item are added as advanced versioning (major/minor versioning)",
+          "type": "boolean"
+        },
+        "volume_id": {
+          "description": "The ID of the volume to which this item belongs",
+          "type": "integer"
+        }
+      }
+    },
+    "DescriptionMultilingual": {
+      "type": "object",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "Description in English"
+        },
+        "de": {
+          "type": "string",
+          "description": "Beschreibung in Deutsch"
+        }
+      }
+    },
+    "NameMultilingual": {
+      "type": "object",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "Name in English"
+        },
+        "de": {
+          "type": "string",
+          "description": "Name auf Deutsch"
+        }
+      }
+    },
+    "V2BusinessWorkspaceTypeInfo": {
+      "type": "object",
+      "properties": {
+        "wksp_type_icon": {
+          "type": "string",
+          "description": "Specific workspace icon data"
+        },
+        "wksp_type_icon_content_type": {
+          "type": "string",
+          "description": "Content type of specific workspace icon"
+        }
+      }
+    },
+    "V2BusinessWorkspacesIconsResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2IconResult"
+        }
+      }
+    },
+    "V2IconResult": {
+      "type": "object",
+      "properties": {
+        "icon_node_id": {
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "V2PutIconResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2IconUpdateResult"
+        }
+      }
+    },
+    "V2IconUpdateResult": {
+      "type": "object",
+      "properties": {
+        "icon_node_id": {
+          "type": "integer"
+        },
+        "icon_version_id": {
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "V2GetBusinessWorkspacesRolesResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V2RolesGetResult"
+          }
+        }
+      }
+    },
+    "V2RolesGetResult": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "Actions",
+          "$ref": "#/definitions/V2Actions"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2RolesData"
+        }
+      }
+    },
+    "V2RolesData": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Properties",
+          "$ref": "#/definitions/V2RolesProperties"
+        }
+      }
+    },
+    "V2RolesProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "inherited_from_id": {},
+        "leader": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "perms": {
+          "type": "integer"
+        }
+      }
+    },
+    "V2GetBusinessWorkspacesRolesSpecificResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2RolesGetResult"
+        }
+      }
+    },
+    "V2CreateBusinessWorkspacesRolesResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2RolesCreateResult"
+        }
+      }
+    },
+    "V2AddBusinessWorkspaceRelationResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object"
+        }
+      }
+    },
+    "V2DeleteBusinessWorkspacesElementResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object"
+        }
+      }
+    },
+    "V2RolesCreateResult": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2RolesData"
+        }
+      }
+    },
+    "V2GetBusinessWorkspacesRolesMembersResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V2RolesMembersResult"
+          }
+        }
+      }
+    },
+    "V2BusinessWorkspacesRolesMembersSpecificResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "object",
+          "$ref": "#/definitions/V2RolesMembersResult"
+        }
+      }
+    },
+    "V2RolesMembersResult": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2RolesMembersData"
+        }
+      }
+    },
+    "V2RolesMembersData": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Properties",
+          "$ref": "#/definitions/V2RolesMembersGetProperties"
+        }
+      }
+    },
+    "V2RolesMembersGetProperties": {
+      "type": "object",
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "group_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "BusinessWorkspaceInfo": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BusinessWorkspaceData"
+          }
+        }
+      }
+    },
+    "RelatedItemsData": {
+      "type": "object",
+      "properties": {}
+    },
+    "BusinessWorkspaceData": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "type": "object",
+          "$ref": "#/definitions/AttributesInfo"
+        },
+        "business_reference": {
+          "type": "object",
+          "$ref": "#/definitions/BusinessReferenceInfo"
+        },
+        "recent_changes": {
+          "type": "array",
+          "items": {}
+        },
+        "related_business_workspaces": {
+          "type": "object",
+          "items": {}
+        },
+        "work_items": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "AttributesInfo": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "items": {}
+        },
+        "definitions": {
+          "type": "object",
+          "items": {}
+        },
+        "definitions_map": {
+          "type": "object",
+          "items": {}
+        },
+        "definitions_order": {
+          "type": "object",
+          "items": {}
+        }
+      }
+    },
+    "BusinessReferenceInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Node ID of business workspace"
+        },
+        "has_business_object_id": {
+          "type": "boolean",
+          "description": "True, if business workspace is linked to a business object in an external system. False, if the workspace is not linked"
+        },
+        "display_url": {
+          "type": "string",
+          "description": "URL to external system for displaying the business object that is linked to the business workspace. Only there if has_business_object_id = true"
+        },
+        "business_object_id": {
+          "type": "string",
+          "description": "ID of business object in external system. Only there if has_business_object_id = true"
+        },
+        "business_object_type_id": {
+          "type": "integer",
+          "description": "Internal ID of business object type. Only there if has_business_object_id = true"
+        },
+        "workspace_type_id": {
+          "type": "integer",
+          "description": "Internal ID of business workspace type"
+        },
+        "business_object_type_name": {
+          "type": "string",
+          "description": "Name of business object type. Only there if has_business_object_id = true"
+        },
+        "workspace_type_name": {
+          "type": "string",
+          "description": "Name of business workspace type"
+        }
+      }
+    },
+    "V2GetBusinessWorkspaceTypesResult": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "description": "Results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V2BusinessWorkspaceTypeResult"
+          }
+        }
+      }
+    },
+    "V2BusinessWorkspaceTypeResult": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "Actions",
+          "$ref": "#/definitions/V2Actions"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data",
+          "$ref": "#/definitions/V2BusinessWorkspaceTypeData"
+        }
+      }
+    },
+    "V2BusinessWorkspaceTypeData": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Properties",
+          "$ref": "#/definitions/V2BusinessWorkspaceTypeProperties"
+        },
+        "wksp_info": {
+          "type": "object",
+          "description": "Additional workspace type specific information",
+          "$ref": "#/definitions/V2BusinessWorkspaceTypeInfo"
+        }
+      }
+    },
+    "V2BusinessWorkspaceTypeProperties": {
+      "type": "object",
+      "properties": {
+        "rm_enabled": {
+          "description": "Whether or not records management is enabled for this item",
+          "type": "boolean"
+        },
+        "wksp_type_id": {
+          "type": "integer"
+        },
+        "wksp_type_name": {
+          "type": "string"
+        }
+      }
+    },
+    "BusinessWorkspaceTypeInfo": {
+      "type": "object",
+      "properties": {
+        "icon_url": {
+          "type": "string",
+          "description": "URL to the icon image that is configured for the specified workspace type"
+        },
+        "is_policies_enabled": {
+          "type": "boolean",
+          "description": "Flag to show whether policies are enabled for business workspaces of that workspace type"
+        },
+        "workspace_type": {
+          "type": "string",
+          "description": "Name of the business workspace type"
+        }
+      }
+    },
+    "WidgetConfig": {
+      "type": "object",
+      "properties": {
+        "dataelementname": {
+          "type": "string",
+          "description": "Business workspace sidebar widget type name",
+          "enum": [
+            "attributes",
+            "relatedbusinessworkspaces",
+            "recentchanges",
+            "businessreference",
+            "workitems"
+          ]
+        },
+        "details": {
+          "type": "string",
+          "description": "Business workspace sidebar widget detail configuration (depends on dataelementname)"
+        },
+        "id": {
+          "type": "integer",
+          "description": "Internal ID of business workspace sidebar widget configuration entity"
+        },
+        "is_horizontal": {
+          "type": "boolean",
+          "description": "Desired business workspace widget display orientation"
+        },
+        "title": {
+          "type": "string",
+          "description": "Business workspace sidebar widget title"
+        }
+      }
+    },
+    "BusinessWorkspaceSidebarWidgetsInfo": {
+      "type": "object",
+      "properties": {
+        "widgetsConfig": {
+          "type": "array",
+          "description": "Configuration of a single business workspace sidebar widget",
+          "items": {
+            "$ref": "#/definitions/WidgetConfig"
+          }
+        }
+      }
+    },
+    "ConfiguredVolumes": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Links",
+          "type": "object",
+          "$ref": "#/definitions/V2DataLinks"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VolumeInfo"
+          }
+        }
+      }
+    },
+    "VolumeInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Data ID of the configured volume"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the configured volume"
+        },
+        "type": {
+          "type": "integer",
+          "description": "Subtype of the configured volume"
+        }
+      }
+    },
+    "V2GetFormsWorkspacesCreateResponse": {
+      "type": "object",
+      "properties": {
+        "forms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V2FormsCreateResult"
+          }
+        }
+      }
+    },
+    "V2FormsCreateResult": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "options": {
+          "type": "object",
+          "$ref": "#/definitions/JSONOptions"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "object",
+          "$ref": "#/definitions/JSONSchema"
+        }
+      }
+    },
+    "JSONOptions": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object"
+        }
+      }
+    },
+    "JSONSchema": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "BusinessWorkspaceRootInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "isLinked": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "workspace_type_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "V1GetNodesBusinessWorkspaceTypesResponse": {
+      "type": "object",
+      "properties": {
+        "businessworkspacetypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V1GetNodesBusinessWorkspaceTypesElement"
+          }
+        }
+      }
+    },
+    "V1GetNodesBusinessWorkspaceTypesElement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rm_enabled": {
+          "type": "boolean"
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V1GetNodesBusinessWorkspaceTypesTemplate"
+          }
+        }
+      }
+    },
+    "V1GetNodesBusinessWorkspaceTypesTemplate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "subType": {
+          "type": "integer"
+        }
+      }
+    },
+    "CreateDocumentRequest": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Name of the document.",
+          "type": "string"
+        },
+        "Description": {
+          "description": "Description of the document.",
+          "type": "string"
+        },
+        "Categories": {
+          "description": "Categories that should be added to the document.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Category"
+          }
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "Unique Name": {
+          "description": "Unique name of the category",
+          "type": "string"
+        },
+        "Properties": {
+          "description": "Properties of the category",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValue"
+          }
+        },
+        "Property Groups": {
+          "description": "Property groups of the category",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValues"
+          }
+        }
+      }
+    },
+    "NameValue": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Name value pair. Replace name with name of the property. Value type according to category definition.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NameValues": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Replace name with name of the property group.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValue"
+          }
+        }
+      }
+    },
+    "CreateWorkspaceTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "NodeId": {
+          "type": "integer",
+          "description": "The node ID of the created document."
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "Error message."
+        }
+      }
+    }
+  }
+}
