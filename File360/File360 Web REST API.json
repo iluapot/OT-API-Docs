@@ -1,0 +1,5272 @@
+{
+  "basePath": "/api",
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "Application": {
+      "description": "Application.",
+      "properties": {
+        "Id": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Application name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApplicationArchiveAccess": {
+      "description": "A collection of access types for the application archive.",
+      "properties": {
+        "ApplicationArchivePair": {
+          "$ref": "#/definitions/ApplicationArchivePair"
+        },
+        "ArcAppAccessTypes": {
+          "description": "A collection of access types for the application archive.",
+          "items": {
+            "description": "One of the following access types : NoAccess = 0, RetrievalAccess = 1, ExportAccess = 2, EntryAccess = 4, ImportAccess = 8, UpdateAccess = 16, DeleteAccess = 32, SuperAccess = 65535",
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ApplicationArchivePair": {
+      "description": "Application archive pair.",
+      "properties": {
+        "ApplicationId": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "ApplicationName": {
+          "description": "Application name",
+          "type": "string"
+        },
+        "ArchiveId": {
+          "description": "Archive id",
+          "type": "integer"
+        },
+        "ArchiveName": {
+          "description": "Archive name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApplicationIdentifier": {
+      "description": "Application identifier.",
+      "properties": {
+        "Id": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Application name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Archive": {
+      "description": "Archive.",
+      "properties": {
+        "Id": {
+          "description": "Archive id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Archive name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ArchiveApplications": {
+      "description": "Applications associated with an archive with the selected access type.",
+      "properties": {
+        "Applications": {
+          "description": "Application.",
+          "items": {
+            "$ref": "#/definitions/Application"
+          },
+          "type": "array"
+        },
+        "Archive": {
+          "$ref": "#/definitions/Archive"
+        }
+      },
+      "type": "object"
+    },
+    "Authentication": {
+      "description": "Authentication information.",
+      "properties": {
+        "culture": {
+          "description": "Users culture string : 'en-us'",
+          "type": "string"
+        },
+        "key": {
+          "description": "Application key",
+          "type": "string"
+        },
+        "name": {
+          "description": "User name",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "password",
+        "culture"
+      ],
+      "type": "object"
+    },
+    "AvailableDevices": {
+      "description": "Available devices",
+      "properties": {
+        "Applications": {
+          "description": "Collection of applications associated with device types",
+          "items": {
+            "$ref": "#/definitions/ApplicationIdentifier"
+          },
+          "type": "array"
+        },
+        "CacheDevices": {
+          "description": "Collection of cache devices",
+          "items": {
+            "$ref": "#/definitions/Cache"
+          },
+          "type": "array"
+        },
+        "ContentServerDevices": {
+          "description": "Collection of Content Server devices",
+          "items": {
+            "$ref": "#/definitions/ContentServer"
+          },
+          "type": "array"
+        },
+        "DefaultDevice": {
+          "$ref": "#/definitions/DeviceIdentifier"
+        },
+        "Devices": {
+          "description": "Collection of available devices",
+          "items": {
+            "$ref": "#/definitions/DeviceIdentifier"
+          },
+          "type": "array"
+        },
+        "KeyfileDevices": {
+          "description": "Collection of Keyfile devices",
+          "items": {
+            "$ref": "#/definitions/Keyfile"
+          },
+          "type": "array"
+        },
+        "MicrofilmDevices": {
+          "description": "Collection of microfilm devices",
+          "items": {
+            "$ref": "#/definitions/Microfilm"
+          },
+          "type": "array"
+        },
+        "StoreDevices": {
+          "description": "Collection of store devices",
+          "items": {
+            "$ref": "#/definitions/CdromJukebox"
+          },
+          "type": "array"
+        },
+        "Volumes": {
+          "description": "Collection of Volumes",
+          "items": {
+            "$ref": "#/definitions/Volume"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Cache": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Device"
+        },
+        {
+          "description": "Cache device",
+          "properties": {
+            "ActivateAfterStore": {
+              "description": "Activate cache after storing",
+              "type": "string"
+            },
+            "ActualSize": {
+              "description": "Actual size of the cache",
+              "type": "integer"
+            },
+            "ActualSizeInBytes": {
+              "description": "Actual size of the cache in bytes",
+              "type": "integer"
+            },
+            "ApplicationIdentifier": {
+              "$ref": "#/definitions/ApplicationIdentifier"
+            },
+            "Applications": {
+              "description": "Collection of applications associated with this device",
+              "items": {
+                "$ref": "#/definitions/ApplicationIdentifier"
+              },
+              "type": "array"
+            },
+            "CheckForBestPractices": {
+              "description": "Check that device employs the best practices",
+              "type": "boolean"
+            },
+            "ClearAfterStore": {
+              "description": "Clear cache after storing",
+              "type": "string"
+            },
+            "DeviceIdentifier": {
+              "$ref": "#/definitions/DeviceIdentifier"
+            },
+            "DocumentCount": {
+              "description": "Count of documents in the cache",
+              "type": "integer"
+            },
+            "EnableAutoRun": {
+              "description": "Enable auto run",
+              "type": "boolean"
+            },
+            "ExportIndexDataToStore": {
+              "description": "Export index data to store",
+              "type": "boolean"
+            },
+            "ExportProgramsToStore": {
+              "description": "Export programs to store",
+              "type": "boolean"
+            },
+            "LastDocumentId": {
+              "description": "Id of last document added to cache",
+              "type": "integer"
+            },
+            "LastReset": {
+              "description": "Last time the cache we reset",
+              "type": "string"
+            },
+            "MaximumSizeInBytes": {
+              "description": "Maximum size of the cache in bytes",
+              "type": "integer"
+            },
+            "PathIdentifier": {
+              "$ref": "#/definitions/PathIdentifier"
+            },
+            "State": {
+              "default": 0,
+              "description": "Cache state - one of the following : None = 0, Active = 1, Locked = 2, Full = 3, WritePrepared = 4, Prepared = 5, Checked = 6, Preparing = 7, Checking = 8, Migrating = 9, Migrated = 10",
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10
+              ],
+              "type": "integer"
+            },
+            "StatusReport": {
+              "$ref": "#/definitions/OperationStatus"
+            },
+            "StoreDeviceId": {
+              "description": "Id of Store device was stored to",
+              "type": "integer"
+            },
+            "StoreLabel": {
+              "description": "Label of store cache has been stored to",
+              "type": "string"
+            },
+            "StoredVolume": {
+              "$ref": "#/definitions/Volume"
+            },
+            "UnassignedApplications": {
+              "description": "Collection of unassigned applications",
+              "items": {
+                "$ref": "#/definitions/ApplicationIdentifier"
+              },
+              "type": "array"
+            },
+            "VolumeId": {
+              "description": "Volume id",
+              "type": "integer"
+            },
+            "WorkstationIdentifier": {
+              "$ref": "#/definitions/Workstation"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "CallbackExternalColumn": {
+      "description": "Callback external column.",
+      "properties": {
+        "CopyToTarget": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "TargetFieldId": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "CallbackHandle": {
+      "description": "Callback handle.",
+      "properties": {
+        "ExternalHandlerLibrary": {
+          "description": "External handler library",
+          "type": "string"
+        },
+        "ExternalHandlerMethod": {
+          "description": "External handler method",
+          "type": "string"
+        },
+        "ExternalHandlerNamespace": {
+          "description": "External handler name space",
+          "type": "string"
+        },
+        "ExternalHandlerParameters": {
+          "description": "External handler parameters",
+          "type": "string"
+        },
+        "HandleId": {
+          "description": "Callback handle id",
+          "type": "integer"
+        },
+        "Label": {
+          "description": "Callback label",
+          "type": "string"
+        },
+        "SourceId": {
+          "description": "Source id",
+          "type": "integer"
+        },
+        "TypeCallback": {
+          "default": 0,
+          "description": "Callback type. 0 = None, 1100 = Template entry,3101 = Field entry,3999 = Field entry static file,5001 = Field exit verification,5002 = Field exit min/max,5998 = Field exit existence check,5999 = Field exit static file,9999 = User exit",
+          "enum": [
+            0,
+            1100,
+            3101,
+            3999,
+            5001,
+            5002,
+            5998,
+            5999,
+            9999
+          ],
+          "type": "integer"
+        },
+        "TypeUserExit": {
+          "default": 1,
+          "description": "User exit type. 0 = None, 1 = Callback usage, 2 = Mask, 3 = Lookup",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "CallbackResult": {
+      "description": "Callback result.",
+      "properties": {
+        "Columns": {
+          "description": "Callback external columns.",
+          "items": {
+            "$ref": "#/definitions/CallbackExternalColumn"
+          },
+          "type": "array"
+        },
+        "EntryTemplate": {
+          "$ref": "#/definitions/DataEntryTemplate"
+        },
+        "Handle": {
+          "$ref": "#/definitions/CallbackHandle"
+        },
+        "Rows": {
+          "description": "Collection of callback results returned.",
+          "items": {
+            "$ref": "#/definitions/CallbackResultRows"
+          },
+          "type": "array"
+        },
+        "SearchTemplate": {
+          "$ref": "#/definitions/RetrievalTemplate"
+        }
+      },
+      "type": "object"
+    },
+    "CallbackResultRows": {
+      "description": "Callback result.",
+      "properties": {
+        "Row": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CdromJukebox": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Device"
+        },
+        {
+          "description": "CDRom jukebox device.",
+          "properties": {
+            "CacheDevices": {
+              "description": "Cache device",
+              "items": {
+                "$ref": "#/definitions/Cache"
+              },
+              "type": "array"
+            },
+            "CheckForBestPractices": {
+              "description": "Check that device employs the best practices",
+              "type": "boolean"
+            },
+            "DeviceIdentifier": {
+              "$ref": "#/definitions/DeviceIdentifier"
+            },
+            "IsReadOnly": {
+              "description": "Is this CD read only",
+              "type": "boolean"
+            },
+            "MostRecentLabel": {
+              "description": "Most recent label",
+              "type": "string"
+            },
+            "PathIdentifier": {
+              "$ref": "#/definitions/PathIdentifier"
+            },
+            "StatusReport": {
+              "$ref": "#/definitions/OperationStatus"
+            },
+            "WorkstationIdentifier": {
+              "$ref": "#/definitions/Workstation"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ContentServer": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Device"
+        },
+        {
+          "description": "Content server device.",
+          "properties": {
+            "ApplicationPassword": {
+              "description": "Application password",
+              "type": "string"
+            },
+            "ApplicationUserName": {
+              "description": "Application user name",
+              "type": "string"
+            },
+            "AuthenticationPassword": {
+              "description": "Authentication password",
+              "type": "string"
+            },
+            "AuthenticationServerAddress": {
+              "description": "Authentication server address",
+              "type": "string"
+            },
+            "AuthenticationUserName": {
+              "description": "Authentication user name",
+              "type": "string"
+            },
+            "CheckForBestPractices": {
+              "description": "Check that device employs the best practices",
+              "type": "boolean"
+            },
+            "ContentServerAddress": {
+              "description": "Content server address",
+              "type": "string"
+            },
+            "DeviceIdentifier": {
+              "$ref": "#/definitions/DeviceIdentifier"
+            },
+            "EncryptedApplicationPassword": {
+              "description": "Encrypted application password",
+              "type": "string"
+            },
+            "EnterpriseLibraryServerAddress": {
+              "description": "Enterprise library server address",
+              "type": "string"
+            },
+            "PathIdentifier": {
+              "$ref": "#/definitions/PathIdentifier"
+            },
+            "RootFolderItemId": {
+              "description": "Root folder item id",
+              "type": "string"
+            },
+            "StatusReport": {
+              "$ref": "#/definitions/OperationStatus"
+            },
+            "WebsiteAddress": {
+              "description": "Web site address",
+              "type": "string"
+            },
+            "WorkstationIdentifier": {
+              "$ref": "#/definitions/Workstation"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "CreateDocumentinfo": {
+      "description": "Create document information.",
+      "properties": {
+        "dataEntryTemplate": {
+          "$ref": "#/definitions/DataEntryTemplate"
+        },
+        "indexFolderDocumentFiles": {
+          "description": "Folder document files.  One file required",
+          "items": {
+            "$ref": "#/definitions/IndexFolderDocumentFile"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "indexFolderDocumentFiles",
+        "dataEntryTemplate"
+      ],
+      "type": "object"
+    },
+    "DataEntryInputField": {
+      "description": "Data entry input field.",
+      "properties": {
+        "CallbackHandle": {
+          "description": "Look up table.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "DisplayType": {
+          "default": "E",
+          "description": "Display type. Edit = 'E', MaskEdit = '<mask value>', Lookup = 'L,<num>'",
+          "enum": [
+            "E",
+            "<mask value>",
+            "L,<num>"
+          ],
+          "type": "string"
+        },
+        "EntryCallback": {
+          "$ref": "#/definitions/CallbackHandle"
+        },
+        "ExitCallback": {
+          "$ref": "#/definitions/CallbackHandle"
+        },
+        "FieldType": {
+          "default": 0,
+          "description": "Field type. None = 0, Currency = 11, Date = 9, DateTime = 8, Double = 5, Float = 4, LongInteger = 3, String = 6, Time = 10",
+          "enum": [
+            0,
+            11,
+            9,
+            8,
+            5,
+            4,
+            3,
+            6,
+            10
+          ],
+          "type": "integer"
+        },
+        "Hint": {
+          "description": "Field hint",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Field id",
+          "type": "integer"
+        },
+        "IsDuplicate": {
+          "description": "Should the field be duplicated on data entry",
+          "type": "boolean"
+        },
+        "Label": {
+          "description": "Field label",
+          "type": "string"
+        },
+        "Length": {
+          "description": "Field data max length",
+          "type": "integer"
+        },
+        "MappingNumber": {
+          "description": "Mapping number",
+          "type": "integer"
+        },
+        "Mask": {
+          "description": "Field mask",
+          "type": "string"
+        },
+        "MaskPlaceholder": {
+          "description": "Field mask placeholder",
+          "type": "string"
+        },
+        "MaskStorage": {
+          "default": 0,
+          "description": "Mask storage. UserData = 0, Literals = 1, Spaces = 2, IncludePlaceholders = 3, IncludeLiteralsAndPlaceholders = 4, IncludeLiterals = 5",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Field name",
+          "type": "string"
+        },
+        "Precision": {
+          "description": "Field precision",
+          "type": "integer"
+        },
+        "Required": {
+          "description": "Is the field required",
+          "type": "boolean"
+        },
+        "Value": {
+          "description": "Field value",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DataEntryInputFieldKeyValuePair": {
+      "description": "Data entry key-value pair : Field id - DataEntryTemplateField",
+      "properties": {
+        "Key": {
+          "description": "Field Id",
+          "type": "string"
+        },
+        "Value": {
+          "$ref": "#/definitions/DataEntryInputField"
+        }
+      },
+      "type": "object"
+    },
+    "DataEntryTemplate": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataEntryTemplateIdentifier"
+        },
+        {
+          "description": "Data entry template.",
+          "properties": {
+            "ApplicationId": {
+              "description": "Application id",
+              "type": "integer"
+            },
+            "ApplicationName": {
+              "description": "Application name",
+              "type": "string"
+            },
+            "ArchiveId": {
+              "description": "Archive id",
+              "type": "integer"
+            },
+            "ArchiveName": {
+              "description": "Archive name",
+              "type": "string"
+            },
+            "AvailableDevices": {
+              "description": "Available devices",
+              "items": {
+                "$ref": "#/definitions/DeviceIdentifier"
+              },
+              "type": "array"
+            },
+            "CanDataEnter": {
+              "description": "Can data enter",
+              "type": "boolean"
+            },
+            "CanUpdate": {
+              "description": "Can update",
+              "type": "boolean"
+            },
+            "EntryCallback": {
+              "$ref": "#/definitions/CallbackHandle"
+            },
+            "ExitCallback": {
+              "$ref": "#/definitions/CallbackHandle"
+            },
+            "InputFields": {
+              "description": "Collection of field ids and input field objects",
+              "items": {
+                "$ref": "#/definitions/DataEntryInputFieldKeyValuePair"
+              },
+              "type": "array"
+            },
+            "SelectedDevice": {
+              "$ref": "#/definitions/DeviceIdentifier"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "DataEntryTemplateDescription": {
+      "description": "Data entry template description.",
+      "properties": {
+        "ApplicationId": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "ApplicationName": {
+          "description": "Application name",
+          "type": "string"
+        },
+        "ArchiveId": {
+          "description": "Archive id",
+          "type": "integer"
+        },
+        "ArchiveName": {
+          "description": "Archive name",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Template id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Template name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DataEntryTemplateIdentifier": {
+      "description": "Data entry template identifier.",
+      "discriminator": "Id",
+      "properties": {
+        "Id": {
+          "description": "Entry template id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Entry template name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Id"
+      ],
+      "type": "object"
+    },
+    "DataEntryTemplatesList": {
+      "description": "A collection of data entry templates.",
+      "properties": {
+        "DataEntryTemplates": {
+          "description": "Data entry templates",
+          "items": {
+            "$ref": "#/definitions/DataEntryTemplateDescription"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "DeleteDocumentResult": {
+      "description": "Del document results.",
+      "properties": {
+        "Document": {
+          "$ref": "#/definitions/DocumentIdentifier"
+        },
+        "ErrorMessage": {
+          "description": "Error message",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Device": {
+      "description": "Device",
+      "properties": {
+        "CheckForBestPractices": {
+          "description": "Check that device employs the best practices",
+          "type": "boolean"
+        },
+        "DeviceIdentifier": {
+          "$ref": "#/definitions/DeviceIdentifier"
+        },
+        "PathIdentifier": {
+          "$ref": "#/definitions/PathIdentifier"
+        },
+        "StatusReport": {
+          "$ref": "#/definitions/OperationStatus"
+        },
+        "WorkstationIdentifier": {
+          "$ref": "#/definitions/Workstation"
+        }
+      },
+      "type": "object"
+    },
+    "DeviceIdentifier": {
+      "description": "Device identifier.",
+      "properties": {
+        "DeviceType": {
+          "default": 1,
+          "description": "Device type. 0 = None,1 = Cache,2 = Keyfile,3 = MicrofilmIdw,4 = MicrofilmImt,5 = MicrofilmIms,6 = MicrofilmI7300,7 = LocalCdrom,8 = LocalCdWriter,9 = RemoteCdrom,10 = RemoteCdWriter,11 = CdromJukebox,12 = CdromJukeboxWriter,13 = CacheServer,14 = DocServer,15 = Offline,16 = AutoCache,17 = Scanner,18 = Volume,19 = ContentServer",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "type": "integer"
+        },
+        "Id": {
+          "description": "Device id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Device name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DocumentCreateVersionFile": {
+      "description": "Document create version file.",
+      "properties": {
+        "fileNumber": {
+          "description": "File number",
+          "type": "integer"
+        },
+        "filePath": {
+          "description": "File path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileNumber",
+        "filePath"
+      ],
+      "type": "object"
+    },
+    "DocumentFormatIcon": {
+      "description": "Document format icon.",
+      "properties": {
+        "Icon": {
+          "$ref": "#/definitions/Icon"
+        },
+        "TotalResults": {
+          "default": 1,
+          "description": "Tiff = 1, Ascii = 2, Bitmap = 3, Word = 4, Excel = 5, Powerpoint = 6, Windoc = 7, Unknown = 8, Exe = 9, LockedByCurrentUser = 100, Keywords = 101, Remarks = 102, LockedByOtherUser = 103, VersionsExist = 104, Expired = 105, Annotations = 106",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ],
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "DocumentIdentifier": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SourceDocumentIdentifier"
+        },
+        {
+          "description": "Document identifier.",
+          "properties": {
+            "Suffix": {
+              "description": "Document suffix id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Suffix"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "DocumentIdentifierIndexDataChangeMessage": {
+      "description": "Document identifier index data change message.",
+      "properties": {
+        "Documents": {
+          "description": "Collection of document identifiers, one or more, to change index data",
+          "items": {
+            "$ref": "#/definitions/DocumentIdentifier"
+          },
+          "type": "array"
+        },
+        "EntryTemplate": {
+          "$ref": "#/definitions/DataEntryTemplate"
+        }
+      },
+      "required": [
+        "EntryTemplate",
+        "Documents"
+      ],
+      "type": "object"
+    },
+    "DocumentPageKeyValuePair": {
+      "description": "Document page Key-value pair - page number - path to page",
+      "properties": {
+        "PageNumber": {
+          "description": "Page number",
+          "type": "integer"
+        },
+        "Path": {
+          "description": "Path to page",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FetchDocumentIndexReturn": {
+      "description": "Fetch document index key-value return : Field id - string data",
+      "properties": {
+        "Key": {
+          "description": "fieldId",
+          "type": "integer"
+        },
+        "Value": {
+          "description": "String data",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Field": {
+      "description": "Field.",
+      "discriminator": "type",
+      "properties": {
+        "Alignment": {
+          "default": 0,
+          "description": "Alignment - one of the following : Left = 0, Right = 1, Center = 2",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        "Display": {
+          "default": 0,
+          "description": "Display type - one of the following : Edit = 0, MaskEdit = 1, Lookup = 2",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        "DisplayType": {
+          "default": "E",
+          "description": "Display type. Edit = 'E', MaskEdit = '<mask value>', Lookup = 'L,<num>'",
+          "enum": [
+            "E",
+            "<mask value>",
+            "L,<num>"
+          ],
+          "type": "string"
+        },
+        "FieldType": {
+          "default": 0,
+          "description": "Field data type - one of the following : None = 0, Currency = 11, Date = 9, DateTime = 8, Double = 5, Float = 4, LongInteger = 3, String = 6, Time = 10",
+          "enum": [
+            0,
+            11,
+            9,
+            8,
+            5,
+            4,
+            3,
+            6,
+            10
+          ],
+          "type": "integer"
+        },
+        "FillCharacter": {
+          "type": "string"
+        },
+        "Hint": {
+          "type": "string"
+        },
+        "Length": {
+          "type": "integer"
+        },
+        "Mask": {
+          "type": "string"
+        },
+        "MaskFormat": {
+          "default": 0,
+          "description": "Mask format - one of the following : None = 0, Standard = 1, DateAndTime = 2, Numeric = 3",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "type": "integer"
+        },
+        "MaskPlaceholder": {
+          "type": "string"
+        },
+        "MaskStorage": {
+          "default": 0,
+          "description": "Mask storage type - one of the following : UserData = 0, Literals = 1 (Obsolete), Spaces = 2(Obsolete), IncludePlaceholders = 3, IncludeLiteralsAndPlaceholders = 4, IncludeLiterals = 5",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "type": "integer"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Precision": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "FieldCoordinates": {
+      "description": "Field coordinates.",
+      "properties": {
+        "Bottom": {
+          "type": "integer"
+        },
+        "Height": {
+          "type": "integer"
+        },
+        "Left": {
+          "type": "integer"
+        },
+        "Right": {
+          "type": "integer"
+        },
+        "Top": {
+          "type": "integer"
+        },
+        "Width": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "FieldIdentifier": {
+      "description": "Field identifier",
+      "discriminator": "Id",
+      "properties": {
+        "Id": {
+          "description": "Field id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Field name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FileInfo": {
+      "description": "Document file information.",
+      "properties": {
+        "displayName": {
+          "description": "Thumbnail display name",
+          "type": "string"
+        },
+        "fileExtension": {
+          "description": "Source file extension",
+          "type": "string"
+        },
+        "fileNumber": {
+          "description": "File number",
+          "type": "integer"
+        },
+        "sourceFileURL": {
+          "description": "Source file URL",
+          "type": "string"
+        },
+        "thumbnailURL": {
+          "description": "Thumbnail URL",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FolderDocumentAndIndex": {
+      "description": "Folder document index and its associated index folder document",
+      "properties": {
+        "document": {
+          "$ref": "#/definitions/IndexFolderDocument"
+        },
+        "index": {
+          "description": "Document index",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GroupIdentifier": {
+      "description": "Group identifier.",
+      "properties": {
+        "ApplicationArchiveAccess": {
+          "$ref": "#/definitions/ApplicationArchiveAccess"
+        },
+        "Id": {
+          "description": "Group id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Group name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Hit": {
+      "description": "Retrieval hit.",
+      "properties": {
+        "AnnotationCount": {
+          "type": "integer"
+        },
+        "ApplicationId": {
+          "type": "integer"
+        },
+        "ArchiveId": {
+          "type": "integer"
+        },
+        "CanDataEnter": {
+          "type": "boolean"
+        },
+        "CanDelete": {
+          "type": "boolean"
+        },
+        "CanExport": {
+          "type": "boolean"
+        },
+        "CanUpdate": {
+          "type": "boolean"
+        },
+        "ContentServerId": {
+          "type": "string"
+        },
+        "ContentServerWebsiteAddress": {
+          "type": "string"
+        },
+        "DateTimeLocked": {
+          "format": "date",
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "DescriptionFieldId": {
+          "type": "integer"
+        },
+        "Editor": {
+          "type": "string"
+        },
+        "Expires": {
+          "format": "date",
+          "type": "string"
+        },
+        "Fields": {
+          "items": {
+            "$ref": "#/definitions/HitListFieldKeyValuePair"
+          },
+          "type": "array"
+        },
+        "FileFormat": {
+          "type": "integer"
+        },
+        "IsKeywordsEnabled": {
+          "type": "boolean"
+        },
+        "KeywordData": {
+          "type": "string"
+        },
+        "Keywords": {
+          "type": "boolean"
+        },
+        "LegalHoldExpires": {
+          "format": "date",
+          "type": "string"
+        },
+        "LegalHoldReason": {
+          "type": "string"
+        },
+        "LegalHoldUserId": {
+          "type": "integer"
+        },
+        "LockType": {
+          "default": 1,
+          "description": "Lock reserve type - one of the following : NotReserved = 0, Reserved = 1, ReservedByCurrentUser = 2, LegalHold = 3, RecordsManagement = 4",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "type": "integer"
+        },
+        "MasterId": {
+          "type": "integer"
+        },
+        "MediumType": {
+          "default": 1,
+          "description": "Document medium type - of the following : Unknown = 0, Cache = 1, Microfilm = 2, Ascii = 3, Hybrid = 4",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "type": "integer"
+        },
+        "ModifyDateTime": {
+          "format": "date",
+          "type": "string"
+        },
+        "Remarks": {
+          "type": "boolean"
+        },
+        "Suffix": {
+          "type": "integer"
+        },
+        "Version": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "HitListFieldKeyValuePair": {
+      "description": "Hit list field key value pair.",
+      "properties": {
+        "Key": {
+          "description": "Field id",
+          "type": "integer"
+        },
+        "Value": {
+          "$ref": "#/definitions/Field"
+        }
+      },
+      "type": "object"
+    },
+    "Hits": {
+      "description": "A collection of hits.",
+      "properties": {
+        "DocumentFormatIcons": {
+          "items": {
+            "$ref": "#/definitions/DocumentFormatIcon"
+          },
+          "type": "array"
+        },
+        "HitItems": {
+          "items": {
+            "$ref": "#/definitions/Hit"
+          },
+          "type": "array"
+        },
+        "HitlistId": {
+          "type": "integer"
+        },
+        "LookupTables": {
+          "description": "Look up tables.",
+          "items": {
+            "$ref": "#/definitions/LookupTable"
+          },
+          "type": "array"
+        },
+        "MoreHits": {
+          "type": "boolean"
+        },
+        "RetrievalTemplate": {
+          "$ref": "#/definitions/RetrievalTemplate"
+        },
+        "SearchUri": {
+          "type": "string"
+        },
+        "StatusIcons": {
+          "items": {},
+          "type": "array"
+        },
+        "TotalResults": {
+          "type": "integer"
+        },
+        "WebServerUri": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Icon": {
+      "description": "Icon",
+      "properties": {
+        "Description": {
+          "type": "string"
+        },
+        "Icon": {
+          "description": "Byte array for icon.",
+          "type": "object"
+        },
+        "Identifier": {
+          "default": 1,
+          "description": "Tiff = 1, Ascii = 2, Bitmap = 3, Word = 4, Excel = 5, Powerpoint = 6, Windoc = 7, Unknown = 8, Exe = 9, LockedByCurrentUser = 100, Keywords = 101, Remarks = 102, LockedByOtherUser = 103, VersionsExist = 104, Expired = 105, Annotations = 106",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ],
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFolder": {
+      "description": "Index folder",
+      "properties": {
+        "ApplicationId": {
+          "description": "Id of the assigned application for the folder",
+          "type": "integer"
+        },
+        "ApplicationName": {
+          "description": "Name of the assigned application for the folder",
+          "type": "string"
+        },
+        "ArchiveId": {
+          "description": "Id of the assigned archive for the folder",
+          "type": "integer"
+        },
+        "ArchiveName": {
+          "description": "Name of the assigned archive for the folder",
+          "type": "string"
+        },
+        "AssignedToGroupId": {
+          "description": "Id of group assigned to the folder",
+          "type": "integer"
+        },
+        "AssignedToName": {
+          "description": "Name of group or user assigned to the folder",
+          "type": "string"
+        },
+        "AssignedToUserId": {
+          "description": "Id of user assigned to the folder",
+          "type": "integer"
+        },
+        "Count": {
+          "description": "Number of documents in the folder",
+          "type": "integer"
+        },
+        "Created": {
+          "description": "Date the folder was created",
+          "type": "string"
+        },
+        "DistinctApplicationArchives": {
+          "description": "Application archive listing",
+          "items": {
+            "$ref": "#/definitions/ApplicationArchivePair"
+          },
+          "type": "array"
+        },
+        "Id": {
+          "description": "Folder id",
+          "type": "integer"
+        },
+        "IsError": {
+          "description": "Is this an error folder?",
+          "type": "boolean"
+        },
+        "Name": {
+          "description": "Folder name",
+          "type": "string"
+        },
+        "TypeOfFolder": {
+          "default": 1,
+          "description": "Folder types - None = 0, DataEntry = 1, Retrieval = 2, Personal = 3, MailDataEntry = 4, Mail = 5, RequestProcessor = 6, ASCII = 7, AsciiDataEntry = 8, Export = 9, Scanner = 10, AsciiDatabaseEngine = 11, MailRequestProcessor = 12, EmailRequestProcessor = 13, AsciiMailDataEntry = 14",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "type": "integer"
+        },
+        "UsedBy": {
+          "description": "Name of user that is currently using the folder",
+          "type": "string"
+        },
+        "UsedById": {
+          "description": "Id of user currently using the folder",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFolderDocument": {
+      "description": "Index folder document.",
+      "properties": {
+        "ApplicationId": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "ApplicationName": {
+          "description": "Application name",
+          "type": "string"
+        },
+        "ArchiveId": {
+          "description": "Archive id",
+          "type": "integer"
+        },
+        "ArchiveName": {
+          "description": "Archive name",
+          "type": "string"
+        },
+        "Count": {
+          "description": "File count",
+          "type": "integer"
+        },
+        "Created": {
+          "description": "Date document created",
+          "type": "string"
+        },
+        "FolderId": {
+          "description": "Folder id",
+          "type": "integer"
+        },
+        "Id": {
+          "description": "Folder document id",
+          "type": "integer"
+        },
+        "IndexDataId": {
+          "description": "Document id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Document name",
+          "type": "string"
+        },
+        "UsedBy": {
+          "description": "Name of user currently using the document",
+          "type": "string"
+        },
+        "UsedById": {
+          "description": "Id of user currently using the document",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFolderDocumentData": {
+      "description": "Indexing folder document data",
+      "properties": {
+        "FolderDocument": {
+          "$ref": "#/definitions/IndexFolderDocument"
+        },
+        "FolderId": {
+          "description": "Folder id",
+          "type": "integer"
+        },
+        "IndexData": {
+          "description": "Indexing string data array",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "IsFolderShared": {
+          "description": "Is the folder shared between users and groups",
+          "type": "boolean"
+        },
+        "ParentFolder": {
+          "$ref": "#/definitions/IndexFolder"
+        },
+        "PathsToDocumentPages": {
+          "description": "Paths to indexed document pages (files)",
+          "items": {
+            "$ref": "#/definitions/DocumentPageKeyValuePair"
+          },
+          "type": "array"
+        },
+        "RelativeDocumentNumber": {
+          "description": "Number of document relative to folder",
+          "type": "integer"
+        },
+        "Template": {
+          "$ref": "#/definitions/DataEntryTemplate"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFolderDocumentFile": {
+      "description": "Index folder document file.",
+      "properties": {
+        "filePath": {
+          "description": "File path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filePath"
+      ],
+      "type": "object"
+    },
+    "IndexFolderDocumentFiles": {
+      "description": "Collection of index folder document file relative paths, one file required",
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "#/definitions/IndexFolderDocumentFile"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "type": "object"
+    },
+    "IndexFolderDocumentViewer": {
+      "description": "Folder document associated viewer information",
+      "properties": {
+        "IndexFolderDocumentdata": {
+          "$ref": "#/definitions/IndexFolderDocumentData"
+        },
+        "IndexViewerURL": {
+          "description": "Index viewer URL",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFolderDocuments": {
+      "description": "Collection of index folder documents",
+      "properties": {
+        "Documents": {
+          "description": "List of documents in the folder (GET) or the last document created in the folder (POST)",
+          "items": {
+            "$ref": "#/definitions/FolderDocumentAndIndex"
+          },
+          "type": "array"
+        },
+        "Folder": {
+          "$ref": "#/definitions/IndexFolder"
+        },
+        "FolderId": {
+          "description": "Folder id",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "IndexFoldersMessage": {
+      "description": "Index-able error folders",
+      "properties": {
+        "BatchErrorCount": {
+          "description": "Batch error count",
+          "type": "integer"
+        },
+        "IndexFolders": {
+          "description": "Index-able folders",
+          "items": {
+            "$ref": "#/definitions/IndexFolder"
+          },
+          "type": "array"
+        },
+        "UnknownBatchErrorState": {
+          "description": "Is the batch in an unknown error state?",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "IndexedDocument": {
+      "description": "Index document.",
+      "properties": {
+        "Action": {
+          "description": "Index action",
+          "type": "integer"
+        },
+        "ApplicationId": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "ArchiveId": {
+          "description": "Archive id",
+          "type": "integer"
+        },
+        "Document": {
+          "$ref": "#/definitions/SourceDocumentIdentifier"
+        },
+        "FolderData": {
+          "$ref": "#/definitions/IndexFolderDocument"
+        },
+        "NextFolderData": {
+          "$ref": "#/definitions/IndexFolderDocument"
+        }
+      },
+      "type": "object"
+    },
+    "Keyfile": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Device"
+        },
+        {
+          "description": "Keyfile device.",
+          "properties": {
+            "CheckForBestPractices": {
+              "description": "Check that device employs the best practices",
+              "type": "boolean"
+            },
+            "DeviceIdentifier": {
+              "$ref": "#/definitions/DeviceIdentifier"
+            },
+            "PathIdentifier": {
+              "$ref": "#/definitions/PathIdentifier"
+            },
+            "StatusReport": {
+              "$ref": "#/definitions/OperationStatus"
+            },
+            "WorkstationIdentifier": {
+              "$ref": "#/definitions/Workstation"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "Keywords": {
+      "description": "Keywords.",
+      "properties": {
+        "KeywordData": {
+          "description": "Keyword data",
+          "type": "string"
+        },
+        "SourceDocumentIdentifier": {
+          "$ref": "#/definitions/SourceDocumentIdentifier"
+        }
+      },
+      "type": "object"
+    },
+    "LegalHoldStatus": {
+      "description": "Legal hold status.",
+      "properties": {
+        "HoldCreated": {
+          "description": "Date the legal hold was placed",
+          "type": "string"
+        },
+        "HoldExpires": {
+          "description": "Date the legal hold expires - Microsoft JSON date format",
+          "type": "string"
+        },
+        "HoldExpiresDate": {
+          "description": "Date the legal hold expires",
+          "type": "string"
+        },
+        "HoldReason": {
+          "description": "The reason for the hold",
+          "type": "string"
+        },
+        "HoldUserCreated": {
+          "$ref": "#/definitions/UserIdentifier"
+        }
+      },
+      "type": "object"
+    },
+    "LogMessage": {
+      "description": "Log message information.",
+      "properties": {
+        "Message": {
+          "description": "Log message",
+          "type": "string"
+        },
+        "UserName": {
+          "description": "User name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "UserName",
+        "Message"
+      ],
+      "type": "object"
+    },
+    "LookupTable": {
+      "description": "Look up table",
+      "properties": {
+        "FieldId": {
+          "description": "Field id",
+          "type": "integer"
+        },
+        "LookUpTableEntries": {
+          "description": "Look up table entries for field",
+          "items": {
+            "$ref": "#/definitions/LookupTableEntryKeyValuePair"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "LookupTableEntryKeyValuePair": {
+      "description": "Lookup table entry filed key value pair",
+      "properties": {
+        "Key": {
+          "description": "List Key",
+          "type": "string"
+        },
+        "Value": {
+          "description": "List Value",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Microfilm": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Device"
+        },
+        {
+          "description": "Microfilm device.",
+          "properties": {},
+          "type": "object"
+        }
+      ]
+    },
+    "OperationStatus": {
+      "description": "Device operation status.",
+      "properties": {
+        "CanCancel": {
+          "description": "Can the operation be canceled",
+          "type": "boolean"
+        },
+        "Count": {
+          "description": "Operation count",
+          "type": "integer"
+        },
+        "StatusMessage": {
+          "description": "Operation status message",
+          "type": "string"
+        },
+        "Total": {
+          "description": "Operation total",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "PathIdentifier": {
+      "description": "device path identifier.",
+      "properties": {
+        "Id": {
+          "description": "Path id",
+          "type": "integer"
+        },
+        "Path": {
+          "description": "Path",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "PermissionItem": {
+      "description": "Permission item.",
+      "properties": {
+        "PermissionItem": {
+          "description": "Permission",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Remark": {
+      "description": "Remark.",
+      "properties": {
+        "Content": {
+          "description": "Remark content",
+          "type": "string"
+        },
+        "DocumentIdentifier": {
+          "$ref": "#/definitions/DocumentIdentifier"
+        }
+      },
+      "type": "object"
+    },
+    "RetrievalTemplate": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/RetrievalTemplateIdentifier"
+        },
+        {
+          "description": "Retrieval template.",
+          "properties": {
+            "AppendResults": {
+              "description": "Append next search result to existing results",
+              "type": "boolean"
+            },
+            "ContentServerSearchAddress": {
+              "description": "Content server URL search address",
+              "type": "string"
+            },
+            "DeleteOption": {
+              "default": 0,
+              "description": "Items inclusion option. NonDeleted = 0: Include only non deleted items, Deleted = 1: include only deleted items, DeletedAndNonDeleted = 2: include both deleted and non-deleted items",
+              "enum": [
+                0,
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            "IncludeExpiredDocuments": {
+              "description": "Include expired documents in hit list",
+              "type": "boolean"
+            },
+            "InputFields": {
+              "description": "Collection of field ids and input field objects",
+              "items": {
+                "$ref": "#/definitions/RetrievalTemplateInputFieldKeyValuePair"
+              },
+              "type": "array"
+            },
+            "IsPersonalTemplate": {
+              "description": "Is this a personal template",
+              "type": "boolean"
+            },
+            "MaxHits": {
+              "default": 100,
+              "description": "Maximum number of hits to return.  Max 50000",
+              "format": "int32",
+              "maximum": 50000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "OnlyLegalHoldDocuments": {
+              "description": "Include only documents on legal hold in hit list",
+              "type": "boolean"
+            },
+            "OutputFields": {
+              "description": "Collection of field ids and output field objects",
+              "items": {
+                "$ref": "#/definitions/RetrievalTemplateOutputFieldKeyValuePair"
+              },
+              "type": "array"
+            },
+            "PersonalTemplateGroups": {
+              "description": "Personal template groups.",
+              "items": {
+                "$ref": "#/definitions/GroupIdentifier"
+              },
+              "type": "array"
+            },
+            "PersonalTemplateUsers": {
+              "description": "Personal template users.",
+              "items": {
+                "$ref": "#/definitions/UserIdentifier"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "RetrievalTemplateDescription": {
+      "description": "A retrieval template description.",
+      "properties": {
+        "ApplicationId": {
+          "description": "Application id",
+          "type": "integer"
+        },
+        "ApplicationName": {
+          "description": "Application name",
+          "type": "string"
+        },
+        "FriendlyName": {
+          "description": "Template friendly name",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Template id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Template name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "RetrievalTemplateIdentifier": {
+      "description": "Retrieval template identifier.",
+      "discriminator": "Id",
+      "properties": {
+        "Id": {
+          "description": "Template id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Template name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Id"
+      ],
+      "type": "object"
+    },
+    "RetrievalTemplateInputField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Field"
+        },
+        {
+          "description": "Retrieval template input field.",
+          "properties": {
+            "CanCompare": {
+              "type": "boolean"
+            },
+            "ChangeCallback": {
+              "$ref": "#/definitions/CallbackHandle"
+            },
+            "CompareOperator": {
+              "default": 1,
+              "description": "Compare operator type - one of the following : Equal = 1, NotEqual = 2, GreaterThan = 3, LessThan = 4, GreaterThanOrEqualTo = 5, LessThanOrEqualTo = 6, Between = 7",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "type": "integer"
+            },
+            "ComparePosition1": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "ComparePosition2": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "Conjunction": {
+              "default": 0,
+              "description": "Conjunction type - one of the following : None = 0, And = 1, Or = 2",
+              "enum": [
+                0,
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            "ConjunctionPosition": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "EntryCallback": {
+              "$ref": "#/definitions/CallbackHandle"
+            },
+            "ExitCallback": {
+              "$ref": "#/definitions/CallbackHandle"
+            },
+            "Field1Position": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "Field2Position": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "Label": {
+              "type": "string"
+            },
+            "LabelPosition": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "LeftParenthesis": {
+              "type": "boolean"
+            },
+            "LeftParenthesisPosition": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "LookupTable": {
+              "description": "Look up table.",
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "Required": {
+              "type": "boolean"
+            },
+            "RightParenthesis": {
+              "type": "boolean"
+            },
+            "RightParenthesisPosition": {
+              "$ref": "#/definitions/FieldCoordinates"
+            },
+            "Value1": {
+              "type": "object"
+            },
+            "Value2": {
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "RetrievalTemplateInputFieldKeyValuePair": {
+      "description": "Retrieval template input field id and object.",
+      "properties": {
+        "fieldId": {
+          "description": "Field Id",
+          "type": "string"
+        },
+        "inputField": {
+          "items": {
+            "$ref": "#/definitions/RetrievalTemplateInputField"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "RetrievalTemplateOutputField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/FieldIdentifier"
+        },
+        {
+          "description": "Retrieval template output field.",
+          "properties": {
+            "CanSort": {
+              "type": "boolean"
+            },
+            "CharacterLength": {
+              "type": "integer"
+            },
+            "DisplayType": {
+              "default": "E",
+              "description": "Display type. Edit = 'E', MaskEdit = '<mask value>', Lookup = 'L,<num>'",
+              "enum": [
+                "E",
+                "<mask value>",
+                "L,<num>"
+              ],
+              "type": "string"
+            },
+            "FieldType": {
+              "default": 0,
+              "description": "Field data type - one of the following : None = 0, Currency = 11, Date = 9, DateTime = 8, Double = 5, Float = 4, LongInteger = 3, String = 6, Time = 10",
+              "enum": [
+                0,
+                11,
+                9,
+                8,
+                5,
+                4,
+                3,
+                6,
+                10
+              ],
+              "type": "integer"
+            },
+            "IncludeInOutput": {
+              "type": "boolean"
+            },
+            "IsSystemField": {
+              "type": "boolean"
+            },
+            "Label": {
+              "type": "string"
+            },
+            "Mask": {
+              "type": "string"
+            },
+            "OutputFieldWidth": {
+              "type": "number"
+            },
+            "OutputOrder": {
+              "type": "integer"
+            },
+            "Precision": {
+              "type": "integer"
+            },
+            "SortOrder": {
+              "type": "integer"
+            },
+            "SortType": {
+              "default": 0,
+              "description": "Sort type - one of the following : Ascending = 0, Descending = 1, NoSort = 2",
+              "enum": [
+                0,
+                1,
+                2
+              ],
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "RetrievalTemplateOutputFieldKeyValuePair": {
+      "description": "Retrieval template output field id and object.",
+      "properties": {
+        "fieldId": {
+          "description": "Field Id",
+          "type": "string"
+        },
+        "outputField": {
+          "items": {
+            "$ref": "#/definitions/RetrievalTemplateOutputField"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "RetrievalTemplatesList": {
+      "description": "A collection of retrieval template descriptions.",
+      "properties": {
+        "RetrievalTemplates": {
+          "description": "Retrieval template descriptions",
+          "items": {
+            "$ref": "#/definitions/RetrievalTemplateDescription"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "RoutingDetails": {
+      "description": "Routing details.",
+      "properties": {
+        "documents": {
+          "description": "Collection of document identifiers to route.",
+          "items": {
+            "$ref": "#/definitions/DocumentIdentifier"
+          },
+          "type": "array"
+        },
+        "groups": {
+          "description": "Collection of group identifiers to route to.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "users": {
+          "description": "Collection of user identifiers to route to.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Setting": {
+      "description": "User setting.",
+      "properties": {
+        "Category": {
+          "description": "Setting category name",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Setting name",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Setting value",
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "SourceDocumentIdentifier": {
+      "description": "Source document identifier.",
+      "properties": {
+        "MasterId": {
+          "description": "Master id",
+          "type": "integer"
+        },
+        "Version": {
+          "description": "Version id",
+          "type": "integer"
+        },
+        "VersionCreated": {
+          "description": "Date version was created",
+          "type": "string"
+        },
+        "VersionCreatorId": {
+          "description": "Version creator user id",
+          "type": "integer"
+        },
+        "VersionCreatorName": {
+          "description": "Version creator name",
+          "type": "string"
+        },
+        "VersionLabel": {
+          "description": "Version label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "MasterId",
+        "Version"
+      ],
+      "type": "object"
+    },
+    "SourceDocumentResult": {
+      "description": "Source document result.",
+      "properties": {
+        "ErrorMessage": {
+          "description": "Document action error message",
+          "type": "string"
+        },
+        "SourceDocument": {
+          "$ref": "#/definitions/SourceDocumentIdentifier"
+        }
+      },
+      "type": "object"
+    },
+    "User": {
+      "description": "File360 user",
+      "properties": {
+        "Annotation": {
+          "description": "Annotation note defined for user, see User/Group administration",
+          "type": "string"
+        },
+        "DatabaseSerialNumber": {
+          "description": "System Key serial number",
+          "type": "integer"
+        },
+        "DaysBeforePasswordChangeRequired": {
+          "description": "Days before password expires",
+          "type": "integer"
+        },
+        "DisallowedIndexingExtensions": {
+          "description": "Collection of disallowed file extensions",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "EndDate": {
+          "description": "End date for user access",
+          "type": "string"
+        },
+        "File360WebserverUrl": {
+          "description": "Web server URL",
+          "type": "string"
+        },
+        "FirstName": {
+          "description": "The user's first name",
+          "type": "string"
+        },
+        "GroupSeats": {
+          "description": "Licenses reserved",
+          "type": "integer"
+        },
+        "InvalidLogonAttemptsAllowed": {
+          "description": "The number of invalid log on attempts allowed",
+          "type": "integer"
+        },
+        "IsActivated": {
+          "description": "Countersign for the system has been applied",
+          "type": "boolean"
+        },
+        "IsAdministrator": {
+          "description": "Is the user an administrator, see Administrator setting in User/Group administration",
+          "type": "boolean"
+        },
+        "IsAutoRunDefault": {
+          "description": "Is auto run default, see Autorun setting in System Configuration",
+          "type": "boolean"
+        },
+        "IsDemo": {
+          "description": "Is this a demo system",
+          "type": "boolean"
+        },
+        "IsRecordsManager": {
+          "description": "Is the user a records manager, see Records Manager setting in User/Group administration",
+          "type": "boolean"
+        },
+        "IsServerVerboseLoggingEnabled": {
+          "description": "Is verbose logging enabled",
+          "type": "boolean"
+        },
+        "LastName": {
+          "description": "The user's last name",
+          "type": "string"
+        },
+        "Locked": {
+          "description": "Is user locked out",
+          "type": "boolean"
+        },
+        "OpenExternalExtensions": {
+          "description": "Semi-colon separated list of file extensions to open externally",
+          "type": "string"
+        },
+        "PasswordLastChanged": {
+          "description": "Date last time password was changed",
+          "type": "string"
+        },
+        "Permissions": {
+          "description": "Collection of permissions",
+          "items": {
+            "$ref": "#/definitions/PermissionItem"
+          },
+          "type": "array"
+        },
+        "ProgramId": {
+          "description": "Program id",
+          "type": "integer"
+        },
+        "SecurityLevelsGranted": {
+          "description": "Collection of security levels granted",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "Settings": {
+          "description": "Collection of user settings",
+          "items": {
+            "$ref": "#/definitions/Setting"
+          },
+          "type": "array"
+        },
+        "StartDate": {
+          "description": "Start date for user accessed",
+          "type": "string"
+        },
+        "UniqueId": {
+          "description": "Users unique identifier",
+          "type": "string"
+        },
+        "WarnSystemKeyToExpireMessage": {
+          "description": "System key to expire message.  If this value is set then 'Display license expiration warning' checkbox is set.",
+          "type": "string"
+        },
+        "WebViewerOption": {
+          "description": "Web viewer options - one of the following : PDF = 0, Brava = 1",
+          "type": "integer"
+        },
+        "WorkstationId": {
+          "description": "Workspace id for client logon",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "UserIdentifier": {
+      "description": "User identifier.",
+      "properties": {
+        "Id": {
+          "description": "User id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "User name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Volume": {
+      "properties": {
+        "DeviceIdentifier": {
+          "$ref": "#/definitions/DeviceIdentifier"
+        },
+        "Id": {
+          "description": "Volume id",
+          "type": "integer"
+        },
+        "Label": {
+          "description": "Volume label",
+          "type": "string"
+        },
+        "ShouldMoveFilesToTarget": {
+          "description": "Should move files to target",
+          "type": "boolean"
+        },
+        "Slot": {
+          "description": "Volume slot",
+          "type": "integer"
+        },
+        "TargetDeviceIdentifier": {
+          "$ref": "#/definitions/DeviceIdentifier"
+        }
+      },
+      "type": "object"
+    },
+    "Workitem": {
+      "description": "Workitem.",
+      "properties": {
+        "CanModifyDocumentIndex": {
+          "description": "Can modify document index",
+          "type": "boolean"
+        },
+        "ClassName": {
+          "description": "Workitem class name",
+          "type": "string"
+        },
+        "DataEntryTemplateId": {
+          "description": "Data entry template id",
+          "type": "integer"
+        },
+        "FormFields": {
+          "description": "Workitem form field.",
+          "items": {
+            "$ref": "#/definitions/WorkitemFormField"
+          },
+          "type": "array"
+        },
+        "History": {
+          "description": "Workitem history.",
+          "items": {
+            "$ref": "#/definitions/WorkitemHistory"
+          },
+          "type": "array"
+        },
+        "Id": {
+          "description": "Workitem id",
+          "type": "string"
+        },
+        "InboxFields": {
+          "description": "Workitem form inbox fields.",
+          "items": {
+            "$ref": "#/definitions/WorkitemFormInboxField"
+          },
+          "type": "array"
+        },
+        "IsInProgress": {
+          "description": "Is workitem in progress",
+          "type": "boolean"
+        },
+        "IsModified": {
+          "description": "Has workitem been modified",
+          "type": "boolean"
+        },
+        "IsReserved": {
+          "description": "Is workitem reserved",
+          "type": "boolean"
+        },
+        "Name": {
+          "description": "Workitem name",
+          "type": "string"
+        },
+        "SendToDefault": {
+          "description": "Send to default workset",
+          "type": "boolean"
+        },
+        "SourceDocument": {
+          "$ref": "#/definitions/DocumentIdentifier"
+        },
+        "Type": {
+          "description": "Workitem type",
+          "type": "integer"
+        },
+        "WorkflowId": {
+          "description": "Workflow id",
+          "type": "integer"
+        },
+        "WorkflowName": {
+          "description": "Workflow name",
+          "type": "string"
+        },
+        "WorksetName": {
+          "description": "Workset name",
+          "type": "string"
+        },
+        "WorkstepEntryTime": {
+          "description": "Time workitem entered the workstep",
+          "type": "string"
+        },
+        "WorkstepName": {
+          "description": "Workstep name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WorkitemForm": {
+      "description": "Work item form.",
+      "properties": {
+        "Fields": {
+          "description": "Workitem form fields.",
+          "items": {
+            "$ref": "#/definitions/WorkitemFormField"
+          },
+          "type": "array"
+        },
+        "Name": {
+          "description": "Workitem form name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WorkitemFormField": {
+      "description": "Workitem form field.",
+      "properties": {
+        "FieldDataType": {
+          "default": 0,
+          "description": "Field data type - one of the following : None = 0, Currency = 11, Date = 9, DateTime = 8, Double = 5, Float = 4, LongInteger = 3, String = 6, Time = 10",
+          "enum": [
+            0,
+            11,
+            9,
+            8,
+            5,
+            4,
+            3,
+            6,
+            10
+          ],
+          "type": "integer"
+        },
+        "Hint": {
+          "description": "Workitem form field label",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Workitem form field id",
+          "type": "integer"
+        },
+        "IsMemo": {
+          "description": "Is the Workitem form field a memo field",
+          "type": "boolean"
+        },
+        "IsReadOnly": {
+          "description": "Is the Workitem form field read only",
+          "type": "boolean"
+        },
+        "IsRequired": {
+          "description": "Is the Workitem form field required",
+          "type": "boolean"
+        },
+        "Label": {
+          "description": "Workitem form field label",
+          "type": "string"
+        },
+        "Length": {
+          "description": "Workitem form field length",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Workitem form field name",
+          "type": "string"
+        },
+        "OptionList": {
+          "description": "Possible display options of the field.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "Value": {
+          "description": "Workitem form field value",
+          "type": "string"
+        },
+        "ValueList": {
+          "description": "A collection of values for the form field.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "WorkitemFormInboxField": {
+      "description": "Workitem form field.",
+      "properties": {
+        "Name": {
+          "description": "Inbox field name",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Inbox field value",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WorkitemHistory": {
+      "description": "Workitem history.",
+      "properties": {
+        "DestinationWorkstepName": {
+          "description": "Destination workstep name",
+          "type": "string"
+        },
+        "ErrorCode": {
+          "description": "Error code",
+          "type": "integer"
+        },
+        "HasError": {
+          "description": "Has an error",
+          "type": "boolean"
+        },
+        "ResourceName": {
+          "description": "Resource name",
+          "type": "string"
+        },
+        "SourceWorkstepName": {
+          "description": "Source workstep name",
+          "type": "string"
+        },
+        "WorkflowName": {
+          "description": "Workflow Name",
+          "type": "string"
+        },
+        "WorkstepEntryTime": {
+          "description": "Workstep entry time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Workitems": {
+      "description": "Workitems.",
+      "properties": {
+        "InboxFields": {
+          "description": "Inbox fields.",
+          "items": {
+            "$ref": "#/definitions/WorkitemFormField"
+          },
+          "type": "array"
+        },
+        "WorkitemList": {
+          "description": "Workitem list.",
+          "items": {
+            "$ref": "#/definitions/Workitem"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Workset": {
+      "description": "Workset.",
+      "properties": {
+        "Count": {
+          "description": "Workitem count",
+          "type": "integer"
+        },
+        "WorkflowId": {
+          "description": "Workflow id",
+          "type": "integer"
+        },
+        "WorkflowName": {
+          "description": "Workflow name",
+          "type": "string"
+        },
+        "WorksetName": {
+          "description": "Workset name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Worksets": {
+      "description": "Worksets.",
+      "properties": {
+        "WorkitemList": {
+          "description": "Workset list.",
+          "items": {
+            "$ref": "#/definitions/Workset"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Workstation": {
+      "description": "Workstation definition.",
+      "properties": {
+        "Domain": {
+          "description": "Workstation domain name",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Workstation id",
+          "type": "integer"
+        },
+        "Name": {
+          "description": "Workstation name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@opentext.com",
+      "name": "Opentext Support",
+      "url": "http://support.opentext.com"
+    },
+    "description": "The File360 Web client, a world class user experience powered by Angular/CSS, is built upon a set of RESTful APIs. The power of the web application is available to our customers and partners with the RESTful APIs which power every bit of the web application.\n\nPlease see https://file360demo.otxlab.com/File360Web/test/api for examples and test harness.",
+    "termsOfService": "https://www.opentext.com/about/copyright-information",
+    "title": "File360 Web REST API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/applications": {
+      "get": {
+        "description": "Get a listing of archives and applications with the required access types. Access types for the applications is defined via the application administration tool.",
+        "operationId": "Applications",
+        "parameters": [
+          {
+            "description": "Access Type, an OR'ed set of the following : No Access = 0, Retrieval Access = 1, Export Access = 2, Entry Access = 4, Import Access = 8, Update Access = 16, Delete Access = 32, Super Access (includes all above) = 65535",
+            "in": "query",
+            "name": "accesstype",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applications archive pair array listing",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ArchiveApplications"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a listing of archives and applications.",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/v1/auth": {
+      "delete": {
+        "description": "Logs off the current user. Logging off will release any associated resources and licenses.",
+        "operationId": "LogOff",
+        "responses": {
+          "200": {
+            "description": "Logged off."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Logs off the current user.",
+        "tags": [
+          "authorization"
+        ]
+      },
+      "post": {
+        "description": "Logs on a user with the given credentials.",
+        "operationId": "LogOn",
+        "parameters": [
+          {
+            "description": "Authentication information",
+            "in": "body",
+            "name": "auth",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Authentication"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged on user object.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Logs on a user with the given credentials defined in the Authentication object.",
+        "tags": [
+          "authorization"
+        ]
+      }
+    },
+    "/v1/document": {
+      "delete": {
+        "description": "Destroy the index data and the files for an document or just the previous versions. ",
+        "operationId": "DestroyDocument",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id ",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Destroy all versions",
+            "in": "query",
+            "name": "allversions",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "description": "Destroy prior to the version id parameter",
+            "in": "query",
+            "name": "priorversions",
+            "required": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Destroy document result.",
+            "schema": {
+              "$ref": "#/definitions/SourceDocumentResult"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Destroy the index data and the files for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/devices": {
+      "get": {
+        "description": "Get a list of devices, caches, stores, Keyfile, Content Server etc., for a document.",
+        "operationId": "GetDocumentDevices",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "versionId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available devices for a document.",
+            "schema": {
+              "$ref": "#/definitions/AvailableDevices"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of devices for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/files": {
+      "get": {
+        "description": "Get the file information for the document.  Which includes display name, extension, source URL and thumbnail URL.",
+        "operationId": "GetDocumentFileInfo",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "versionId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Files for the version of the document.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/FileInfo"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the file information for the document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/index": {
+      "delete": {
+        "description": "Delete a document. Marks the document as unsearchable for all users.",
+        "operationId": "DeleteDocument",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Suffix",
+            "in": "query",
+            "name": "suffix",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete document results.",
+            "schema": {
+              "$ref": "#/definitions/DeleteDocumentResult"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Delete a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "get": {
+        "description": "Get the index information for a document.",
+        "operationId": "FetchDocumentIndex",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Suffix",
+            "in": "query",
+            "name": "suffix",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Keyfile public document id",
+            "in": "query",
+            "name": "keyfileDocId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array with the index data for the document.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/FetchDocumentIndexReturn"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the index data for a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "post": {
+        "description": "Create a document.",
+        "operationId": "CreateDocument",
+        "parameters": [
+          {
+            "description": "Folder document index id to create the document from",
+            "in": "query",
+            "name": "indexDataId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "default": 2,
+            "description": "One of the following indexing action : IndexFirstSuffix = 1, Index = 2, Modify = 4",
+            "enum": [
+              1,
+              2,
+              4
+            ],
+            "in": "query",
+            "name": "action",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "List of files and index information",
+            "in": "body",
+            "name": "files",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateDocumentinfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indexed document and folder data.",
+            "schema": {
+              "$ref": "#/definitions/IndexedDocument"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Create a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "put": {
+        "description": "Update the index data for a document.",
+        "operationId": "UpdateDocumentIndex",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Suffix",
+            "in": "query",
+            "name": "suffix",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Data entry template with modified data entry fields",
+            "in": "body",
+            "name": "template",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DataEntryTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An identifier for the newly created document.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/DocumentIdentifier"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Update the index data for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/keywords": {
+      "get": {
+        "description": "Get the keywords associated with a document.",        
+        "operationId": "GetKeywords",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Keywords for a document.",
+            "schema": {
+              "$ref": "#/definitions/Keywords"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the keywords associated with a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "post": {
+        "description": "Put new keywords in a document. Replaces existing keywords, to remove keywords set keywords data to empty.",
+        "operationId": "PutKeywords",
+        "parameters": [
+          {
+            "description": "New Keywords data.",
+            "in": "body",
+            "name": "Keywords",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Keywords"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Keywords for a document.",
+            "schema": {
+              "$ref": "#/definitions/Keywords"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Put new keywords in a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/legalhold": {
+      "delete": {
+        "description": "Removes a document legal from hold.",
+        "operationId": "RemoveLegalHold",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document identifier.",
+            "schema": {
+              "$ref": "#/definitions/SourceDocumentIdentifier"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Removes a document from legal hold .",
+        "tags": [
+          "document"
+        ]
+      },
+      "get": {
+        "description": "Get the legal hold status for a document.",
+        "operationId": "GetLegalHold",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Legal hold status for a document.",
+            "schema": {
+              "$ref": "#/definitions/LegalHoldStatus"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the legal hold status for a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "post": {
+        "description": "Set the legal hold data for a document. Also provides ability to change the expiration date and the reason.",
+        "operationId": "SetLegalHold",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "New legal hold status data.",
+            "in": "body",
+            "name": "legalHoldStatus",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LegalHoldStatus"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document identifier.",
+            "schema": {
+              "$ref": "#/definitions/SourceDocumentIdentifier"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Set the legal hold data for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/remarks": {
+      "get": {
+        "description": "Get the remarks associated with a document.",
+        "operationId": "GetRemarks",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Suffix id",
+            "in": "query",
+            "name": "suffix",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Remarks for a document.",
+            "schema": {
+              "$ref": "#/definitions/Remark"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the remarks associated with a document.",
+        "tags": [
+          "document"
+        ]
+      },
+      "post": {
+        "description": "Put new remarks in a document.",
+        "operationId": "PutRemarks",
+        "parameters": [
+          {
+            "description": "New remark data.",
+            "in": "body",
+            "name": "remark",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Remark"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Remarks for a document.",
+            "schema": {
+              "$ref": "#/definitions/Remark"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Put new remarks in a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/suffix": {
+      "post": {
+        "description": "Create a suffix for a document.",
+        "operationId": "CreateSuffix",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Version id",
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Data entry template.",
+            "in": "body",
+            "name": "template",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DataEntryTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identifier for the new document.",
+            "schema": {
+              "$ref": "#/definitions/DocumentIdentifier"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Create a suffix for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/unlock": {
+      "delete": {
+        "description": "Unlock a  document.",
+        "operationId": "Unlock",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identifier of unlocked document.",
+            "schema": {
+              "$ref": "#/definitions/SourceDocumentIdentifier"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Unlock a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/version": {
+      "post": {
+        "description": "Create a new version for a document.",
+        "operationId": "CreateVersion",
+        "parameters": [
+          {
+            "description": "Master id of the document",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "New version label",
+            "in": "query",
+            "name": "versionLabel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Id of device where version is to be created.  Use document/devices to get a device id.",
+            "in": "query",
+            "name": "deviceId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Collection of file identifiers",
+            "in": "body",
+            "name": "files",
+            "required": true,
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/DocumentCreateVersionFile"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New document version identifier.",
+            "schema": {
+              "$ref": "#/definitions/SourceDocumentIdentifier"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Create a new version for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/document/versions": {
+      "get": {
+        "description": "Get a list of versions for a document.",
+        "operationId": "GetVersions",
+        "parameters": [
+          {
+            "description": "Master id",
+            "in": "query",
+            "name": "masterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Versions for a document.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/SourceDocumentIdentifier"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of versions for a document.",
+        "tags": [
+          "document"
+        ]
+      }
+    },
+    "/v1/documents/index": {
+      "put": {
+        "description": "Update index data for a document or a collection of documents.",
+        "operationId": "UpdateDocumentIndexes",
+        "parameters": [
+          {
+            "description": "Index data change message",
+            "in": "body",
+            "name": "updateDetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DocumentIdentifierIndexDataChangeMessage"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Changed documents results.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/DocumentIdentifierIndexDataChangeMessage"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Update document index data.",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/errorfolders": {
+      "get": {
+        "description": "Get a list of error folders for user.",
+        "operationId": "GetIndexErrorFolders",
+        "responses": {
+          "200": {
+            "description": "A collection of error folders.",
+            "schema": {
+              "$ref": "#/definitions/IndexFoldersMessage"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of error folders for user.",
+        "tags": [
+          "errorfolders"
+        ]
+      }
+    },
+    "/v1/folder": {
+      "delete": {
+        "description": "Delete an indexing folder.",
+        "operationId": "DeleteFolder",
+        "parameters": [
+          {
+            "description": "Folder id.",
+            "in": "query",
+            "name": "folderId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Index folder deleted.",
+            "schema": {
+              "$ref": "#/definitions/IndexFolder"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Delete an indexing folder.",
+        "tags": [
+          "folder"
+        ]
+      },
+      "put": {
+        "description": "Update properties of an index folder.",
+        "operationId": "UpdateFolder",
+        "parameters": [
+          {
+            "default": 1,
+            "description": "Actions to perform on the folder : SendFolderToApplication = 1, SendFolderToUser = 3, SendFolderToGroup = 4, RenameFolder = 5, ReleaseFolder = 6, CloseFolder = 10",
+            "enum": [
+              1,
+              3,
+              4,
+              5,
+              6,
+              10
+            ],
+            "in": "query",
+            "name": "action",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Folder and data to update.",
+            "in": "body",
+            "name": "folder",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/IndexFolder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated index folder.",
+            "schema": {
+              "$ref": "#/definitions/IndexFolder"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Update properties of an index folder.",
+        "tags": [
+          "folder"
+        ]
+      }
+    },
+    "/v1/folder/document": {
+      "delete": {
+        "description": "Delete a document in the user folder.",
+        "operationId": "DeleteFolderDocument",
+        "parameters": [
+          {
+            "description": "The index id of the document in the folder.  Returned as part of the IndexFolderDocuments object.",
+            "in": "query",
+            "name": "indexDataId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted index folder document.",
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocument"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Delete a document in the user folder.",
+        "tags": [
+          "folder"
+        ]
+      },
+      "get": {
+        "description": "Get the document information from a folder.",
+        "operationId": "GetIndexFolderDocs",
+        "parameters": [
+          {
+            "description": "Id of folder from which to get the document",
+            "in": "query",
+            "name": "folderId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "When viewing a specific document, use IndexDataId; when using prevDoc or nextDoc use DocumentId; when opening folder for indexing, use 0 to return first document in the folder",
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Move to the document previous from the index id parameter value",
+            "in": "query",
+            "name": "prevDoc",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Move to the next document from the index id parameter value",
+            "in": "query",
+            "name": "nextDoc",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Is this index folder shared with other users or groups",
+            "in": "query",
+            "name": "isFolderShared",
+            "required": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Index folder document viewer information",
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocumentViewer"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the document information from a folder.",
+        "tags": [
+          "folder"
+        ]
+      },
+      "post": {
+        "description": "Create a user folder document.",
+        "operationId": "CreateUserFolderDocument",
+        "parameters": [
+          {
+            "description": "sessionName is used to define the directory where the files for the document were uploaded.",
+            "in": "query",
+            "name": "sessionName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "With applicationId, archive id is used to find or created the user folder to place document",
+            "in": "query",
+            "name": "archiveId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "With archiveId, application id is used to find or created the user folder to place document",
+            "in": "query",
+            "name": "applicationId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The destination folder, and the document created as part of a collection of documents",
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocuments"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Create a user folder document.",
+        "tags": [
+          "folder"
+        ]
+      }
+    },
+    "/v1/folder/document/compid": {
+      "post": {
+        "description": "Get a Brava composition id for a list of folder document files.",
+        "operationId": "GetIndexFolderDocCompID",
+        "parameters": [
+          {
+            "description": "List of files in the folder document.",
+            "in": "body",
+            "name": "docfiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocumentFiles"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brava composition id for a list of folder document files.",
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocumentViewer"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a Brava composition id for a list of folder document files.",
+        "tags": [
+          "folder"
+        ]
+      }
+    },
+    "/v1/folder/document/files": {
+      "get": {
+        "description": "Get a list of files in a document.",
+        "operationId": "GetIndexFolderDocFiles",
+        "parameters": [
+          {
+            "description": "Document index id",
+            "in": "query",
+            "name": "indexId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Is this folder shared between users or groups",
+            "in": "query",
+            "name": "isFolderShared",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Folder document files.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/FileInfo"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of files in a document.",
+        "tags": [
+          "folder"
+        ]
+      }
+    },
+    "/v1/folder/documents": {
+      "get": {
+        "description": "Get a list of documents in a folder.",
+        "operationId": "GetIndexFolderDocuments",
+        "parameters": [
+          {
+            "description": "Folder id",
+            "in": "query",
+            "name": "folderId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of index folder documents.",
+            "schema": {
+              "$ref": "#/definitions/IndexFolderDocuments"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of documents in a folder.",
+        "tags": [
+          "folder"
+        ]
+      }
+    },
+    "/v1/folders": {
+      "get": {
+        "description": "Get a list of data entry folders.",
+        "operationId": "GetIndexFolders",
+        "responses": {
+          "200": {
+            "description": "A collection of data entry folders.",
+            "schema": {
+              "$ref": "#/definitions/IndexFoldersMessage"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of data entry folders.",
+        "tags": [
+          "folders"
+        ]
+      }
+    },
+    "/v1/groups": {
+      "get": {
+        "description": "Get the list of user groups.",
+        "operationId": "Groups",
+        "responses": {
+          "200": {
+            "description": "A collection of groups.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/GroupIdentifier"
+              },
+              "type": "array"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of groups.",
+        "tags": [
+          "groups"
+        ]
+      }
+    },
+    "/v1/log": {
+      "post": {
+        "description": "Log a client message to the Web Server debug log. (See KB710808 for details on how to enable web client logging)",
+        "operationId": "Log",
+        "parameters": [
+          {
+            "description": "Log message information.",
+            "in": "body",
+            "name": "logData",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LogMessage"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message logged."
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Log a client message to the Web Server debug log.",
+        "tags": [
+          "infrastructure"
+        ]
+      }
+    },
+    "/v1/route": {
+      "post": {
+        "description": "Route documents to users or groups.",
+        "operationId": "RouteDocuments",
+        "parameters": [
+          {
+            "description": "Routing message title",
+            "in": "query",
+            "name": "title",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Routing message comment",
+            "in": "query",
+            "name": "comment",
+            "type": "string"
+          },
+          {
+            "description": "Retrieval template id",
+            "in": "query",
+            "name": "templateId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Routing details",
+            "in": "body",
+            "name": "routingDetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RoutingDetails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identifier for the Route just created.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Route documents to a user or group.",
+        "tags": [
+          "route"
+        ]
+      }
+    },
+    "/v1/template/dataentry": {
+      "get": {
+        "description": "Get a data entry template.",
+        "operationId": "GetDataEntryTemplate",
+        "parameters": [
+          {
+            "description": "Template id",
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data entry template.",
+            "schema": {
+              "$ref": "#/definitions/DataEntryTemplate"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a data entry template.",
+        "tags": [
+          "template"
+        ]
+      }
+    },
+    "/v1/template/dataentry/callback": {
+      "post": {
+        "operationId": "RunCallbackDataEntry",
+        "parameters": [
+          {
+            "description": "Callback handle id",
+            "in": "query",
+            "name": "callbackHandleId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Field id",
+            "in": "query",
+            "name": "fieldId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Data entry template object",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DataEntryTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Call back result.",
+            "schema": {
+              "$ref": "#/definitions/CallbackResult"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Run a data entry template callback.",
+        "tags": [
+          "template"
+        ]
+      }
+    },
+    "/v1/template/retrieval": {
+      "get": {
+        "description": "Get a retrieval template.",
+        "operationId": "GetRetrievalTemplate",
+        "parameters": [
+          {
+            "description": "Template id",
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Application id",
+            "in": "query",
+            "name": "applicationid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieval template.",
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a retrieval template.",
+        "tags": [
+          "template"
+        ]
+      }
+    },
+    "/v1/template/retrieval/callback": {
+      "post": {
+        "operationId": "RunCallbackRetrieval",
+        "parameters": [
+          {
+            "description": "Callback handle id",
+            "in": "query",
+            "name": "callbackHandleId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Field id",
+            "in": "query",
+            "name": "fieldId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Retrieval template",
+            "in": "body",
+            "name": "searchTemplate",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Call back result.",
+            "schema": {
+              "$ref": "#/definitions/CallbackResult"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Run a retrieval template callback.",
+        "tags": [
+          "template"
+        ]
+      }
+    },
+    "/v1/template/retrieval/documents": {
+      "post": {
+        "description": "Search for a list of documents using the criteria filled into the input fields in the retrieval template.",
+        "operationId": "PerformRetrieval",
+        "parameters": [
+          {
+            "description": "Retrieval template filled in with search criteria",
+            "in": "body",
+            "name": "searchTemplate",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hit list.",
+            "schema": {
+              "$ref": "#/definitions/Hits"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Search for a list of documents.",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/template/retrieval/layout": {
+      "put": {
+        "description": "Update retrieval template layout for user.",
+        "operationId": "SavePersonalRetrievalTemplate",
+        "parameters": [
+          {
+            "description": "Retrieval template",
+            "in": "body",
+            "name": "template",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieval template.",
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Update retrieval template layout for user.",
+        "tags": [
+          "template"
+        ]
+      },
+      "delete": 
+      {
+        "description": "Delete the template layout for user.",
+        "operationId": "RemovePersonalRetrievalTemplate",
+        "parameters": [
+          {
+            "description": "Template id",
+            "in": "query",
+            "name": "templateId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieval template.",
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplate"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Delete retrieval template layout for user.",
+        "tags": [
+          "template"
+        ]
+      }
+    },
+    "/v1/templates/dataentry": {
+      "get": {
+        "description": "Get a list of data entry templates.",
+        "operationId": "dataentrytemplates",
+        "responses": {
+          "200": {
+            "description": "A collection of data entry templates.",
+            "schema": {
+              "$ref": "#/definitions/DataEntryTemplatesList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Data entry templates listing.",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/v1/templates/retrieval": {
+      "get": {
+        "description": "Get a list of retrieval templates.",
+        "operationId": "retrievaltemplates",
+        "responses": {
+          "200": {
+            "description": "A collection of retrieval templates.",
+            "schema": {
+              "$ref": "#/definitions/RetrievalTemplatesList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Retrieval templates listing.",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/v1/users": {
+      "get": {
+        "description": "Get a list of the users defined in user administration.",
+        "operationId": "Users",
+        "responses": {
+          "200": {
+            "description": "A collection of user identifiers.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/UserIdentifier"
+              },
+              "type": "array"
+            }
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of users.",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/workflow/workitem": {
+      "get": {
+        "description": "Get a workitem.",
+        "operationId": "RetrieveWorkitem",
+        "parameters": [
+          {
+            "description": "Workitem id",
+            "in": "query",
+            "name": "workitemId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Workitem type",
+            "in": "query",
+            "name": "type",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Workstep name",
+            "in": "query",
+            "name": "workstep",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Workset name",
+            "in": "query",
+            "name": "workset",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Workflow id",
+            "in": "query",
+            "name": "workflowId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Workitem timestamp",
+            "in": "query",
+            "name": "timestamp",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A workitem.",
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a workitem.",
+        "tags": [
+          "workflow"
+        ]
+      },
+      "post": {
+        "description": "Post changes for a workitem.",
+        "operationId": "SendWorkitem",
+        "parameters": [
+          {
+            "description": "Workitem",
+            "in": "body",
+            "name": "workitem",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An updated workitem.",
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Send the changes for the workitem.",
+        "tags": [
+          "workflow"
+        ]
+      },
+      "put": {
+        "description": "Make changes to a workitem.",
+        "operationId": "SaveWorkitem",
+        "parameters": [
+          {
+            "description": "Workitem",
+            "in": "body",
+            "name": "workitem",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An updated workitem.",
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Make changes to a workitem.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/workitem/history": {
+      "get": {
+        "description": "Get the history for a workitem.",
+        "operationId": "GetHistory",
+        "parameters": [
+          {
+            "description": "Workitem id",
+            "in": "query",
+            "name": "workitemId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The workitem history.",
+            "schema": {
+              "$ref": "#/definitions/Workitem"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the history for a workitem.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/workitems": {
+      "get": {
+        "description": "Get a list of workitems.",
+        "operationId": "Workitems",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "query",
+            "name": "workflowId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Workset name",
+            "in": "query",
+            "name": "worksetName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of workitems.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Workitems"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of workitems.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/workitems/backlog": {
+      "get": {
+        "description": "Get a count of workflow items awaiting initiation.",
+        "operationId": "GetCountOfWorkflowBacklog",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Count of workitems awaiting initiation.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a count of workflow items awaiting initiation.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/worklist": {
+      "get": {
+        "description": "Get a list of workitems on the currently logged on users worklist.",
+        "operationId": "Worklist",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A collection of workitems.",
+            "schema": {
+              "$ref": "#/definitions/Workitems"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of workitems on the currently logged on users worklist.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/worklist/form": {
+      "get": {
+        "description": "Get the workflow form.",
+        "operationId": "GetForm",
+        "parameters": [
+          {
+            "description": "Class name",
+            "in": "query",
+            "name": "className",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The workflow for the class.",
+            "schema": {
+              "$ref": "#/definitions/WorkitemForm"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get the workflow form.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/worklist/workitem": {
+      "delete": {
+        "description": "Remove a workitem from the current users worklist.",
+        "operationId": "RemoveWorkitemFromWorklist",
+        "parameters": [
+          {
+            "description": "Workitem id",
+            "in": "query",
+            "name": "workitemId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The workitem id that was removed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Remove a workitem from the current users worklist.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/v1/workflow/worksets": {
+      "get": {
+        "description": "Get a list of worksets.",
+        "operationId": "Worksets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A collection of worksets.",
+            "schema": {
+              "$ref": "#/definitions/Worksets"
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "403": {
+            "description": "Permission denied."
+          },
+          "500": {
+            "description": "Internal server error. Check server log."
+          }
+        },
+        "summary": "Get a list of worksets.",
+        "tags": [
+          "workflow"
+        ]
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "tags": [
+    {
+      "description": "Applications",
+      "name": "applications"
+    },
+    {
+      "description": "Logon and logoff",
+      "name": "authorization"
+    },
+    {
+      "description": "Document",
+      "name": "document"
+    },
+    {
+      "description": "Documents",
+      "name": "documents"
+    },
+    {
+      "description": "Error folders",
+      "name": "errorfolders"
+    },
+    {
+      "description": "Folder",
+      "name": "folder"
+    },
+    {
+      "description": "Folders",
+      "name": "folders"
+    },
+    {
+      "description": "Groups",
+      "name": "groups"
+    },
+    {
+      "description": "Debug logging",
+      "name": "infrastructure"
+    },
+    {
+      "description": "Routing",
+      "name": "route"
+    },
+    {
+      "description": "Template - Data entry and retrieval",
+      "name": "template"
+    },
+    {
+      "description": "Templates - Data entry and retrieval",
+      "name": "templates"
+    },
+    {
+      "description": "Users",
+      "name": "users"
+    },
+    {
+      "description": "Workflow",
+      "name": "workflow"
+    }
+  ]
+}
