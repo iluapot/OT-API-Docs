@@ -1,0 +1,1223 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "description": "# Authentication\nHTTP Basic authentication is used for all requests.\n",
+    "title": "OpenText Messaging Fax REST API",
+    "version": "V1"
+  },
+  "servers": [
+    {
+      "url": "https://api.us.cloudmessaging.opentext.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://t2api.us.cloudmessaging.opentext.com",
+      "description": "Pre-production"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "description": "",
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "FaxRequest": {
+        "type": "object",
+        "required": [
+          "destinations",
+          "documents"
+        ],
+        "properties": {
+          "options": {
+            "description": "This contains all processing options for the job.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FaxOptions"
+              }
+            ]
+          },
+          "reports": {
+            "description": "This contains the specification of any reports that are required by the job. If *reports* is present, only those reports specified will be generated - the OpenText messaging service will not automatically request any additional report. If *reports* is not present, the system will act based on the user profile.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FaxReport"
+              }
+            ]
+          },
+          "destinations": {
+            "type": "array",
+            "description": "This contains one or more recipients fax numbers. \n",
+            "items": {
+              "$ref": "#/components/schemas/FaxDestination"
+            }
+          },
+          "documents": {
+            "type": "array",
+            "description": "This specifies the contents of the document being sent. The characteristics of documents that can be used are governed by the type of job being requested.\n",
+            "items": {
+              "$ref": "#/components/schemas/FaxDoc"
+            }
+          }
+        },
+        "title": "FaxRequest"
+      },
+      "FaxOptions": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "example": "temp_message_id",
+            "description": "A client-supplied globally unique identifier of no more than 80 characters used to help prevent duplicate requests. A case-insensitive comparison is used to determine a duplicate value.\n"
+          },
+          "billing_code": {
+            "type": "string",
+            "example": "temp_billing_code",
+            "description": "A client-supplied string of up to 255 characters that can appear on an invoice.\n"
+          },
+          "customer_reference": {
+            "type": "string",
+            "example": "temp_customer_reference",
+            "description": "A client-supplied string of up to 255 characters.\n"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Specifies a time after which no more delivery attempts (initial or retry) are made. (ISO 8601 format).\n"
+          },
+          "coversheet": {
+            "type": "object",
+            "description": "This contains information pertaining to the presence and contents of a fax coversheet. If *coversheet* is absent, no coversheet is requested and user profile settings are not normally consulted.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Coversheet"
+              }
+            ]
+          },
+          "translation_options": {
+            "type": "object",
+            "description": "This contains options to translate the document for fax delivery.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TranslationOptions"
+              }
+            ]
+          },
+          "pilot_line": {
+            "type": "object",
+            "description": "This contains the style and content of the line on the very top of the fax page. \n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PilotLine"
+              }
+            ]
+          }
+        },
+        "title": "Options"
+      },
+      "FaxReport": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "detail",
+              "exception",
+              "conditional"
+            ],
+            "description": "Specifies the type of report to be generated.Legal values are: detail, exception, conditional, or summary.\n"
+          },
+          "report_destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportDest"
+            }
+          }
+        },
+        "title": "Report"
+      },
+      "_fax": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "example": {
+          "fax": "1234567891"
+        },
+        "description": "Contains report destination for fax address type.US domestic numbers should use the following format: 2025550123. International numbers should use the following format: +44123456789.\n"
+      },
+      "_email": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "example": {
+          "email": "example@org.com"
+        },
+        "description": "Contains report destination for email address type.\n"
+      },
+      "_url": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "example": {
+          "url": "http://data.example.com"
+        },
+        "description": "Contains report destination for URL address type.Default URL length is 255 bytes and max url length is configurable through application properties.\n"
+      },
+      "ReportDest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/_fax"
+          },
+          {
+            "$ref": "#/components/schemas/_email"
+          },
+          {
+            "$ref": "#/components/schemas/_url"
+          }
+        ],
+        "additionalProperties": false,
+        "title": "ReportDest"
+      },
+      "FaxDestination": {
+        "type": "object",
+        "required": [
+          "fax"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "example": "ref001",
+            "description": "A client-supplied string of up to 20 characters used to identify the recipient.\n"
+          },
+          "fax": {
+            "type": "string",
+            "example": "1234567891",
+            "description": "The recipient fax number. US domestic numbers should use the following format: 2025550123. International numbers should use the following format: +44123456789.\n"
+          },
+          "inserts": {
+            "type": "array",
+            "description": "Contains insert values, which can be used to personalize the documents for each recipient.",
+            "items": {
+              "$ref": "#/components/schemas/Insert"
+            }
+          }
+        },
+        "title": "FaxDestination"
+      },
+      "FaxDoc": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "temp.txt",
+            "description": "A client-supplied filename. This value should be unique within a given request.\n"
+          },
+          "type": {
+            "type": "string",
+            "example": "text",
+            "description": "Indicates the format of the document. Supported document types  with descriptions are mentioned below\n\n`BMP` :  .bmp image.\n\n`text` : data to be treated as text.\n\n`MSW` : Microsoft Word.\n\n`GIF` : GIF image file.\n\n`HTML` : Hyper Text Markup Language.\n\n`JPEG` : JPEG image file.\n\n`MPP` : Microsoft Project File.\n\n`PCL` : HP Printer control Language.\n\n`PDF` : Adobe Portable Document Format.\n\n`PNG` : PNG image file.\n\n`PPT` : PowerPoint document.\n\n`PS` :  PostScript.\n\n`PUB` : Microsoft Publisher document.\n\n`RTF` : Rich Text Format.\n\n`TIFF` : Tagged Image File Format input.\n\n`VSD` : Visio document.\n\n`XAR` : Standard UNIX ar archive.\n\n`XLS` : Microsoft Excel Spreadsheet.\n"
+          },
+          "charset": {
+            "type": "string",
+            "example": "UTF-8",
+            "description": "The language encoding (character set) of the document, if needed, for proper interpretation.\n"
+          },
+          "data": {
+            "type": "string",
+            "example": "VGhpcyBpcyBzYW1wbGUgdGV4dCBkYXRh",
+            "description": "The document contents; base64 encoded.\n"
+          }
+        },
+        "title": "FaxDoc"
+      },
+      "Coversheet": {
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Enables/disables the use of a stored coversheet.\n"
+          },
+          "from": {
+            "type": "string",
+            "description": "Value to appear on the From line of the OpenText coversheet. Maximum length is 256 characters.\n"
+          },
+          "name": {
+            "type": "string",
+            "example": "f2m_default",
+            "description": "The name of a coversheet stored in the OpenText messaging service.\n"
+          },
+          "subject": {
+            "type": "string",
+            "example": "SampleSubject",
+            "description": "A client-supplied string to be used on the subject line of an OpenText system-generated coversheet.\n"
+          }
+        },
+        "title": "Coversheet"
+      },
+      "TranslationOptions": {
+        "type": "object",
+        "properties": {
+          "fax_mode": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "fine"
+            ],
+            "description": "Indicates the vertical image resolution to be used for fax deliveries.Legal values are:standard or fine.\n"
+          },
+          "page_orientation": {
+            "type": "string",
+            "enum": [
+              "portrait",
+              "landscape"
+            ],
+            "description": "Indicates the page orientation to be used when preparing the document for fax delivery.Legal values are portrait or landscape.\n"
+          }
+        },
+        "title": "TranslationOptions"
+      },
+      "PilotLine": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "SamplePilotText",
+            "description": "A client-supplied string that is to appear on the pilot line.\n"
+          }
+        },
+        "title": "PilotLine"
+      },
+      "Insert": {
+        "type": "object",
+        "required": [
+          "id",
+          "value"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "description": "An integer between 1 and 999 indicating the ordinal value of the insert.\n"
+          },
+          "value": {
+            "type": "string",
+            "example": "destination_insert_value",
+            "description": "A client-supplied string of up to 255 characters.\n"
+          }
+        },
+        "title": "Insert"
+      },
+      "FaxSubmitResponse": {
+        "type": "object",
+        "required": [
+          "job_id"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "example": "xsi-1234567"
+          }
+        },
+        "title": "FaxSubmitResponse"
+      },
+      "FaxStatusResponse": {
+        "type": "object",
+        "required": [
+          "job_id",
+          "job_state"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "example": "xsi-1234567",
+            "description": "Unique job identifier\n"
+          },
+          "billing_code_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "dGVtcF9iaWxsX2NvZGU=",
+            "description": "A client-supplied string of up to 255 characters in base64 encoded format that can appear on an invoice.\n"
+          },
+          "customer_reference_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "bXJhX2N1c3RfcmVm",
+            "description": "A client-supplied metadata string of up to 255 characters in base64 encoded format.\n"
+          },
+          "entry_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "The date/time job entered the system. (ISO 8601 format).\n"
+          },
+          "job_state": {
+            "type": "array",
+            "description": "JobState can have many different values, but the key ones that relate to the overall state of the job are below.Also note that it is possible for more than one of these states to be seen together (for instance, Processing and Error could show up at the same time, indicating an error in the processing step).\n\n`AwaitingSetup` : job has been received but has not yet started the setup process.\n\n`Setup` : Job is in the midst of initial processing. \n\n`Processing` : Setup has completed and the system is performing the needed steps to prepare for delivery (usually conversion of input documents to TIFF for faxing).\n\n`AwaitingDelivery` : Processing is complete, and the job is ready to deliver.This state is usually seen for scheduled jobs, where the delivery is to happen in the future. \n\n`Delivering`: The job is actively delivering the content.\n\n\n `Posted` - Delivery is complete.The job may still be in process to wait\n  for future events (like email bouncebacks) and/or to generate a report.\n\n\n`Delivered` - Essentially the same as posted. \n\n`Reporting` - A report is being generated. \n\n`Complete` - The job (including any reporting included) is complete. \n\n`Error` - There is an error that is preventing the job from processing. \n\n`Cancelled` - A request has been made to cancel the job.This state does not indicate that the cancellation has fully finished though.The way to confirm that is to make sure the Complete state is also included. \n\n`Held` - The job has been held and is not processing.  This usually occurs as a result of usage quotas imposed by the finance/credit departments.\n",
+            "items": {
+              "$ref": "#/components/schemas/JobState"
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+            "example": [
+              "Complete",
+              "Posted"
+            ]
+          },
+          "deliveries": {
+            "$ref": "#/components/schemas/DeliveryDetails"
+          }
+        },
+        "title": "FaxStatusResponse"
+      },
+      "DeliveryDetails": {
+        "type": "array",
+        "required": [
+          "fax"
+        ],
+        "items": {
+          "properties": {
+            "ref_base64": {
+              "type": "string",
+              "example": "RkFYT1VU",
+              "description": "A client-supplied string of up to 20 characters in base64 encoded format used to identify the recipient.\n"
+            },
+            "fax": {
+              "type": "string",
+              "example": "1234567891",
+              "description": "The recipient fax number. US domestic numbers should use the following format: 2025550123. International numbers should use the following format: +44123456789.\n"
+            },
+            "delivery_attempts": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/DeliveryData"
+                }
+              ]
+            }
+          }
+        },
+        "title": "DeliveryDetails"
+      },
+      "JobState": {
+        "type": "string"
+      },
+      "DeliveryData": {
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "Sent",
+              "Pending",
+              "Submitted",
+              "InProcess",
+              "Error",
+              "Cancelled",
+              "Held",
+              "Expired"
+            ],
+            "description": "Item level states show the status of the delivery of a particular items.You would see these states in FaxStatus response.  Although there are 8 different possible states, some of them almost never occur.\n\n`Pending` : Item is awaiting delivery.   \n\n`Submitted` : Should be treated as Pending, but this is not a state that I have ever seen in actual use. \n\n`InProcess` : Item is actively being delivered.  This state is very rarely if ever used. \n\n`Error` : An error has occured in attempting to delivery this item.  The item is not actively being attempted, although subsequent retry logic could cause it to be re-attempted.  When you see this state, you should also investigate the \"gammacode\" attribute of the item to see why it failed - the document available in link https://apiforums.easylink.com/system/files/gammacodes.pdf explains the different gamma codes.\n\n`Cancelled` : Delivery of the item was cancelled before delivery was attempted.This could occur because of a problem with the destination address (e.g. an email address in an invalid format), an address block, or a user-initiated cancellation of the job.  As above, the \"gamma code\" attribute gives more details on the reason for the cancellation. \n\n`Held` : The item's delivery is on hold.  This is another state that rarely if ever occurs.\n\n`Sent` : The item was successfully sent.This is what we want to see!\n\n`Expired` : The item was not attempted before the job expired.  Jobs can expire due to the specification of an expiration time, or also due to blackout restrictions (preventing delivery of voice jobs after certain times of day).\n"
+          },
+          "gamma_code": {
+            "type": "integer",
+            "example": 5000,
+            "description": "A code that may provide more detailed status information, mainly applicable to the Error state.A list of codes and their respective meanings can be found in below link https://apiforums.easylink.com/system/files/gammacodes.pdf\n"
+          },
+          "first_attempt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:51:00.000Z",
+            "description": "The date/time of the first delivery attempt (ISO 8601 format).\n"
+          },
+          "delivery_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:56:29.000Z",
+            "description": "Ending date/time of this delivery attempt (ISO 8601 format).\n"
+          },
+          "delivery_sec": {
+            "type": "integer",
+            "example": 28,
+            "description": "Number of seconds it took for this delivery attempt to complete.\n"
+          },
+          "pages_delivered": {
+            "type": "integer",
+            "example": 3,
+            "description": "Page number of the last page delivered of the input document.  Note: Does not include OpenText coverpage.\n"
+          },
+          "baud_rate": {
+            "type": "integer",
+            "example": 9600,
+            "description": "Indicates the delivery baud rate.\n"
+          },
+          "rcsid": {
+            "type": "string",
+            "example": "123-123-1234",
+            "description": "The Customer Subscriber Identification(CSID) of the receiving fax machine.\n"
+          }
+        },
+        "title": "DeliveryData"
+      },
+      "ReceiveDocResponse": {
+        "type": "object",
+        "required": [
+          "document_class",
+          "job_id",
+          "documents"
+        ],
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "example": "ZGV99996666",
+            "description": "An identifier for the document being retrieved in base64 encoded format.\n"
+          },
+          "document_class": {
+            "type": "string",
+            "example": "Inbound Fax",
+            "description": "Represents the document delivery type.Legal values are InboundFax.\n"
+          },
+          "job_id": {
+            "type": "string",
+            "example": "xsi-1234567",
+            "description": "Unique job identifier \n"
+          },
+          "user_id": {
+            "type": "string",
+            "example": "dev/abcd",
+            "description": "User ID associated with the job. This is the system's formal user ID, and not an alias such as a phone number or email address.\n"
+          },
+          "customer_reference_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "Nzg5NjY=",
+            "description": "A client-supplied metadata string of up to 255  characters in base64 encoded format.\n"
+          },
+          "billing_code_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "Nzg5NjY=",
+            "description": "A client-supplied string of up to 255 characters in base64 encoded format that can appear on an invoice.\n"
+          },
+          "previous_retrieval": {
+            "type": "string",
+            "example": "12ab1234-1234-2021232425266",
+            "description": "If this particular document has been previously retrieved, it will be included to provide information about one such prior retrieval. It consists of X-MRA-ProcessingID identifying the previous retrieval transaction.\n"
+          },
+          "transaction_info": {
+            "type": "object",
+            "description": "Contains transaction the transaction information of the document.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TransactionInfo"
+              }
+            ]
+          },
+          "document": {
+            "type": "object",
+            "description": "Contains the document content and information.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RetrieveDocuments"
+              }
+            ]
+          }
+        },
+        "title": "ReceiveDocResponse"
+      },
+      "TransactionInfo": {
+        "type": "object",
+        "properties": {
+          "fax_mode": {
+            "type": "string",
+            "example": "FINE",
+            "description": "The fax mode used - STANDARD or FINE.\n"
+          },
+          "tsid": {
+            "type": "string",
+            "example": "TSID",
+            "description": "The TSID of the sending fax machine.\n"
+          },
+          "ani": {
+            "type": "string",
+            "example": "ANI",
+            "description": "The ANI (sender) used when receiving the document.\n"
+          },
+          "dnis": {
+            "type": "string",
+            "example": "DNIS",
+            "description": "The DNIS (receiver) used when receiving the document. \n"
+          },
+          "call_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-03-17T11:27:34.000Z",
+            "description": "The time the document was received (ISO 8601 format).\n"
+          },
+          "connect_time": {
+            "type": "integer",
+            "example": 45,
+            "description": "The duration in seconds of the connection during which the document was received.\n"
+          },
+          "baud_rate": {
+            "type": "integer",
+            "example": 9600,
+            "description": "The baud rate of the connection. \n"
+          },
+          "page_count": {
+            "type": "integer",
+            "example": 2,
+            "description": "The actual number of pages received. \n"
+          },
+          "internal_fax_id": {
+            "type": "string",
+            "example": "qasiplgc1-0120000000000001-12345678",
+            "description": "The unique ID of the fax device that received the document. \n"
+          }
+        },
+        "title": "TransactionInfo"
+      },
+      "RetrieveDocuments": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "TIFF",
+            "description": "Indicates the format of the document. Examples: TIFF, PDF.\n"
+          },
+          "name_base64": {
+            "type": "string",
+            "example": "dGVzdF9maWxlLmRvYw==",
+            "description": "Filename associated with document being retrieved. \n"
+          },
+          "data": {
+            "type": "string",
+            "example": "QSB0ZXh0IGRvYyBmb3IgZGVsaXZlcnkgdmlhIHFkb2M=",
+            "description": "The document contents; base64 encoded.\n"
+          }
+        },
+        "title": "RetrieveDocuments"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error_code",
+          "error_message"
+        ],
+        "properties": {
+          "error_code": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          }
+        },
+        "title": "ErrorResponse"
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Send faxes"
+    },
+    {
+      "name": "Obtaining fax status",
+      "description": "Once a request to send a fax has been successfully accepted and a job ID is returned,users can obtain information i.e., status of the job as it is being processed by the OpenText messaging service. \n\nThere are two ways to obtain fax status: \n1. Using the status method /outbound/faxes/status as described in the section \"Get fax status\".\n2. Via a callback mechanism (webhook).\n\nNote that callback mechanism only provides the final message status.\n"
+    },
+    {
+      "name": "Fax status"
+    },
+    {
+      "name": "Receive fax status via callback URL (fax status webhook)",
+      "description": "Users can receive the final status for a submitted fax request via a callback URL. There are two ways to set the callback URL:\n1. Set the URL parameter for report destinations when submitting fax requests using the   method /outbound/faxes. Refer to the section \"Send faxes\" in this document.\n2. Set the callback URL in the account profile by contacting customer support.\n\nWhen the callback URL is set via either of these methods, OpenText messaging service will POST the final fax status as application/json to this end point. The schema is the same as in the response from \"Get fax status\" method except that the values of \"job_state\" parameter will not include \"complete\" even if all deliveries are complete.\n\nNote that account level setting will post the final fax status to the URL for all submitted fax requests. However, setting the URL when submitting fax request via /outbound/faxes method will override the account level callback URL setting only for that request. \n"
+    },
+    {
+      "name": "Collect fax documents from the OpenText messaging service",
+      "description": "There are two ways to collect faxes (aka inbound faxes) received by the OpenText messaging service:\n1. Using the method /inbound/documents/next described in the section \"Retrieve a fax  document\".\n2. Via a callback URL.\n\nNote: Both methods have identical schema for inbound faxes.\n"
+    },
+    {
+      "name": "Document retrieve"
+    },
+    {
+      "name": "Receive fax documents via callback URL (inbound fax webhook)",
+      "description": "There are two ways to receive fax documents by the Callback URL:\n1. By contacting customer support to set forwarding address for the account .\n2. By setting \"alternate address\" for recipients under \"receive preferences\" in the       Administration section of MyPortal; refer to the MyPortal documentation. Note that the  MyPortal setting for alternate address will override the account setting.\n\nFor schema definition, refer to the example provided in the section \"Retrieve a fax document\".\n"
+    },
+    {
+      "name": "Document delete"
+    },
+    {
+      "name": "Details on callbackURL",
+      "description": "# Authentication for callback URL\nWe support basic authentication and digest authentication for callback URLs. If you provide username and password, the OpenText messaging service will use them when making requests. \n# Polling versus using callbacks (webhooks) for getting fax status and inbound fax documents\n  One can obtain fax status and inbound faxes either via polling or via callback mechanism. There are pros and cons with each method. For example, polling can get status and inbound faxes relatively quicker, but it requires sending many requests to the messaging service which can impact performance.  Excessive polling can result in imposing rate limits by the OpenText messaging service to customer accounts to minimize performance impact. On the other hand, callback mechanism avoids such issues but requires a receiver setup by customers.\n# Retry mechanism for webhook:\n  The OpenText messaging service utilizes a robust mechanism when pushing inbound faxes and fax status to your webhook URL. Our default retry algorithm works as outlined below. Note that attempt to alternate will be skipped if it is not configured.\n  1. Attempt primary\n  2. Retry primary – after 10 mins\n  3. Retry primary – after another 10 mins\n  4. Attempt alternates\n  5. Retry alternate – after 10 mins\n  6. Retry alternate – after 10 mins\n  7. Wait for 1 min\n  8. Attempt primary\n  9. Retry primary – after 10 mins\n  10. Retry primary – after another 10 mins\n  11. Attempt alternates\n  12. Retry alternate – after 10 mins\n  13. Retry alternate – after 10 mins\n  14. Wait for 2 min\n  15. Retry primary – after 10 mins\n  16. Retry primary – after another 10 mins\n  17. Attempt alternates\n  18. Retry alternate – after 10 mins\n  19. Retry alternate – after 10 mins\n  20. Wait for 20 mins\n  21. Retry primary – after 10 mins\n  22. Retry primary – after another 10 mins\n  23. Attempt alternates\n  24. Retry alternate – after 10 mins\n  25. Retry alternate – after 10 mins\n"
+    }
+  ],
+  "paths": {
+    "/mra/v1/outbound/faxes": {
+      "post": {
+        "tags": [
+          "Send faxes"
+        ],
+        "summary": "Submit a fax request",
+        "description": "Submitting a request to send a fax requires use of pure JSON request body wherein the fax metadata (recipient fax numbers and user-specified options) and the document(s) to be faxed are part of the same JSON construct.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "A client-supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaxRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)."
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A client-supplied unique identifier,returned in response if provided in request."
+              },
+              "X-MRA-Duplicate-MessageId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Returned processing id of message_id , if it is previously used."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaxSubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/mra/v1/outbound/faxes/status/": {
+      "get": {
+        "tags": [
+          "Fax status"
+        ],
+        "summary": "Get fax status",
+        "description": "Once a fax request has been successfully accepted and a job ID is returned, this method allows users to request the information about the job as it is being processed by the OpenText messaging service.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "A cleint-supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "query",
+            "description": "A string consists of xdn-mrn.Where xdn is domain name and mrn is job number.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "xsi-1234567"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)."
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A client-supplied unique identifier,returned in response if provided in request."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaxStatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/mra/v1/inbound/documents/next": {
+      "get": {
+        "tags": [
+          "Document retrieve"
+        ],
+        "summary": "Retrieve a fax document",
+        "description": "Inbound faxes can be retrieved from OpenText messaging service using this method.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "A client-supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hold_sec",
+            "in": "query",
+            "description": "The number of seconds a retrieved document should be held waiting for a \"delete\" operation before it is returned to the queue for retrieval. Currently, values between 5 and 3600 can be used, and the default value is 900.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": 900
+            }
+          },
+          {
+            "name": "group_no",
+            "in": "query",
+            "description": "Optional Fax2Mail Group entity number. Fax2Mail administrators may request documents from jobs belonging to any user in the specified group.\nNote that only jobs for users who are actually members of the named group will be looked for. Jobs for users of sub-groups of the named group will not be found.\nAlso note that only Fax2Mail jobs will be retrieved using this method - if Fax2Mail users create non-Fax2Mail jobs (which is not usual), such jobs will not be associated with the group for the purposes of this function.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": 999999
+            }
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "description": "Just as the GroupNo option allows group-wide retrieval of documents, this option allows customer-wide retrieval. If this is included and set to \"True (or) Yes\" (case insensitive values), then documents from jobs for any user under the requester's customer account will be looked for. The requester must have the permission setting that permits accessing customer-wide job data.\n Use of this feature can significantly reduce the number of polling requests necessary for certain applications.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "example": "Yes"
+            }
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "description": "Optional string specifying a particular domain to look for waiting documents. By default, retrieving a fax document will randomly poll all domains the user might have jobs in, returning once a document is found or the list of domains is exhausted. It may improve performance and reliability to limit the scope of that search by specifying a particular domain name, or the generic \"XDDS\" or \"MR\" names (which will limit the search to switches of the appropriate type.) Fax2Mail traffic, for instance, will only appear in \"XDDS\" switches, so if that is the only type of delivery expected, there is no point in polling the MR domains.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "XDDS"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiveDocResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)."
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A client-supplied unique identifier,returned in response if provided in request."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/mra/v1/inbound/documents/{docId}": {
+      "delete": {
+        "tags": [
+          "Document delete"
+        ],
+        "summary": "Delete a fax document",
+        "description": "A received fax can be deleted from the system after retrieval.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "A client-supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "required": true,
+            "name": "docId",
+            "schema": {
+              "type": "string",
+              "example": "ZGV2fDE2NTg4MjR8MTIwNHxxZG9jLXB1bGwtODUyNjU5",
+              "description": "Value returned in the response of retrieve fax request.\n"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No_Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)."
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A client-supplied unique identifier,returned in response if provided in request."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  }
+}
