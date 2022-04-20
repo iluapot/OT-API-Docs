@@ -1,0 +1,1553 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "External Visibility API",
+		"version": "v3",
+		"title": "Active Documents Visibility REST Services",
+		"termsOfService": "http://www.github.com/kongchen/swagger-maven-plugin"
+	},
+	"host": "apigrid.opentext.com",
+	"basePath": "/adservices",
+	"schemes": [
+		"https",
+		"http"
+	],
+	"tags": [
+		{
+			"name": "Visibility Entitlement Service",
+			"description": "Community Master Data entitlement resources to resolve references"
+		},
+		{
+			"name": "Visibility Reference Resolver",
+			"description": "Visibility Resources to resolve references"
+		},
+		{
+			"name": "Visibility Search Lifecycles",
+			"description": "API to search lifecycles based on different criteria"
+		}
+	],
+	"paths": {
+		"/entitlementServices/v1/companies/{companyId}/entitledMailboxRefs": {
+			"get": {
+				"tags": [
+					"Visibility Entitlement Service"
+				],
+				"summary": "Get available and entitled mailboxes",
+				"description": "Search for mailboxes",
+				"operationId": "Get Mailboxes",
+				"parameters": [
+					{
+						"name": "companyId",
+						"in": "path",
+						"description": "Trading Grid Community Master Data Partner Organization Identity",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "scope",
+						"in": "query",
+						"description": "Entitlement Scope.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/MaiboxCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/entitlementServices/v1/companies/{companyId}/entitledPartnerRefs": {
+			"get": {
+				"tags": [
+					"Visibility Entitlement Service"
+				],
+				"summary": "Get list of available partner companies references",
+				"description": "Search for partners",
+				"operationId": "Get Partners",
+				"parameters": [
+					{
+						"name": "companyId",
+						"in": "path",
+						"description": "Trading Grid Community Master Data Partner Organization Identity",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "scope",
+						"in": "query",
+						"description": "Entitlement Scope.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "companyName",
+						"in": "query",
+						"description": "Partner name filter. Please provide at least three symbols existent in edi address.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/PartnersCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/entitlementServices/v1/companies/{companyId}/entitledTradingAddressRefs": {
+			"get": {
+				"tags": [
+					"Visibility Entitlement Service"
+				],
+				"summary": "Get entitled Trading Addresses",
+				"description": "Search for patner trading addresses",
+				"operationId": "Get Partner Addresses",
+				"parameters": [
+					{
+						"name": "companyId",
+						"in": "path",
+						"description": "Trading Grid Community Master Data Partner Organization Identity",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "scope",
+						"in": "query",
+						"description": "Entitlement Scope.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "tradingAddress",
+						"in": "query",
+						"description": "Trading Address filter.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "mailbox",
+						"in": "query",
+						"description": "Mailbox ID.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/AddressCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visibilityServices/v1/companies/{companyId}/keyNames": {
+			"get": {
+				"tags": [
+					"Visibility Reference Resolver"
+				],
+				"summary": "Get list of key names",
+				"description": "Get list of available search key names",
+				"operationId": "Get Search Key Names",
+				"parameters": [
+					{
+						"name": "companyId",
+						"in": "path",
+						"description": "Trading Grid Community Master Data Partner Organization Identity",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "documentKeyName",
+						"in": "query",
+						"description": "Search key name filter. Please provide at least two symbols existent in key name.",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/SearchKeyNameCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visibilityServices/v1/documentLifecycles": {
+			"get": {
+				"tags": [
+					"Visibility Search Lifecycles"
+				],
+				"summary": "Visibility - Get document lifecycle",
+				"description": "Search for document lifecycle based on search parameters",
+				"operationId": "Document Lifecycle",
+				"parameters": [
+					{
+						"name": "startDate",
+						"in": "query",
+						"description": "Start Date in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "endDate",
+						"in": "query",
+						"description": "End Date  in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "primaryKey",
+						"in": "query",
+						"description": "Primary key (one key/value pair in the form of parm_name1=value1)",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "searchKeys",
+						"in": "query",
+						"description": "Searchable keys (in the form of parm_name1=value1, parm_name2=value2, ...)",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "mailbox",
+						"in": "query",
+						"description": "Trading Grid mailbox if applicable",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerCompanyReference",
+						"in": "query",
+						"description": "Trading Partner Organization Identity as defined by the Trading Grid Community Master Data Service.",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "tradingAddress",
+						"in": "query",
+						"description": "Trading (EDI or binary routing) address",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerTradingAddress",
+						"in": "query",
+						"description": "Partner Trading (EDI or binary routing) address",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "direction",
+						"in": "query",
+						"description": "Indicates if the transaction was sent to (inbound) or sent from (outbound) the perspective of the Customer {both, sent, receive}",
+						"required": false,
+						"type": "string",
+						"default": "ALL"
+					},
+					{
+						"name": "docType",
+						"in": "query",
+						"description": "Transaction type in the envelope if EDI, or assigned by sender if binary data",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "processStatus",
+						"in": "query",
+						"description": "Current Process Status",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/LifecycleCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visibilityServices/v1/documentLifecycles/{lifeCycleId}/businessRelated": {
+			"get": {
+				"tags": [
+					"Visibility Search Lifecycles"
+				],
+				"summary": "Visibility - Get business related lifecycles",
+				"description": "Search for business related lifecycles based on other lifecycles",
+				"operationId": "Related Lifecycle",
+				"parameters": [
+					{
+						"name": "lifeCycleId",
+						"in": "path",
+						"description": "Related Lifecycle Id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/LifecycleCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visibilityServices/v1/envelopeLifecycles": {
+			"get": {
+				"tags": [
+					"Visibility Search Lifecycles"
+				],
+				"summary": "Visibility - Get envelope lifecycles",
+				"description": "Search for envelope lifecycle based on search parameters",
+				"operationId": "Envelope Lifecycle",
+				"parameters": [
+					{
+						"name": "startDate",
+						"in": "query",
+						"description": "Start Date in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "endDate",
+						"in": "query",
+						"description": "End Date in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "mailbox",
+						"in": "query",
+						"description": "Trading Grid mailbox ID if applicable",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerCompanyReference",
+						"in": "query",
+						"description": "Trading Partner Organization Identity as defined by the Trading Grid Community Master Data Service.",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "tradingAddress",
+						"in": "query",
+						"description": "Trading (EDI or binary routing) address",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerTradingAddress",
+						"in": "query",
+						"description": "Partner Trading (EDI or binary routing) address",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "direction",
+						"in": "query",
+						"description": "Indicates if the transaction was sent to (inbound) or sent from (outbound) the perspective of the Customer {both, sent, receive}",
+						"required": false,
+						"type": "string",
+						"default": "ALL"
+					},
+					{
+						"name": "interchangeControlNumber",
+						"in": "query",
+						"description": "Interchange Control Number",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "productionTestFlag",
+						"in": "query",
+						"description": "Production/Test Flag",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/LifecycleCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visibilityServices/v1/fileLifecycles": {
+			"get": {
+				"tags": [
+					"Visibility Search Lifecycles"
+				],
+				"summary": "Visibility - Get file lifecycles",
+				"description": "Search for file lifecycle based on search parameters",
+				"operationId": "File Life Cycle",
+				"parameters": [
+					{
+						"name": "startDate",
+						"in": "query",
+						"description": "Start Date in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "endDate",
+						"in": "query",
+						"description": "End Date in ISO 8601 format",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "mailbox",
+						"in": "query",
+						"description": "Trading Grid mailbox ID if applicable",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerOrgId",
+						"in": "query",
+						"description": "Trading Partner Organization Identity as defined by the Trading Grid Community Master Data Service.",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "partnerTradingAddress",
+						"in": "query",
+						"description": "Partner Trading (EDI or binary routing) address",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "direction",
+						"in": "query",
+						"description": "Indicates if the transaction was sent to (inbound) or sent from (outbound) the perspective of the Customer {both, sent, receive}",
+						"required": false,
+						"type": "string",
+						"default": "ALL"
+					},
+					{
+						"name": "aprf",
+						"in": "query",
+						"description": "Application Reference",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "snrf",
+						"in": "query",
+						"description": "Sender Reference",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "processStatus",
+						"in": "query",
+						"description": "Current Process Status",
+						"required": false,
+						"type": "string",
+						"default": "all"
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"description": "The position of starting record for collection page. Should be used together with LIMIT parameter. Can not be used in combination of BEFORE parameter,",
+						"required": false,
+						"type": "integer",
+						"default": 0,
+						"format": "int32"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of elements in result collection.",
+						"required": false,
+						"type": "integer",
+						"default": 25,
+						"format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Service has been completed. Please use service results. If information can not be found service will return empty collection.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/LifecycleCollection"
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect search parameters. Please verify supplied search arguments. Error message field contains all required information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized. This error should not be thrown by this endpoint."
+					},
+					"403": {
+						"description": "Forbidden. Caller has no rights to access requested information.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					},
+					"404": {
+						"description": "Requested resource cannot be found. This error should not be thrown by this endpoint."
+					},
+					"500": {
+						"description": "Service Process Error. Please supply error information to support team.",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/ErrorResponse"
+							}
+						}
+					}
+				}			
+			}
+		}
+	},
+	"definitions": {
+		"AddressCollection": {
+			"type": "object",
+			"properties": {
+				"startPosition": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start position."
+				},
+				"pageSize": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start size."
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int64",
+					"description": "Total count entities in collection."
+				},
+				"responseCollection": {
+					"type": "array",
+					"description": "Requested entities subcollection",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"AddressInfo": {
+			"type": "object",
+			"required": [
+				"address"
+			],
+			"properties": {
+				"address": {
+					"type": "string",
+					"description": "Address"
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				}
+			}
+		},
+		"AddressReference": {
+			"type": "object",
+			"required": [
+				"companyId",
+				"companyName",
+				"rootCompanyId",
+				"tradingAddress"
+			],
+			"properties": {
+				"companyId": {
+					"type": "string",
+					"description": "Context company identifier. Maximum length: 20"
+				},
+				"rootCompanyId": {
+					"type": "string",
+					"description": "Context company identifier. Maximum length: 20"
+				},
+				"companyName": {
+					"type": "string",
+					"description": "Company name. Maximum length: 100"
+				},
+				"tradingAddress": {
+					"type": "string",
+					"description": "Trading address. Minimum length: 2, Maximum length: 35"
+				}
+			}
+		},
+		"BuReference": {
+			"type": "object",
+			"required": [
+				"companyName",
+				"orgId",
+				"rootOrgId"
+			],
+			"properties": {
+				"orgId": {
+					"type": "string",
+					"description": "Organization Identifier"
+				},
+				"rootOrgId": {
+					"type": "string",
+					"description": "Root Organization Identifier"
+				},
+				"companyName": {
+					"type": "string",
+					"description": "Company name. Maximum length: 100"
+				}
+			}
+		},
+		"BuReferenceInfo": {
+			"type": "object",
+			"required": [
+				"buReference"
+			],
+			"properties": {
+				"buReference": {
+					"$ref": "#/definitions/BuReference"
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				}
+			}
+		},
+		"ContentFileReference": {
+			"type": "object",
+			"required": [
+				"docType",
+				"receiver",
+				"sender",
+				"snrf",
+				"storageKey",
+				"storageType"
+			],
+			"properties": {
+				"sender": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"receiver": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"snrf": {
+					"type": "string",
+					"description": "SNRF"
+				},
+				"solutionId": {
+					"type": "string",
+					"description": "Solution Identifier. Maximim length: 50"
+				},
+				"contentId": {
+					"type": "string",
+					"description": "Content Id",
+					"xml": {
+						"attribute": true
+					}
+				},
+				"storageType": {
+					"type": "string",
+					"description": "Storage Type"
+				},
+				"storageKey": {
+					"type": "string",
+					"description": "Storage Key"
+				},
+				"docType": {
+					"type": "string",
+					"description": "Document Type"
+				}
+			}
+		},
+		"DistinctSummary": {
+			"type": "object",
+			"properties": {
+				"partnerInfo": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/BuReferenceInfo"
+					}
+				},
+				"senderAddresses": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/AddressInfo"
+					}
+				},
+				"receiverAddreses": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/AddressInfo"
+					}
+				},
+				"processingStatus": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ProcessingStatusInfo"
+					}
+				},
+				"processingDirection": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ProcessingDirectionInfo"
+					}
+				},
+				"documentType": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/DocumentTypeInfo"
+					}
+				},
+				"reconStatus": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ReconStatusInfo"
+					}
+				},
+				"reprocessedStatus": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ReprocessedInfo"
+					}
+				}
+			}
+		},
+		"DocumentReference": {
+			"type": "object",
+			"required": [
+				"docType",
+				"receiver",
+				"sender",
+				"snrf"
+			],
+			"properties": {
+				"sender": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"receiver": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"snrf": {
+					"type": "string",
+					"description": "SNRF"
+				},
+				"solutionId": {
+					"type": "string",
+					"description": "Solution Id"
+				},
+				"contentId": {
+					"type": "string",
+					"description": "Content Id",
+					"xml": {
+						"attribute": true
+					}
+				},
+				"docType": {
+					"type": "string",
+					"description": "Document Type"
+				}
+			}
+		},
+		"DocumentTypeInfo": {
+			"type": "object",
+			"required": [
+				"documentType"
+			],
+			"properties": {
+				"documentType": {
+					"type": "string",
+					"description": "Document Type"
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				}
+			}
+		},
+		"EnvelopeReference": {
+			"type": "object",
+			"required": [
+				"envelopeType",
+				"receiver",
+				"sender",
+				"snrf"
+			],
+			"properties": {
+				"sender": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"receiver": {
+					"$ref": "#/definitions/AddressReference"
+				},
+				"snrf": {
+					"type": "string",
+					"description": "SNRF"
+				},
+				"solutionId": {
+					"type": "string",
+					"description": "Solution Id"
+				},
+				"contentId": {
+					"type": "string",
+					"description": "Content Id",
+					"xml": {
+						"attribute": true
+					}
+				},
+				"envelopeStandard": {
+					"type": "string",
+					"description": "Envelope Standard"
+				},
+				"envelopeType": {
+					"type": "string",
+					"description": "Envelope Type"
+				}
+			}
+		},
+		"ErrorResponse": {
+			"type": "object",
+			"required": [
+				"errorCode",
+				"errorDescription"
+			],
+			"properties": {
+				"processingReference": {
+					"type": "string",
+					"description": "Error reference. Can be used for problems troubleshooting"
+				},
+				"errorCode": {
+					"type": "string",
+					"description": "Unique Error Code for each Error generated. This code should include a service identification namespace to ensure no error code collisions across Services"
+				},
+				"errorDescription": {
+					"type": "string",
+					"description": "Actionable description of the Error condition"
+				},
+				"link": {
+					"type": "string",
+					"description": "URL to additional information within the Developer Portal. "
+				}
+			},
+			"description": "Payload to be retun on case of processing error"
+		},
+		"Lifecycle": {
+			"type": "object",
+			"required": [
+				"perspectiveType",
+				"processReference",
+				"selectedFields"
+			],
+			"properties": {
+				"perspectiveType": {
+					"type": "string",
+					"description": "Perspective Type"
+				},
+				"contentFile": {
+					"$ref": "#/definitions/ContentFileReference"
+				},
+				"envelope": {
+					"$ref": "#/definitions/EnvelopeReference"
+				},
+				"document": {
+					"$ref": "#/definitions/DocumentReference"
+				},
+				"processReference": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ProcessReference"
+					}
+				},
+				"selectedFields": {
+					"$ref": "#/definitions/SelectedFields"
+				},
+				"lifecycleId": {
+					"type": "string",
+					"description": "Lifecycle Id",
+					"xml": {
+						"attribute": true
+					}
+				},
+				"lifecycleCreateDate": {
+					"type": "string",
+					"description": "Lifecycle Create Date",
+					"xml": {
+						"attribute": true
+					}
+				}
+			}
+		},
+		"LifecycleCollection": {
+			"type": "object",
+			"required": [
+				"resultSetStatus"
+			],
+			"properties": {
+				"resultSetStatus": {
+					"$ref": "#/definitions/ResultSetStatus"
+				},
+				"totalCount": {
+					"type": "integer",
+					"description": "Total Count",
+					"format": "int32"
+				},
+				"distinctSummary": {
+					"$ref": "#/definitions/DistinctSummary"
+				},
+				"lifecycle": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Lifecycle"
+					}
+				}
+			}
+		},
+		"MaiboxCollection": {
+			"type": "object",
+			"properties": {
+				"startPosition": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start position."
+				},
+				"pageSize": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start size."
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int64",
+					"description": "Total count entities in collection."
+				},
+				"responseCollection": {
+					"type": "array",
+					"description": "Requested entities subcollection",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"PartnerReference": {
+			"type": "object",
+			"properties": {
+				"reference": {
+					"type": "string",
+					"description": "Reference"
+				},
+				"companyName": {
+					"type": "string",
+					"description": "Company Name"
+				}
+			}
+		},
+		"PartnersCollection": {
+			"type": "object",
+			"properties": {
+				"startPosition": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start position."
+				},
+				"pageSize": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start size."
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int64",
+					"description": "Total count entities in collection."
+				},
+				"responseCollection": {
+					"type": "array",
+					"description": "Requested entities subcollection",
+					"items": {
+						"$ref": "#/definitions/PartnerReference"
+					}
+				}
+			}
+		},
+		"ProcessReference": {
+			"type": "object",
+			"required": [
+				"processId",
+				"processStatus"
+			],
+			"properties": {
+				"processId": {
+					"type": "string",
+					"description": "Process Id"
+				},
+				"processStatus": {
+					"type": "string",
+					"description": "Process Status"
+				},
+				"processRole": {
+					"type": "string",
+					"description": "Process Role",
+					"xml": {
+						"attribute": true
+					}
+				}
+			}
+		},
+		"ProcessingDirectionInfo": {
+			"type": "object",
+			"required": [
+				"processingDirection"
+			],
+			"properties": {
+				"processingDirection": {
+					"type": "string",
+					"description": "Processing Direction",
+					"enum": [
+						"INBOUND",
+						"OUTBOUND",
+						"UNKNOWN"
+					]
+				},
+				"totalCount": {
+					"type": "integer",
+					"description": "Total Count",
+					"format": "int32"
+				}
+			}
+		},
+		"ProcessingStatusInfo": {
+			"type": "object",
+			"required": [
+				"processingStatus"
+			],
+			"properties": {
+				"processingStatus": {
+					"type": "string",
+					"description": "Processing Status"
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				}
+			}
+		},
+		"ReconStatusInfo": {
+			"type": "object",
+			"properties": {
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				},
+				"reconStatus": {
+					"type": "string",
+					"description": "Recon Status"
+				}
+			}
+		},
+		"ReprocessedInfo": {
+			"type": "object",
+			"properties": {
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				},
+				"reprocessed": {
+					"type": "string",
+					"description": "Reprocessed"
+				}
+			}
+		},
+		"ResultSetStatus": {
+			"type": "object",
+			"required": [
+				"statusCode"
+			],
+			"properties": {
+				"statusCode": {
+					"type": "string",
+					"description": "Status Code"
+				},
+				"statusSubCode": {
+					"type": "string",
+					"description": "Status Sub Code"
+				},
+				"statusMessage": {
+					"type": "string",
+					"description": "Status Message"
+				}
+			}
+		},
+		"SearchKeyName": {
+			"type": "object",
+			"properties": {
+				"keyName": {
+					"type": "string",
+					"description": "Key Name"
+				},
+				"isPrimary": {
+					"type": "boolean",
+					"description": "Is Primary"
+				}
+			}
+		},
+		"SearchKeyNameCollection": {
+			"type": "object",
+			"properties": {
+				"startPosition": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start position."
+				},
+				"pageSize": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Page start size."
+				},
+				"totalCount": {
+					"type": "integer",
+					"format": "int64",
+					"description": "Total count entities in collection."
+				},
+				"responseCollection": {
+					"type": "array",
+					"description": "Requested entities subcollection",
+					"items": {
+						"$ref": "#/definitions/SearchKeyName"
+					}
+				}
+			}
+		},
+		"SelectedField": {
+			"type": "object",
+			"required": [
+				"entityName",
+				"fieldName",
+				"fieldValue"
+			],
+			"properties": {
+				"entityName": {
+					"type": "string",
+					"description": "Entity Name"
+				},
+				"fieldName": {
+					"type": "string",
+					"description": "Field Name"
+				},
+				"fieldValue": {
+					"type": "string",
+					"description": "Field Value"
+				},
+				"fieldType": {
+					"type": "object",
+					"description": "Field Type"
+				}
+			}
+		},
+		"SelectedFields": {
+			"type": "object",
+			"required": [
+				"selectedField"
+			],
+			"properties": {
+				"totalCount": {
+					"type": "integer",
+					"format": "int32",
+					"description": "Total Count"
+				},
+				"selectedField": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/SelectedField"
+					}
+				}
+			}
+		}
+	}
+}
