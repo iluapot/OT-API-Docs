@@ -1,0 +1,293 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"RESTful API's for managing Trading Grid Community Provisioning System",
+      "version":"1.0",
+      "title":"Community Provisioning Services REST API's"
+   },  
+   "servers": [
+	 {
+       "url": "https://apibetagrid.opentext.com/CommunityProvisioningServices",
+	   "description": "OpenText OT2 US Pre-Production"
+     },
+     {
+       "url": "https://apibetagrid-eu.opentext.com/CommunityProvisioningServices",
+	   "description": "OpenText OT2 EU Pre-Production"	   
+     },
+     {
+       "url": "https://apigrid.opentext.com/CommunityProvisioningServices",
+	   "description": "OpenText OT2 US Production"
+     },
+     {
+       "url": "https://apigrid-eu.opentext.com/CommunityProvisioningServices",
+	   "description": "OpenText OT2 EU Production"
+     }
+   ],
+   "tags":[
+      {
+         "name":"trading-partner-provisioning-services",
+         "description":"Trading Partner Provisioning Services"
+      }
+   ],
+   "paths":{
+      "/v2/onboarding/tradingPartnerProvisionings":{
+         "post":{
+            "tags":[
+               "trading-partner-provisioning-services"
+            ],
+            "summary":"Create Trading Partner Provisioning",
+            "description":"This API may be used to provision the customers against Invitation Code.",
+            "operationId":"Create Trading Partner Provisioning",
+			"consumes":[
+               "application/xml"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[             
+               {
+				  "in":"body",
+				  "name":"tprPayload",                           
+                  "description":"Input Payload for provisioning in String for reference. Actual payload will be in XML format wrapped in String. Please contact the OT Professional Services team for customer specific payload.",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/StringPayload"
+                  }
+               }
+            ],
+            "responses":{
+               "202":{
+                  "description":"Accepted - /CommunityProvisioningServices/v2/onboarding/tradingPartnerProvisionings/TrackingId/status",
+                  "schema":{
+                     "items":{
+                        "$ref":"#/definitions/SuccessAsynchResponseType"
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request - Validation Error, 1 ) Header argument passed to the method was invalid.: blank/null string values. 2) Input parameter cannot be a Zero length string. Parameter: x-ottg-principal-authid / x-ottg-principal-userid / x-ottg-principal-orgid / x-ottg-principal-serviceid. 3) Missing input parameter. Parameter: processingContext details is required / processingContext.invitationCode is required /processingContext.tpIdentifier is required / processingContext.customerIdentifier is required / processingContext.customerIdentifier.CompanyName is required / processingContext.customerIdentifier.buId is required. 4 ) Invalid Invitation Code or WorkFlow Id, Id : xxxx. 5) Invitation/Request data retrieval failed",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponseType"
+					 }
+                  }
+               },              
+               "500":{
+                  "description":"Internal server error -  1) Auto Trading address generation failed. 2) System error occured while processing the request",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponseType"
+					 }
+                  }
+               }
+            },
+            "requestBody":{
+               "content":{                  
+                  "application/xml": {
+                     "schema":{
+                        "type": "object",
+                        "$ref": "#/definitions/StringPayload"
+                     },
+                     "examples":{
+                        "request": {
+                           "type": "string",
+                           "value": "<workflow>\n  <processingContext>\n\t<invitationCode>string</invitationCode>\n\t<tpIdentifier>\n\t\t<countryCode>string</countryCode>\n\t\t<companyName>string</companyName>\n\t\t<city>string</city>\n\t</tpIdentifier>\n\t<initiatorIdentifier>\n\t\t<buId>string</buId>\n\t\t<userId>string</userId>\n\t</initiatorIdentifier>\n\t<action> string</action>\n\t<invitationSource>string</invitationSource>\n </processingContext>\n  <provisioningRequestData>string</provisioningRequestData>\n</workflow>"
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/v2/onboarding/tradingPartnerProvisionings/{trackingId}/status":{
+         "get":{
+            "tags":[
+               "trading-partner-provisioning-services"
+            ],
+            "summary":"Get Provisioning Status",
+            "description":"This API may be used to track provisioning status by tracking id",
+            "operationId":"Get Provisioning Status",          
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"trackingId",
+                  "in":"path",
+                  "description":"Tracking id of the provisioning request",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - Provisioning status retrieved successfully",
+                  "schema":{
+                     "$ref":"#/definitions/ProvisioningResponseType"                   
+                  }
+               },
+               "400":{
+                  "description":"Bad request - Validation Error, 1 ) Header argument passed to the method was invalid.: blank/null string values. 2) Input parameter cannot be a Zero length string. Parameter: x-ottg-principal-authid / x-ottg-principal-userid / x-ottg-principal-orgid / x-ottg-principal-serviceid. 3) Invalid value for input parameter. Parameter: trackingId Value must be: Integer. 4) On boarding Provisioning request id not found, request id : xxxx. 5) Invitation/Request data retrieval failed",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponseType"
+					 }
+                  }
+               },            
+               "500":{
+                  "description":"Internal server error - Internal Error encountered while processing request",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponseType"
+					 }
+                  }
+               }
+            }
+         }
+      }
+   },  
+   "definitions":{
+	 "SuccessAsynchResponseType":{
+	    "type":"object",
+	    "properties":{
+		   "resourceLink":{
+			 "type":"string",
+			 "description":"Specifices the response resource"
+		   }                  
+	    }
+     },
+	 "ProvisioningResponseType":{
+	   "type":"object",
+	   "properties":{
+		  "status":{
+			 "type":"string",
+			 "description":"Specifices the provisioning status"
+		  },
+		  "description":{
+			 "type":"string",
+			 "description":"Specifices the provisioning description"
+		   }          
+	    }
+     },
+     "ErrorResponseType":{
+	   "type":"object",
+	   "properties":{
+		  "processingReference":{
+			 "type":"string",
+			 "description":"Specifices the processing reference"
+		   },
+		   "errorCode":{
+			  "type":"string",
+			  "description":"Specifices the error code"
+		   },
+		   "errorDescription":{
+			  "type":"string",
+			  "description":"Specifices the error description"
+		   },
+		   "errorId":{
+			  "type":"string",
+			  "description":"Specifices the error Id"
+		   },
+		   "link":{
+			  "description":"Specifices the link",
+			  "items":{
+			   "$ref":"#/definitions/UUID"
+			  }
+		   }
+	    }
+     },
+	 "UUID":{
+	    "type":"object",
+	    "properties":{
+		   "leastSignificantBits":{
+			  "type":"integer",
+			  "description":"Specifices the least significant bits"
+		   },
+		   "mostSignificantBits":{
+			  "type":"integer",
+			  "description":"Specifices the most significant bits"
+		    }          
+	     }
+	  },
+	  "StringPayload":{
+	    "type":"object",
+		"required":[
+            "workflow"
+        ],
+	    "properties":{
+		   "workflow":{
+			   "description":"Payload workflow",
+               "$ref":"#/definitions/workflow"
+		    }	   
+	     }
+	  },
+	  "workflow":{
+	    "type":"object",
+	    "properties":{
+		   "processingContext":{
+			   "description":"Payload processing context",
+               "$ref":"#/definitions/processingContext"
+		    },
+		    "provisioningRequestData":{
+		      "type":"string",
+			  "description":"Client Specific data"
+		    }
+	     }
+	  },	  
+	  "processingContext":{
+	    "type":"object",
+	    "properties":{
+		   "invitationCode":{
+			  "type":"string",
+			  "description":"Invitation Code for onboarding request, will be provided by OT"
+		   },
+		   "tpIdentifier":{
+			  "description":"Trading Partner information",
+              "$ref":"#/definitions/TPIdentifierInfo"           
+		   },
+		   "initiatorIdentifier":{
+			  "description":"Trading Partner initiator information",
+              "$ref":"#/definitions/InitiatorIdentifierInfo"             
+		   },
+		   "action":{
+			  "type":"string",
+			  "description":"Onboarding Request action"
+		   },
+		   "invitationSource":{
+			  "type":"string",
+			  "description":"Source of Onboarding request, Will be provided by OT"
+		   }		   
+	    }
+	 },
+     "TPIdentifierInfo":{
+         "type":"object",
+         "properties":{
+            "countryCode":{
+			   "type":"string",
+               "description":"ISO country code. Length: 2"
+            },
+            "companyName":{
+			   "type":"string",
+               "description":"Trading partner name. Maximum length: 100"
+            },
+            "city":{
+			   "type":"string",
+               "description":"Trading partner address city. Maximum length: 50"
+            }
+         }
+      },
+	  "InitiatorIdentifierInfo":{
+         "type":"object",
+         "properties":{
+            "buId":{
+			   "type":"string",
+               "description":"Customer Company identifier, Will be provided by OT. Maximum length: 20"
+            },
+            "userId":{
+			   "type":"string",
+               "description":"Customer User identifier, Will be provided by OT. Maximum length: 20"
+            }
+         }
+      }
+   }
+}

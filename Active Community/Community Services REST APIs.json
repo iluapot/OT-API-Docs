@@ -1,0 +1,1738 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"RESTful API's for managing Trading Grid Community Management System",
+      "version":"1.0",
+      "title":"TGCommunity Services REST API's"
+   },
+   "servers": [
+	 {
+       "url": "https://apibetagrid.opentext.com/TGCommunityServices",
+	   "description": "OpenText OT2 US Pre-Production"
+     },
+     {
+       "url": "https://apibetagrid-eu.opentext.com/TGCommunityServices",
+	   "description": "OpenText OT2 EU Pre-Production"	   
+     },
+     {
+       "url": "https://apigrid.opentext.com/TGCommunityServices",
+	   "description": "OpenText OT2 US Production"
+     },
+     {
+       "url": "https://apigrid-eu.opentext.com/TGCommunityServices",
+	   "description": "OpenText OT2 EU Production"
+     }
+   ],
+   "tags":[
+      {
+         "name":"company-services",
+         "description":"Company Services"
+      }
+   ],
+   "paths":{
+      "/v1/companies":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Search Company",
+            "description":"The operation allows to search company by query parameters. Parameters : externalRefKey and externalRefValue, both are mandatory.",
+            "operationId":"Search Company",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"externalRefKey",
+                  "in":"query",
+                  "description":"External Reference Key, must be searched along with externalRefValue query param. Maximum length: 50",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"externalRefValue",
+                  "in":"query",
+                  "description":"External Reference Value, must be searched along with externalRefKey query param. Maximum length: 40",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - Company retrieved successfully.",
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/CompanyDetails"
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad Request - Insufficient query parameters. API message: 1) Validation error - Key and Value both inputs are required for External Reference. 2) Insufficient input - External Reference is required as query parameter to search company.",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: No company found for the given External Reference key : {} and value : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"Company retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving company.",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Retrieve Company",
+            "description":"The operation allows to retrieve company by company identifier",
+            "operationId":"Retrieve Company",          
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - Company retrieved successfully.",
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/CompanyDetails"
+                     }
+                  }
+               },              
+               "404":{
+                  "description":"Company not found. API message: No Business Unit information could be found for a given Input : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"Company retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving company.",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },   
+      "/v1/companies/{companyId}/partnerDirectory":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Search trading community",
+            "description":"Search your trading community based on your company ID; search options include partner ID, name, display name, status, trading address, count, creation start and end date. This API supports pagination by taking number of records into account",
+            "operationId":"Search trading community",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"partnerCompanyId",
+                  "in":"query",
+                  "description":"Partner company identifier. Maximum length: 20",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"partnerCompanyName",
+                  "in":"query",
+                  "description":"Partner company name. Maximum length: 100",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"partnerCompanyDisplayName",
+                  "in":"query",
+                  "description":"Partner company display name or facade name. Maximum length: 100",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"countOnly",
+                  "in":"query",
+                  "description":"Returns the record count based on the search criteria. Allowed values: true or false",
+                  "required":false,
+                  "type":"boolean"
+               },
+               {
+                  "name":"page",
+                  "in":"query",
+                  "description":"Page is the start index of the requested set of records. Allowed values: Numeric value. Minimum value: 0, Maximum value: Total number of records - 1",
+                  "required":false,
+                  "type":"integer",
+                  "format":"int32"
+               },
+               {
+                  "name":"pageSize",
+                  "in":"query",
+                  "description":"PageSize is the number of records requested. Allowed values: Numeric value. Minimum value: 0, Maximum value: 100",
+                  "required":false,
+                  "type":"integer",
+                  "format":"int32"
+               },
+               {
+                  "name":"tradingAddress",
+                  "in":"query",
+                  "description":"Trading Address of partner company. Minimum length: 2, Maximum length: 35",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"creationStartDate",
+                  "in":"query",
+                  "description":"Creation start date and it should be combined with creation end date. Date format: DD/MM/YYYY",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"creationEndDate",
+                  "in":"query",
+                  "description":"Creation end date and it should be combined with creation start date. Date format: DD/MM/YYYY",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"partnerCompanyStatus",
+                  "in":"query",
+                  "description":"Partner company status. Allowed values: active or inactive",
+                  "required":false,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful operation",
+				  "schema": {
+					 "type": "array",
+					 "items": {
+					   "$ref": "#/definitions/TPDirectoryDetailsType"
+					 }
+				  }
+               },
+               "400":{
+                  "description":"Bad Request - Invalid search parameters. API message: Validation error - Invalid value for input parameter. Parameter: {0} Value must be: {1}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Trading partner relationship does not exist. API message: Validation Error : Trading partner relationship does not exist for the given trading partner relationship id : {0}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+			   "409":{
+				  "description": "Conflict - Please refine the search criteria. API message: Search has crossed maximum permissible limit of 3000 records",
+				  "schema": {
+					 "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+				  }
+			   },
+               "500":{
+                  "description":"Trading partner relationship retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving trading community",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}/users":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Search Users",
+            "description":"The operation allows to retrieve all users within the company.",
+            "operationId":"Search Users",           
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"loginId",
+                  "in":"query",
+                  "description":"User Login identifier. Maximum length: 20",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"count",
+                  "in":"query",
+                  "description":"User Count withing the company, must not be searched along with any other query param. Allowed values = true",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"after",
+                  "in":"query",
+                  "description":"Strictly Integer. Used for pagination, after means from specific record, must be searched along with limit query param",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"limit",
+                  "in":"query",
+                  "description":"Strictly Integer. Used for pagination, limit means the number of records to be fetched, must be searched along with limit query param",
+                  "required":false,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - Users retrieved successfully.",
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/UserDetails"
+                     }
+                  }
+               },          
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving user",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         },
+         "post":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Create User",
+            "description":"The operation allows to create an user within the company.",
+            "operationId":"Create User",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "in":"body",
+                  "name":"userPayload",
+                  "description":"Essential information for user creation",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/User"
+                  }
+               }
+            ],
+            "responses":{
+               "201":{
+                  "description":"Created - User created successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ConstituteResponse"
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: 1) Invalid value for input parameter. Parameter: {} Value must be: {}. 2) For User creation, Business Unit subscription to services is prerequisite. User cannot be created till the BU subscribes to services",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: Company Id : {} does not exist within the system",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "409":{
+                  "description":"Conflict - The specified user already exists. API message: Given Login User is already exists in the system",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User creation failed due to internal server issue. API message: Internal server error - Error occurred while creating user",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}/users/{userId}":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Retrieve User",
+            "description":"The operation allows to retrieve an user within the company.",
+            "operationId":"Retrieve User",         
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - User retrieved successfully.",
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/UserDetails"
+                     }
+                  }
+               },            
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving user",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         },
+         "put":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Update User",
+            "description":"The operation allows to update an user within the company.",
+            "operationId":"Update User",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "in":"body",
+                  "name":"userPayload",
+                  "description":"Essential information for user update",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/ModifyUser"
+                  }
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Updated - User updated successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ConstituteResponse"
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: 1) Invalid value for input parameter. Parameter: {} Value must be: {}.",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User update failed due to internal server issue. API message: Internal server error - Error occurred while updating user",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         },
+         "delete":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Delete User",
+            "description":"The operation allows to delete an user within the company",
+            "operationId":"Delete User",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               }             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Deleted - User has been deleted successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ResponseDesc"
+                  }
+               },             
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User delete failed due to internal server issue. API message: Internal server error - Error occurred while deleting user",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}/users/{userId}/services":{
+         "get":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Retrieve User Subscriptions",
+            "description":"The operation allows to retrieve an user subscription within the company.",
+            "operationId":"Retrieve User Subscriptions",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Retrieved - User service subscriptions retrieved successfully.",
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ServiceDetails"
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: 1) Invalid value for input parameter. Parameter: {} Value must be: {}.",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User Subscriptions retrieval failed due to internal server issue. API message: Internal server error - Error occurred while retrieving User Subscriptions",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         },
+         "post":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Create User Subscriptions",
+            "description":"The operation allows to create an user subscription within the company.",
+            "operationId":"Create User Subscriptions",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "in":"body",
+                  "name":"services",
+                  "description":"Essential information for user subscription creation",
+                  "required":true,
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Service"
+                     }
+                  }
+               }
+            ],
+            "responses":{
+               "201":{
+                  "description":"Created - User service subscription created successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ConstituteResponse"
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: Exception occurred while creating / deleting the Subscription for user :{}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}. 4) Data does not exist in the system for the given input : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User Subscriptions creation failed due to internal server issue. API message: Internal server error - Error occurred while creating User Subscriptions",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}/users/{userId}/services/{serviceId}":{
+         "delete":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Delete User Service Subscription",
+            "description":"The operation allows to delete an user service subscription within the company.",
+            "operationId":"Delete User Service Subscription",         
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"serviceId",
+                  "in":"path",
+                  "description":"Service instance identifier. Data type: String. Maximum length: 10",
+                  "required":true,
+                  "type":"string"
+               }           
+            ],
+            "responses":{
+               "200":{
+                  "description":"Deleted - User service subscription deleted successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ResponseDesc"
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: Exception occurred while creating / deleting the Subscription for user :{}. The given user is Inactive",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}. 4) Data does not exist in the system for the given input : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User Service Subscriptions delete failed due to internal server issue. API message: Internal server error - Error occurred while deleting User Service Subscriptions",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      },
+      "/v1/companies/{companyId}/users/{userId}/services/{serviceId}/roles/{roleId}":{
+         "delete":{
+            "tags":[
+               "company-services"
+            ],
+            "summary":"Delete User Role Subscription",
+            "description":"The operation allows to delete an user role subscription within the company.",
+            "operationId":"Delete User Role Subscription",          
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"companyId",
+                  "in":"path",
+                  "description":"Context company identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"userId",
+                  "in":"path",
+                  "description":"User identifier. Data type: String. Maximum length: 20",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"serviceId",
+                  "in":"path",
+                  "description":"Service instance identifier. Data type: String. Maximum length: 10",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"roleId",
+                  "in":"path",
+                  "description":"Role id",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Deleted - User role subscription deleted successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/ResponseDesc"
+                  }
+               },
+               "400":{
+                  "description":"Bad request - One of the request input is not valid. API message: Exception occurred while creating / deleting the Subscription for user :{}. The given user is Inactive",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "404":{
+                  "description":"Company not found. API message: 1) Company Id : {} does not exist within the system. 2) User information could not be found for the input data. 3) No User available for a given company : {}. 4) Data does not exist in the system for the given input : {}",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               },
+               "500":{
+                  "description":"User Role Subscriptions delete failed due to internal server issue. API message: Internal server error - Error occurred while deleting User Role Subscriptions",
+                  "schema":{
+                     "items": {
+						"$ref": "#/definitions/ErrorResponse"
+					 }
+                  }
+               }
+            }
+         }
+      }   
+   },
+   "definitions":{
+      "ActivityLogType":{
+         "type":"object",
+         "properties":{
+            "createTimeStamp":{
+               "type":"string",
+               "description":"Specifices the timestamp when the Entity is created"
+            },
+            "createdBy":{
+               "type":"string",
+               "description":"Specifies the user who has created the Entity"
+            },
+            "modifiedBy":{
+               "type":"string",
+               "description":"Specifies the user who has lastly modified the Entity"
+            },
+            "modifyTimeStamp":{
+               "type":"string",
+               "description":"Specifies the timestamp when the Entity has been last modified"
+            }
+         }
+      },
+      "Address":{
+         "type":"object",
+         "required":[
+            "addressLine1",
+            "city",
+            "countryCode",
+            "postalCode",
+            "state"
+         ],
+         "properties":{
+            "addressLine1":{
+               "type":"string",
+               "description":"Address Line 1"
+            },
+            "addressLine2":{
+               "type":"string",
+               "description":"Address Line 2"
+            },
+            "city":{
+               "type":"string",
+               "description":"Company city"
+            },
+            "countryCode":{
+               "type":"string",
+               "description":"Company ISO country code"
+            },
+            "postalCode":{
+               "type":"string",
+               "description":"Company postal code, Required for US, UK and Canada"
+            },
+            "state":{
+               "type":"string",
+               "description":"Company state"
+            }
+         }
+      },
+      "BaseTradingAddressType":{
+         "type":"object",
+         "required":[
+            "address"
+         ],
+         "properties":{
+            "address":{
+               "type":"string"
+            },
+            "alias":{
+               "type":"string"
+            },
+            "qualifier":{
+               "type":"string"
+            }
+         }
+      },
+      "BillingSplitsType":{
+         "type":"object",
+         "properties":{
+            "connectOutPayee":{
+               "type":"string",
+               "description":"SENDER or RECEIVER"
+            },
+            "receivePayee":{
+               "type":"string",
+               "description":"Who pays for the receiving side of the transaction charge. Value is either SENDER or RECEIVER."
+            },
+            "sendPayee":{
+               "type":"string",
+               "description":"Who pays for the sending side of the transaction charge. Value is either SENDER or RECEIVER."
+            },
+            "storagePayee":{
+               "type":"string",
+               "description":"Who pays for the receiver mailbox storage charge. Value is either SENDER or RECEIVER."
+            }
+         }
+      },
+      "CompanyDetails":{
+         "type":"object",
+         "properties":{
+            "activityLog":{
+               "description":"Company creator details",
+               "$ref":"#/definitions/ActivityLogType"
+            },
+            "address":{
+               "description":"Company postal address",
+               "$ref":"#/definitions/Address"
+            },
+            "companyId":{
+               "type":"string",
+               "description":"Company identifier"
+            },
+            "companyName":{
+               "type":"string",
+               "description":"Company name"
+            },
+            "companyWebsiteURL":{
+               "type":"string",
+               "description":"WebSite url of the company"
+            },
+            "dunsNumber":{
+               "type":"string",
+               "description":"Company DUNS number, format xx-xxx-xxxx, represented in numeric"
+            },
+            "externalRef":{
+               "type":"array",
+               "description":"External Reference is an unique identifier for the company. This can be of Type - OLBBPortalCompanyID, CPGID with a corresponding ID value",
+               "items":{
+                  "$ref":"#/definitions/ExternalReference"
+               }
+            },
+            "globalCustomerId":{
+               "type":"string",
+               "description":"Company global customer Id uniquely identifies the company across the multiple systems"
+            },
+            "globalLocationNumber":{
+               "type":"string",
+               "description":"Company global location number"
+            },
+            "industryType":{
+               "type":"string",
+               "description":"Company industry catagory"
+            },
+            "isHierarchySupported":{
+               "type":"string",
+               "description":"Company hierarchy supported",
+               "enum":[
+                  "true",
+                  "false"
+               ]
+            },
+            "isTestCompany":{
+               "type":"string",
+               "description":"Test company corresponds to non billable company",
+               "enum":[
+                  "true",
+                  "false"
+               ]
+            },
+            "parentCompanyId":{
+               "type":"string",
+               "description":"Parent company identifier"
+            },
+            "status":{
+               "type":"string",
+               "description":"Company status could be active or inactive"
+            },
+            "ucceanNumber":{
+               "type":"string",
+               "description":"Company UCCEAN number is required if the company is subscribed to ASN service"
+            }
+         }
+      },
+      "ConstituteResponse":{
+         "type":"object",
+         "properties":{
+            "description":{
+               "type":"string",
+               "description":"Description of the resource"
+            },
+            "link":{
+               "type":"string",
+               "description":"Url to find the resource"
+            },
+            "uniqueId":{
+               "type":"string",
+               "description":"Unique identifier to represent the genereted / target resource"
+            }
+         }
+      },
+      "Contact":{
+         "type":"object",
+         "required":[
+            "email",
+            "phoneNumber"
+         ],
+         "properties":{
+            "email":{
+               "type":"string",
+               "description":"Email"
+            },
+            "faxNumber":{
+               "type":"string",
+               "description":"Fax Number"
+            },
+            "mobile":{
+               "type":"string",
+               "description":"Mobile"
+            },
+            "phoneNumber":{
+               "type":"string",
+               "description":"Phone Number"
+            },
+            "phoneNumberExtention":{
+               "type":"string",
+               "description":"Phone Number Extention"
+            }
+         }
+      },
+      "CustomFieldsAnswers":{
+         "type":"object",
+         "properties":{
+            "answers":{
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "customFieldId":{
+               "type":"string"
+            }
+         }
+      },
+      "CustomFieldsAnswersListType":{
+         "type":"object",
+         "properties":{
+            "categoryName":{
+               "type":"string"
+            },
+            "customFieldsAnswers":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CustomFieldsAnswers"
+               }
+            }
+         }
+      },
+      "ErrorResponse":{
+         "type":"object",
+         "properties":{
+            "errorCode":{
+               "type":"string"
+            },
+            "errorDescription":{
+               "type":"string"
+            },
+            "errorId":{
+               "type":"string"
+            },
+            "errorMessage":{
+               "type":"string"
+            },
+            "link":{
+               "type":"string"
+            },
+            "processingReference":{
+               "type":"string"
+            }
+         }
+      },
+      "ExternalReference":{
+         "type":"object",
+         "properties":{
+            "key":{
+               "type":"string",
+               "description":"Key could be OLBB Portal Company ID, CPGID"
+            },
+            "value":{
+               "type":"string",
+               "description":"Value is the corresponding value of key"
+            }
+         }
+      },
+      "Hint":{
+         "type":"object",
+         "required":[
+            "answer",
+            "question"
+         ],
+         "properties":{
+            "answer":{
+               "type":"string",
+               "description":"Hint answer for resetting the user password"
+            },
+            "question":{
+               "type":"string",
+               "description":"Hint question for resetting the user password"
+            }
+         }
+      },
+      "ModifyTradingPartnershipType":{
+         "type":"object",
+         "required":[
+            "reasonForRejection"
+         ],
+         "properties":{
+            "billingInfo":{
+               "$ref":"#/definitions/BillingSplitsType"
+            },
+            "modifyStatus":{
+               "type":"string",
+               "description":"Modify the status of trading partner relationship established. Value is either ACTIVE or REJECT"
+            },
+            "reasonForRejection":{
+               "type":"string"
+            }
+         }
+      },
+      "ModifyUser":{
+         "type":"object",
+         "properties":{
+            "address":{
+               "description":"Company postal address",
+               "$ref":"#/definitions/Address"
+            },
+            "contactInformation":{
+               "description":"Company contact information",
+               "$ref":"#/definitions/Contact"
+            },
+            "firstName":{
+               "type":"string",
+               "description":"User first name"
+            },
+            "isConsentClause":{
+               "type":"string",
+               "description":"Consent clause to show up in TGO. Allowed values: Yes / No"
+            },
+            "isDayLightSavingsTimeObserved":{
+               "type":"string",
+               "description":"Daylight savings time observed. Allowed values: Yes / No"
+            },
+            "isRequiredOpenTextMarketingMaterials":{
+               "type":"string",
+               "description":"Required Opentext marketing materials. Allowed values: Yes / No"
+            },
+            "lastName":{
+               "type":"string",
+               "description":"User last name"
+            },
+            "loginId":{
+               "type":"string",
+               "description":"User Login Id, should be an valid email format"
+            },
+            "preferredDateFormat":{
+               "type":"string",
+               "description":"User Preferred Date Format in TGO"
+            },
+            "preferredLanguage":{
+               "type":"string",
+               "description":"User Preferred Language, specify the Language in ISO code"
+            },
+            "preferredTimezone":{
+               "type":"string",
+               "description":"User time zone, refer to documation for the time zone format"
+            },
+            "status":{
+               "type":"string",
+               "description":"User Status in TGO. Allowed values: Active / Inactive"
+            },
+            "userPasswordHint":{
+               "description":"User password hint question and answers",
+               "$ref":"#/definitions/UserPasswordHint"
+            }
+         }
+      },
+      "PermissionType":{
+         "type":"object",
+         "properties":{
+            "name":{
+               "type":"string"
+            },
+            "scopeLevel":{
+               "type":"string"
+            },
+            "scopeValue":{
+               "type":"string"
+            },
+            "serviceInstanceMap":{
+               "type":"string"
+            },
+            "target":{
+               "type":"string"
+            }
+         }
+      },
+      "ResponseDesc":{
+         "type":"object",
+         "properties":{
+            "description":{
+               "type":"string"
+            }
+         }
+      },
+      "Role":{
+         "type":"object",
+         "required":[
+            "id"
+         ],
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"An unique Id to idenfity an User Role in the system. Strictly Integer"
+            }
+         }
+      },
+      "RoleDetails":{
+         "type":"object",
+         "properties":{
+            "displayName":{
+               "type":"string",
+               "description":"Role name based on locale"
+            },
+            "id":{
+               "type":"string",
+               "description":"An unique Id to idenfity an User Role in the system"
+            },
+            "isAutoGrant":{
+               "type":"string",
+               "description":"Specifices whether the role is granted automally when the user is subscribed to the service"
+            },
+            "isSubscribed":{
+               "type":"string",
+               "description":"Is service instance subscribed with user"
+            },
+            "name":{
+               "type":"string",
+               "description":"An unique name to idenfity an User Role in the system"
+            }
+         }
+      },
+      "Service":{
+         "type":"object",
+         "required":[
+            "id",
+            "roles"
+         ],
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"Service Instance Id. Strictly Integer"
+            },
+            "roles":{
+               "type":"array",
+               "description":"Role payload details",
+               "items":{
+                  "$ref":"#/definitions/Role"
+               }
+            }
+         }
+      },
+	  "ChildServiceDetails":{
+         "type":"object",       
+         "properties":{
+            "id":{
+               "description":"Child service instances, which is List of ServiceDetails",
+			   "items":{
+                  "$ref":"#/definitions/ServiceDetails"
+               }
+            }         
+         }
+      },
+      "ServiceDetails":{
+         "type":"object",
+         "properties":{
+            "childServices":{
+               "type":"array",
+               "description":"Child service instances, which is list of ServiceDetails (Object returned by this API)",
+               "items":{
+                  "$ref":"#/definitions/ChildServiceDetails"
+               }
+            },
+            "displayName":{
+               "type":"string",
+               "description":"Service instance display name"
+            },
+            "id":{
+               "type":"string",
+               "description":"Service instance Id"
+            },
+            "isAutoGrant":{
+               "type":"string",
+               "description":"Specifices whether the service instance is granted automally when the user is subscribed to the service"
+            },
+            "isSubscribed":{
+               "type":"string",
+               "description":"Specifices whether the service instance is subscribed with user"
+            },
+            "map":{
+               "type":"string",
+               "description":"Service instance map"
+            },
+            "name":{
+               "type":"string",
+               "description":"Service instance name"
+            },
+            "roles":{
+               "type":"array",
+               "description":"User role details within service instance",
+               "items":{
+                  "$ref":"#/definitions/RoleDetails"
+               }
+            }
+         }
+      },
+      "SuccessResponse":{
+         "type":"object",
+         "properties":{
+            "description":{
+               "type":"string"
+            },
+            "uniqueId":{
+               "type":"string"
+            }
+         }
+      },
+      "TPDirectoryDetailsType":{
+         "type":"object",
+         "properties":{
+            "bprId":{
+               "type":"string",
+			   "description": "Business process relationship Identifier. Maximum length: 20"
+            },
+            "facadeId":{
+               "type":"string",
+			   "description": "Facade Identifier of Company. Maximum length: 50"
+            },
+            "partnerCompanyDisplayName":{
+               "type":"string",
+			   "description": "Partner company Identifier. Maximum length: 20"
+            },
+            "partnerCompanyId":{
+               "type":"string",
+			   "description": "Partner company name. Maximum length: 100"
+            },
+            "partnerCompanyName":{
+               "type":"string",
+			   "description": "Partner company display name. Maximum length: 100"
+            },
+            "partnershipActivationDate":{
+               "type":"string",
+			   "description": "Partner company status. Returned values: ACTIVE, PENDING or REJECTED."
+            },
+            "partnershipStatus":{
+               "type":"string",
+			   "description": "Trading partnership activation date. Date format: DD/MM/YYYY"
+            }
+         }
+      },
+      "TradingAddressType":{
+         "type":"object",
+         "required":[
+            "address"
+         ],
+         "properties":{
+            "address":{
+               "type":"string"
+            },
+            "alias":{
+               "type":"string"
+            },
+            "parentTradingAddress":{
+               "$ref":"#/definitions/BaseTradingAddressType"
+            },
+            "qualifier":{
+               "type":"string"
+            }
+         }
+      },
+      "TradingPartnershipDetailsType":{
+         "type":"object",
+         "required":[
+            "billingInfo",
+            "ownerTradingAddress",
+            "partnerTradingAddress",
+            "partnershipDirection",
+            "status",
+            "tradingPartnerRelationshipId"
+         ],
+         "properties":{
+            "activityLog":{
+               "$ref":"#/definitions/ActivityLogType"
+            },
+            "billingInfo":{
+               "$ref":"#/definitions/BillingSplitsType"
+            },
+            "businessPartnerRelationshipId":{
+               "type":"string"
+            },
+            "ownerCompanyId":{
+               "type":"string"
+            },
+            "ownerCompanyName":{
+               "type":"string"
+            },
+            "ownerTradingAddress":{
+               "$ref":"#/definitions/TradingAddressType"
+            },
+            "partnerAlias":{
+               "type":"string"
+            },
+            "partnerCompanyId":{
+               "type":"string"
+            },
+            "partnerCompanyName":{
+               "type":"string"
+            },
+            "partnerTradingAddress":{
+               "$ref":"#/definitions/TradingAddressType"
+            },
+            "partnershipDirection":{
+               "type":"string"
+            },
+            "solutionId":{
+               "type":"string"
+            },
+            "status":{
+               "type":"string"
+            },
+            "tradingPartnerRelationshipId":{
+               "type":"string"
+            },
+            "tradingPartnerRelationshipType":{
+               "type":"string"
+            },
+            "yourAlias":{
+               "type":"string"
+            }
+         }
+      },
+      "TradingPartnershipType":{
+         "type":"object",
+         "required":[
+            "billingInfo",
+            "ownerTradingAddress",
+            "partnerTradingAddress",
+            "partnershipDirection",
+            "status"
+         ],
+         "properties":{
+            "billingInfo":{
+               "$ref":"#/definitions/BillingSplitsType"
+            },
+            "ownerTradingAddress":{
+               "$ref":"#/definitions/TradingAddressType"
+            },
+            "partnerAlias":{
+               "type":"string"
+            },
+            "partnerTradingAddress":{
+               "$ref":"#/definitions/TradingAddressType"
+            },
+            "partnershipDirection":{
+               "type":"string"
+            },
+            "solutionId":{
+               "type":"string"
+            },
+            "status":{
+               "type":"string",
+               "description":"Status of trading partner relationship established. Value is either ACTIVE or PENDING"
+            },
+            "yourAlias":{
+               "type":"string"
+            }
+         }
+      },
+      "User":{
+         "type":"object",
+         "required":[
+            "address",
+            "contactInformation",
+            "firstName",
+            "lastName",
+            "loginId",
+            "preferredDateFormat",
+            "preferredLanguage",
+            "preferredTimezone",
+            "userPasswordHint"
+         ],
+         "properties":{
+            "address":{
+               "description":"Company postal address",
+               "$ref":"#/definitions/Address"
+            },
+            "contactInformation":{
+               "description":"Company contact information",
+               "$ref":"#/definitions/Contact"
+            },
+            "firstName":{
+               "type":"string",
+               "description":"User first name"
+            },
+            "isConsentClause":{
+               "type":"string",
+               "description":"Consent clause to show up in TGO. Allowed values: Yes / No"
+            },
+            "isDayLightSavingsTimeObserved":{
+               "type":"string",
+               "description":"Daylight savings time observed. Allowed values: Yes / No"
+            },
+            "isRequiredOpenTextMarketingMaterials":{
+               "type":"string",
+               "description":"Required Opentext marketing materials. Allowed values: Yes / No"
+            },
+            "lastName":{
+               "type":"string",
+               "description":"User last name"
+            },
+            "loginId":{
+               "type":"string",
+               "description":"User Login Id, should be an valid email format"
+            },
+            "loginPassword":{
+               "type":"string",
+               "description":"Password cannot be the same as User Id (used to login). See TG default password policy"
+            },
+            "preferredDateFormat":{
+               "type":"string",
+               "description":"User Preferred Date Format in TGO"
+            },
+            "preferredLanguage":{
+               "type":"string",
+               "description":"User Preferred Language, specify the Language in ISO code"
+            },
+            "preferredTimezone":{
+               "type":"string",
+               "description":"User time zone, refer to documation for the time zone format"
+            },
+            "type":{
+               "type":"string",
+               "description":"Specify this user type as 'Machine' or 'Web'"
+            },
+            "userPasswordHint":{
+               "description":"User password hint question and answers",
+               "$ref":"#/definitions/UserPasswordHint"
+            }
+         }
+      },
+      "UserDetails":{
+         "type":"object",
+         "properties":{
+            "activityLog":{
+               "description":"User creator details",
+               "$ref":"#/definitions/ActivityLogType"
+            },
+            "address":{
+               "description":"Company postal address",
+               "$ref":"#/definitions/Address"
+            },
+            "companyId":{
+               "type":"string",
+               "description":"Company identifier"
+            },
+            "contactInformation":{
+               "description":"Company contact information",
+               "$ref":"#/definitions/Contact"
+            },
+            "firstName":{
+               "type":"string",
+               "description":"User first name"
+            },
+            "isConsentCause":{
+               "type":"string",
+               "description":"Consent clause to show up in TGO"
+            },
+            "isDayLightSavingsTimeObserved":{
+               "type":"string",
+               "description":"Daylight savings time observed"
+            },
+            "isRequiredOpenTextMarketingMaterials":{
+               "type":"string",
+               "description":"Required Opentext marketing materials"
+            },
+            "lastName":{
+               "type":"string",
+               "description":"User last name"
+            },
+            "loginId":{
+               "type":"string",
+               "description":"User Login Id, is an valid email format"
+            },
+            "preferredDateFormat":{
+               "type":"string",
+               "description":"User Preferred Date Format in TGO"
+            },
+            "preferredLanguage":{
+               "type":"string",
+               "description":"User Preferred Language, specified the Language in ISO code"
+            },
+            "preferredTimezone":{
+               "type":"string",
+               "description":"User  time zone, refer to documation for the time zone format"
+            },
+            "status":{
+               "type":"string",
+               "description":"User status"
+            },
+            "type":{
+               "type":"string",
+               "description":"Specify this user type as 'Machine' or 'Web'"
+            },
+            "userId":{
+               "type":"string",
+               "description":"User identifier"
+            }
+         }
+      },
+      "UserPasswordHint":{
+         "type":"object",
+         "properties":{
+            "pwdHintQuestionAnswer1":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            },
+            "pwdHintQuestionAnswer2":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            },
+            "pwdHintQuestionAnswer3":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            },
+            "pwdHintQuestionAnswer4":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            },
+            "pwdHintQuestionAnswer5":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            },
+            "pwdHintQuestionAnswer6":{
+               "description":"Secret Q and A used to retrieve forgotten password.",
+               "$ref":"#/definitions/Hint"
+            }
+         }
+      }
+   }
+}
