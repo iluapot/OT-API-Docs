@@ -1,0 +1,1043 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "description": "# Authentication\nHTTP Basic authentication is used for all requests.\n",
+    "title": "OpenText Messaging Email REST API",
+    "version": "V1"
+  },
+  "servers": [
+    {
+      "url": "https: //api.us.cloudmessaging.opentext.com",
+      "description": "Production North America"
+    },
+    {
+      "url": "https://api.eu.cloudmessaging.opentext.com",
+      "description": "Production EMEA"
+    },
+    {
+      "url": "https: //t2api.us.cloudmessaging.opentext.com",
+      "description": "Pre-production"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "description": "",
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "EmailRequest": {
+        "type": "object",
+        "required": [
+          "destinations",
+          "body"
+        ],
+        "properties": {
+          "options": {
+            "type": "object",
+            "description": "This contains all processing options for the job.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Options"
+              }
+            ]
+          },
+          "reports": {
+            "type": "object",
+            "description": "This contains the specification of any reports that are required by the job. If *reports* is present, only those reports specified will be generated. OpenText messaging system will not automatically request any additional report. If *reports* is not present, the system will act based on the user profile.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Reports"
+              }
+            ]
+          },
+          "destinations": {
+            "type": "array",
+            "description": "It contains one or more destinations.\n",
+            "items": {
+              "$ref": "#/components/schemas/EmailDestination"
+            }
+          },
+          "body": {
+            "type": "array",
+            "description": "This specifies the contents of the document being sent. The characteristics of documents that can be used are governed by the type of job being requested.\n",
+            "items": {
+              "$ref": "#/components/schemas/BodyDoc"
+            }
+          },
+          "attachments": {
+            "type": "array",
+            "description": "This specifies the contents of the document being sent as attachment or pull file. The characteristics of documents that can be used are governed by the type of job being requested.\n",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentsDoc"
+            }
+          }
+        },
+        "title": "EmailRequest"
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "example": "temp_message_id",
+            "description": "A client-supplied globally unique identifier of no more than 80 characters used to help prevent duplicate requests.\n"
+          },
+          "billing_code": {
+            "type": "string",
+            "example": "temp_billing_code",
+            "description": "A client-supplied string of up to 255 characters that can appear on an invoice.\n"
+          },
+          "customer_reference": {
+            "type": "string",
+            "example": "temp_customer_reference",
+            "description": "A client-supplied string of up to 255 characters.\n"
+          },
+          "email_options": {
+            "description": "This contains options relevant to email deliveries, and implies the use of messaging system.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmailOptions"
+              }
+            ]
+          }
+        },
+        "title": "Options"
+      },
+      "Reports": {
+        "type": "object",
+        "properties": {
+          "delivery_report": {
+            "description": "Requests the delivery report for input request. The report may be sent to one or more destinations and the report template can be chosen.For messaging system it is a posting report, i.e. a report sent after all primary deliveries have completed. To order a completion report for messaging system, one must specify the FinalReport element.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DeliveryReport"
+              }
+            ]
+          },
+          "final_report": {
+            "description": "Requests a report on a job when a job completes. Jobs handled by messaging system are not \"complete\" until the job expires, since activity (e.g. pulls) may continue after deliveries are done.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FinalReport"
+              }
+            ]
+          },
+          "progress_report": {
+            "description": "This requests a series of reports generated after the job is set up and prior to job completion or expiration and at the specified intervals. Note that a user profile may contain interval information which is necessary in order to actually get progress reports. Unless that is set, ProgressReportIntervals must be specified here.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgressReport"
+              }
+            ]
+          }
+        },
+        "title": "Reports"
+      },
+      "DeliveryReport": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "detail",
+              "exception",
+              "conditional",
+              "pull"
+            ],
+            "description": "Specifies the type of report to be generated.Supported report types are summary, detail, exception, pull and conditional.\n"
+          },
+          "report_destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportDest"
+            }
+          }
+        },
+        "title": "DeliveryReport"
+      },
+      "FinalReport": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "detail",
+              "exception",
+              "conditional",
+              "pull",
+              "badaddress"
+            ],
+            "description": "Specifies the type of report to be generated.Supported report types are summary, detail, exception, pull, conditional and badaddress.\n"
+          },
+          "report_destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportDest"
+            }
+          }
+        },
+        "title": "FinalReport"
+      },
+      "ProgressReport": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "detail",
+              "exception",
+              "conditional",
+              "pull",
+              "badaddress"
+            ],
+            "description": "Specifies the type of report to be generated.Supported report types are summary, detail, exception, pull, badaddress and conditional.\n"
+          },
+          "intervals": {
+            "type": "string",
+            "example": "5 10 15 20",
+            "pattern": "^([1-5]?[1-9]|[1-6]0)(\\\\s([1-5]?[1-9]|[1-6]0))*$",
+            "description": "This value is a space-separated list of numbers indicating the intervals, in minutes, between progress report generation. For example, the value of \"5 10 15 11\" indicates that the first report should be generated 5 minutes after the base time indicated by the ProgressReportBase element, another one 10 minutes later, the third one 15 minutes after the second one, etc.\n  \n  Unless these intervals are set in the user's profile, this element is required to actually get progress reports.\n"
+          },
+          "report_destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportDest"
+            }
+          }
+        },
+        "title": "ProgressReport"
+      },
+      "_url": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "description": "Contains report destination for URL address type URL maximum length is configurable through application properties file.Allowed default length is 255 bytes.\n"
+        },
+        "example": {
+          "url": "http://data.example.com"
+        }
+      },
+      "ReportDest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/_url"
+          }
+        ],
+        "additionalProperties": false,
+        "title": "ReportDest"
+      },
+      "EmailDestination": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "example": "ref001",
+            "description": "A client-supplied string of up to 20 characters used to identify the recipient.\n"
+          },
+          "email": {
+            "type": "string",
+            "example": "example@org.com",
+            "description": "The recipient email address. \n"
+          },
+          "inserts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Insert"
+            }
+          },
+          "display_to": {
+            "type": "string",
+            "description": "Comma separated email addresses for each receipient to be display in TO field of email delivery.\n"
+          },
+          "display_cc": {
+            "type": "string",
+            "description": "Comma separated email addresses for each receipient to be display in CC field of email delivery.\n"
+          }
+        },
+        "title": "EmailDestination"
+      },
+      "EmailOptions": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "A string to be used as the subject for email.",
+            "example": " Sample Email Subject"
+          },
+          "from_display_name": {
+            "type": "string",
+            "description": "Sets the display name portion of the from address to be used in email deliveries.",
+            "example": "sample_display_name"
+          },
+          "forward_reply": {
+            "type": "string",
+            "description": "Sets the address to which messaging system will forward replies to email. Note that this controls a setting for the job in the messaging system.It does NOT appear in the delivered email, and is NOT the same as the usual email \"reply\" address.",
+            "example": "abc@ot.com"
+          },
+          "charset": {
+            "type": "string",
+            "description": "Indicates the encoding of all the attached documents unless explicitly overridden. This value should be an ISO character set name.",
+            "example": "ISO-8859-1"
+          },
+          "pull_password": {
+            "type": "string",
+            "description": "Specifies a password to be required for all pulls.",
+            "example": 123456
+          },
+          "html_open_tracking": {
+            "type": "string",
+            "description": "This feature allows tracking whether an HTML recipient has \"opened\" the message or viewed it in the preview pane of the receiving e-mail software.\n  Acceptable values with descriptions are mentioned below.\n  \n\n   `none`: Indicates that no open tracking is required. This is equivalent to omitting the HTMLOpenTracking element.\n    \n  \n   `top`: Messaging system will add a clear (transparent) gif image at the very top of HTML document and may shift the message down by a few lines.\n  \n   `bottom`: The clear gif will be placed at the very bottom of HTML document and will not shift the message.\n  \n  ",
+            "example": "top"
+          },
+          "expiration_days": {
+            "type": "integer",
+            "description": "OpenText stops collecting job statistics such as number of pulls, html open tracking, opt outs etc., and send final report.\n",
+            "example": 14
+          },
+          "display_to": {
+            "type": "string",
+            "description": "Comma separated email addresses for all receipients to be displayed in TO filed of email delivery.\n",
+            "example": "abc@ot.com,ex@ot.com"
+          },
+          "display_cc": {
+            "type": "string",
+            "description": "Comma separated email addresses for all receipients to be displayed in CC filed of email delivery.\n",
+            "example": "abc@ot.com,ex@ot.com"
+          }
+        },
+        "title": "EmailOptions"
+      },
+      "Insert": {
+        "type": "object",
+        "required": [
+          "id",
+          "value"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "description": "An integer between 1 and 999 indicating the ordinal value of the insert.\n"
+          },
+          "value": {
+            "type": "string",
+            "example": "destination_insert_value",
+            "description": "A client-supplied string of up to 255 characters.\n"
+          }
+        },
+        "title": "Insert"
+      },
+      "BodyDoc": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "temp.txt",
+            "description": "A client-supplied filename. This value should be unique within a given request.\n"
+          },
+          "type": {
+            "type": "string",
+            "example": "text",
+            "description": "Indicates the format of the document. Supported document types are text and HTML.\n"
+          },
+          "charset": {
+            "type": "string",
+            "example": "UTF-8",
+            "description": "The language encoding (character set) of the document, if needed, for proper interpretation.\n"
+          },
+          "data": {
+            "type": "string",
+            "example": "VGhpcyBpcyBzYW1wbGUgdGV4dCBkYXRh",
+            "description": "The document contents; base64 encoded.\n"
+          }
+        },
+        "title": "BodyDoc"
+      },
+      "AttachmentsDoc": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "temp.txt",
+            "pattern": "[\\/:\"*?<>|]+",
+            "description": "A client-supplied filename. This value should be unique within a given request.\n"
+          },
+          "type": {
+            "type": "string",
+            "example": "text",
+            "description": "Indicates the format of the document. Supported document types  with descriptions are mentioned below\n\n`BMP` :  .bmp image.\n\n`text` : data to be treated as text.\n\n`MSW` : Microsoft Word.\n\n`GIF` : GIF image file.\n\n`HTML` : Hyper Text Markup Language.\n\n`JPEG` : JPEG image file.\n\n`MPP` : Microsoft Project File.\n\n`PCL` : HP Printer control Language.\n\n`PDF` : Adobe Portable Document Format.\n\n`PNG` : PNG image file.\n\n`PPT` : PowerPoint document.\n\n`PS` :  PostScript.\n\n`PUB` : Microsoft Publisher document.\n\n`RTF` : Rich Text Format.\n\n`TIFF` : Tagged Image File Format input.\n\n`VSD` : Visio document.\n\n`XAR` : Standard UNIX ar archive.\n\n`XLS` : Microsoft Excel Spreadsheet.\n\n`unspec` : In some cases the file format is unimportant, e.g. for e-mail attachments.\n"
+          },
+          "charset": {
+            "type": "string",
+            "example": "UTF-8",
+            "description": "The language encoding (character set) of the document, if needed, for proper interpretation.\n"
+          },
+          "data": {
+            "type": "string",
+            "example": "VGhpcyBpcyBzYW1wbGUgdGV4dCBkYXRh",
+            "description": "The document contents; base64 encoded.\n"
+          },
+          "pullfile_options": {
+            "description": "Applicable if attachment is a pull file.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PullfileOptions"
+              }
+            ]
+          }
+        },
+        "title": "AttachmentsDoc"
+      },
+      "PullfileOptions": {
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Enables/disables the use of attachment as pull file.\n",
+            "example": true
+          },
+          "autopull": {
+            "type": "boolean",
+            "description": "May have the values \"true\" or \"false\". When set to \"true\", messaging system automatically creates pull links or completes any that message body already contains. The default value is normally \"true\".\n",
+            "example": true
+          },
+          "password_needed": {
+            "type": "boolean",
+            "description": "Accepts the values of \"true\" or \"false\". Indicates whether password protection is required for the current pull file.\n",
+            "example": true
+          }
+        }
+      },
+      "EmailSubmitResponse": {
+        "type": "object",
+        "required": [
+          "job_id"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "example": "xsi-1234567",
+            "description": "Unique job identifier\n"
+          }
+        },
+        "title": "EmailSubmitResponse"
+      },
+      "EmailDeliveryDetails": {
+        "type": "array",
+        "required": [
+          "email"
+        ],
+        "items": {
+          "properties": {
+            "ref_base64": {
+              "type": "string",
+              "example": "RkFYT1VU",
+              "format": "base64",
+              "description": "The Ref value for the destination in base64 encoded format, sometimes used as an identifier for the destination."
+            },
+            "email": {
+              "type": "string",
+              "example": "user@example.com",
+              "description": "Destination email address."
+            },
+            "delivery_attempts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EmailDeliveryAttempts"
+              }
+            },
+            "events": {
+              "$ref": "#/components/schemas/EmailEvents"
+            }
+          }
+        }
+      },
+      "EmailJobState": {
+        "type": "string"
+      },
+      "EmailAttachment": {
+        "type": "object",
+        "properties": {
+          "attachment_id": {
+            "type": "integer",
+            "example": -1,
+            "description": "An identifier for the attachment being retrieved."
+          },
+          "name_base64": {
+            "type": "string",
+            "example": "b3Blbi5naWY=",
+            "description": "Name associated with attachment being retrieved in base64 encoded format."
+          },
+          "size": {
+            "type": "integer",
+            "example": 1,
+            "description": "Size of the attachment being retrieved."
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmailFlags"
+            }
+          },
+          "content_type": {
+            "type": "string",
+            "example": "image/gif"
+          },
+          "total_pull_count": {
+            "type": "integer",
+            "example": 1,
+            "description": "Total number of times the attachment has been \"pulled\"."
+          },
+          "distinct_pull_count": {
+            "type": "integer",
+            "example": 1,
+            "description": "Number of distinct destinations for which the attachment has been \"pulled\"."
+          }
+        }
+      },
+      "EmailFlags": {
+        "type": "string",
+        "enum": [
+          "push",
+          "pull",
+          "clickto",
+          "trackable",
+          "untrackable",
+          "open",
+          "image",
+          "embedded"
+        ]
+      },
+      "EmailDeliveryAttempts": {
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "Sent",
+              "Pending",
+              "Submitted",
+              "InProcess",
+              "Error",
+              "Cancelled",
+              "Held",
+              "Expired"
+            ],
+            "description": "Item level states show the status of the delivery of a particular items.You would see these states in FaxStatus response.  Although there are 8 different possible states, some of them almost never occur.\n\n`Pending` : Item is awaiting delivery.   \n\n`Submitted` : Should be treated as Pending, but this is not a state that I have ever seen in actual use. \n\n`InProcess` : Item is actively being delivered.  This state is very rarely if ever used. \n\n`Error` : An error has occured in attempting to delivery this item.  The item is not actively being attempted, although subsequent retry logic could cause it to be re-attempted.  When you see this state, you should also investigate the \"gammacode\" attribute of the item to see why it failed - the document available in link https://apiforums.easylink.com/system/files/gammacodes.pdf explains the different gamma codes.\n\n`Cancelled` : Delivery of the item was cancelled before delivery was attempted.This could occur because of a problem with the destination address (e.g. an email address in an invalid format), an address block, or a user-initiated cancellation of the job.  As above, the \"gamma code\" attribute gives more details on the reason for the cancellation. \n\n`Held` : The item's delivery is on hold.  This is another state that rarely if ever occurs.\n\n`Sent` : The item was successfully sent.This is what we want to see!\n\n`Expired` : The item was not attempted before the job expired.  Jobs can expire due to the specification of an expiration time, or also due to blackout restrictions (preventing delivery of voice jobs after certain times of day).\n"
+          },
+          "gamma_code": {
+            "type": "integer",
+            "example": 0,
+            "description": "A code that may provide more detailed status information, mainly applicable to the Error state.A list of codes and their respective meanings can be found in below link https://apiforums.easylink.com/system/files/gammacodes.pdf"
+          },
+          "first_attempt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10: 51: 00.000Z",
+            "description": "The date/time of the first delivery attempt (ISO 8601 format)."
+          }
+        },
+        "title": "EmailDeliveryAttempts"
+      },
+      "EmailStatusResponse": {
+        "type": "object",
+        "required": [
+          "job_id",
+          "job_state"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "example": "xsi-1234567",
+            "description": "Unique job identifier"
+          },
+          "billing_code_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "dGVtcF9iaWxsX2NvZGU=",
+            "description": "A client-supplied string of up to 255 characters in base64 encoded format that can appear on an invoice."
+          },
+          "customer_reference_base64": {
+            "type": "string",
+            "format": "byte",
+            "example": "bXJhX2N1c3RfcmVm",
+            "description": "A client-supplied metadata string of up to 255 characters in base64 encoded format."
+          },
+          "entry_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "The date/time job entered the system. (ISO 8601 format)."
+          },
+          "job_state": {
+            "type": "array",
+            "description": "JobState can have many different values, but the key ones that relate to the overall state of the job are below.Also note that it is possible for more than one of these states to be seen together (for instance, Processing and Error could show up at the same time, indicating an error in the processing step).\n\n`AwaitingSetup` : job has been received but has not yet started the setup process.\n\n`Setup` : Job is in the midst of initial processing. \n\n`Processing` : Setup has completed and the system is performing the needed steps to prepare for delivery (usually conversion of input documents to TIFF for faxing).\n\n`AwaitingDelivery` : Processing is complete, and the job is ready to deliver.This state is usually seen for scheduled jobs, where the delivery is to happen in the future. \n\n`Delivering`: The job is actively delivering the content.\n\n\n `Posted` - Delivery is complete.The job may still be in process to wait\n  for future events (like email bouncebacks) and/or to generate a report.\n\n\n`Delivered` - Essentially the same as posted. \n\n`Reporting` - A report is being generated. \n\n`Complete` - The job (including any reporting included) is complete. \n\n`Error` - There is an error that is preventing the job from processing. \n\n`Cancelled` - A request has been made to cancel the job.This state does not indicate that the cancellation has fully finished though.The way to confirm that is to make sure the Complete state is also included. \n\n`Held` - The job has been held and is not processing.  This usually occurs as a result of usage quotas imposed by the finance/credit departments.\n",
+            "items": {
+              "$ref": "#/components/schemas/EmailJobState"
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+            "example": [
+              "Complete",
+              "Posted"
+            ]
+          },
+          "html_open_tracking": {
+            "$ref": "#/components/schemas/HtmlOpenTracking"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmailAttachment"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "deliveries": {
+            "$ref": "#/components/schemas/EmailDeliveryDetails"
+          }
+        }
+      },
+      "EmailEvents": {
+        "type": "object",
+        "properties": {
+          "email_delivery_events": {
+            "type": "object",
+            "properties": {
+              "dsn": {
+                "description": "Record of receipt of a Delivery Status Notification (DSN) for this item. See RFC 2822 and RFC 1893 for details on the DSN components.\n",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EmailDsn"
+                  }
+                ]
+              },
+              "html_open": {
+                "$ref": "#/components/schemas/EmailHtmlOpen"
+              },
+              "opt_out": {
+                "description": "Record of a removal request (request for an address block) by the recipient of this item.\n",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EmailOptOut"
+                  }
+                ]
+              },
+              "pull": {
+                "$ref": "#/components/schemas/EmailPull"
+              }
+            }
+          }
+        }
+      },
+      "EmailDsn": {
+        "type": "object",
+        "properties": {
+          "event_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "Time when the DSN was received (ISO 8601 format)."
+          },
+          "value": {
+            "type": "string",
+            "description": "Numeric DSN status class.subject.detail value.",
+            "example": "2.1.5 (Destination address valid, used for positive delivery reports)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Contains any textual status data which may come back from the email MTA (Mail Transport Agent). The maximum length of the field will be 2 KB and *message* is URL encoded.\n",
+            "example": "This is a message"
+          },
+          "tags": {
+            "type": "string",
+            "description": "Used for the Message categorization.",
+            "example": "This is a tag"
+          }
+        }
+      },
+      "EmailHtmlOpen": {
+        "type": "array",
+        "description": "Record of html open tracking image pull event.\n",
+        "items": {
+          "$ref": "#/components/schemas/HtmlOpen"
+        }
+      },
+      "HtmlOpen": {
+        "type": "object",
+        "properties": {
+          "event_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "Time the message was opened (ISO 8601 format)."
+          }
+        }
+      },
+      "EmailOptOut": {
+        "type": "object",
+        "properties": {
+          "event_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "Time the removal request was processed(ISO 8601 format)."
+          }
+        }
+      },
+      "EmailPull": {
+        "type": "array",
+        "description": "Record of a document pull event.\n",
+        "items": {
+          "$ref": "#/components/schemas/Pull"
+        }
+      },
+      "Pull": {
+        "type": "object",
+        "properties": {
+          "event_time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-04-21T10:50:51.000Z",
+            "description": "Time the document was pulled(ISO 8601 format)."
+          },
+          "attachment_id": {
+            "type": "integer",
+            "description": "Indicates which attachment was pulled.",
+            "example": -1
+          }
+        }
+      },
+      "HtmlOpenTracking": {
+        "type": "object",
+        "properties": {
+          "total_open_count": {
+            "type": "integer",
+            "description": "Total number of times the html message has been opened.\n",
+            "example": 1
+          },
+          "distinct_open_count": {
+            "type": "integer",
+            "description": "Number of distinct recipients opened the html message.\n",
+            "example": 1
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error_code",
+          "error_message"
+        ],
+        "properties": {
+          "error_code": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          }
+        },
+        "title": "ErrorResponse"
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Send emails"
+    },
+    {
+      "name": "Email status"
+    },
+    {
+      "name": "Receive Email status via callback URL (Email status webhook)",
+      "description": "Users can receive status for a submitted Email request via a callback URL. \n\nThere are two ways to set the callback URL:\n\n1. Set the URL parameter for report destinations when submitting Email requests using the method /outbound/Email. Refer to the section \"Send Email\" in this document.\n\n2. Set the callback URL in the account profile by contacting customer support.\n\nWhen the callback URL is set via either of these methods, OpenText messaging service will post Email status as application/json to this end point.The schema is the same as in the response from \"Get Email status\" method except that the values of \"job_state\" parameter will not include \"complete\" even if all deliveries are complete.\n\nNote that account level setting will post Email status to the URL for all submitted Email requests. However, setting the URL when submitting Email request via \"/outbound/Email\" method will override the account level callback URL setting only for that request.\n"
+    },
+    {
+      "name": "Details on callbackURL",
+      "description": "# Authentication for callback URL\n\n  We support basic authentication and digest authentication for callback URLs. If you provide username and password, the OpenText messaging service will use them when making requests.\n  \n# Polling versus using callbacks (webhooks) for getting Email status\n\n  One can obtain Email status either via polling or via callback mechanism. There are pros and cons with each method. For example, polling can get status relatively quicker, but it requires sending many requests to the messaging service which can impact performance. Excessive polling can result in imposing rate limits by the OpenText messaging service to customer accounts to minimize performance impact. On the other hand, callback mechanism avoids such issues but requires a receiver setup by customers.\n  \n# Retry mechanism for webhook\n\n  The OpenText messaging service utilizes a robust mechanism when pushing Email status to your webhook URL. Our default retry algorithm works as outlined below. Note that attempt to alternate will be skipped if it is not configured.\n  \n   1. Attempt primary\n   2. Retry primary – after 10 mins\n   3. Retry primary – after another 10 mins\n   4. Attempt alternates\n   5. Retry alternate – after 10 mins\n   6. Retry alternate – after 10 mins\n   7. Wait for 1 min\n   8. Attempt primary\n   9. Retry primary – after 10 mins\n   10. Retry primary – after another 10 mins\n   11. Attempt alternates\n   12. Retry alternate – after 10 mins\n   13. Retry alternate – after 10 mins\n   14. Wait for 2 min\n   15. Retry primary – after 10 mins\n   16. Retry primary – after another 10 mins\n   17. Attempt alternates\n   18. Retry alternate – after 10 mins\n   19. Retry alternate – after 10 mins\n   20. Wait for 20 mins\n   21. Retry primary – after 10 mins\n   22. Retry primary – after another 10 mins\n   23. Attempt alternates\n   24. Retry alternate – after 10 mins\n   25. Retry alternate – after 10 mins\n"
+    }
+  ],
+  "paths": {
+    "/mra/v1/outbound/emails": {
+      "post": {
+        "tags": [
+          "Send emails"
+        ],
+        "summary": "Submit a email request",
+        "description": "Submitting a request to send an email requires use of pure JSON request body wherein the email metadata (recipient email address and user-specified options) and document's to be sent in email are part of the same JSON construct.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "Client supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)."
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Client supplied unique identifier,Returned in response if provided in request."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              },
+              "X-MRA-Duplicate-MessageId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Returned processing id of message_id , if it is previously used."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailSubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/mra/v1/outbound/emails/status": {
+      "get": {
+        "tags": [
+          "Email status"
+        ],
+        "summary": "Get Email status",
+        "deprecated": false,
+        "description": "Once an email request has been successfully accepted and a job ID is returned, this method allows users to request the information about the “job” as it is being processed by the OpenText messaging service.",
+        "parameters": [
+          {
+            "name": "X-MRA-SubmitId",
+            "in": "header",
+            "description": "Optional client supplied string to identify request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "query",
+            "description": "A string consists of “xdn-mrn”.Where xdn is domain name and mrn is job number.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "xsi-1234567"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-MRA-ProcessingID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "A String that uniquely identifies a request (created by application)"
+              },
+              "X-MRA-SubmitId": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Client supplied unique identifier, Returned in response if provided in request."
+              },
+              "X-MRA-RequestID": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Internally generated ID to identify and track the request."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailStatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
