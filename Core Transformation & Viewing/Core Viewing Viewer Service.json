@@ -1,0 +1,295 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Core Viewing Viewer Service",
+        "version": "1.0.0",
+        "description": "Enables advertising the available Core Viewing viewer web applications and then downloading them."
+    },
+    "tags": [
+        {
+            "name": "Admin"
+        },
+        {
+            "name": "Viewers"
+        }
+    ],
+    "servers": [
+        {
+            "url": "https://na-1-dev.api.opentext.com/viewer/api/v1",
+            "description": "Build & Test",
+            "variables": {}
+        },
+        {
+            "url": "https://na-1.api.opentext.com/viewer/api/v1",
+            "description": "NA Production",
+            "variables": {}
+        }
+    ],
+    "security": [
+        {
+            "tenant": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Return the service root",
+                "operationId": "getRoot",
+                "description": "This returns the REST API's root resource. From here, clients can discover, via HAL links, all of the API's available resources and their operations.\n",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Root"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Return the service version information",
+                "operationId": "getVersion",
+                "description": "This returns the service's version information, including major, minor, and patch/build version numbers.\n",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VersionJson"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Return the service health check",
+                "description": "This returns the service's overall health status, along with additional diagnostic state for various components and subsystems. The root object is intended to be an end-user visible label for the service. At various levels of the health resource are \"ok\" properties that represent the overall Boolean health status. Additional properties may be present allowing clients to learn the health of subsystems and their configuration.\n",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Health"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/viewers": {
+            "get": {
+                "summary": "Return all available viewers",
+                "description": "This returns a HAL collection of available viewer names. The viewer names are used to reference a specific loader resource that can be added to an HTML space as a <script> resource to load the specified viewer.\n",
+                "tags": [
+                    "Viewers"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Viewers"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/viewers/{viewer}/loader": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "viewer",
+                        "in": "path",
+                        "required": true,
+                        "description": "The name of the `viewer`",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Loads the named `viewer`",
+                "description": "This returns the named `viewer` web application's bootstrap JavaScript module that in turn dynamically loads viewer modules as needed into the user's browser. \n\nApplication integrations should put this REST resource URL into a script tag on one of their application HTML pages.\n",
+                "tags": [
+                    "Viewers"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/javascript": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "tenant": {
+                "type": "openIdConnect",
+                "openIdConnectUrl": "https://na-1-dev.api.opentext.com/tenants/$tenantId/.well-known/openid-configuration/"
+            }
+        },
+        "schemas": {
+            "HAL-LinkObject": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "templated": {
+                        "type": "boolean"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "deprecation": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "profile": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "hreflang": {
+                        "type": "string"
+                    }
+                }
+            },
+            "HAL-Curies": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "description": "Curried link",
+                    "properties": {
+                        "href": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "templated": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            },
+            "HalLinks": {
+                "type": "object",
+                "properties": {
+                    "_links": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "$ref": "#/components/schemas/HAL-LinkObject"
+                            },
+                            "curies": {
+                                "$ref": "#/components/schemas/HAL-Curies"
+                            }
+                        }
+                    }
+                }
+            },
+            "Root": {
+                "$ref": "#/components/schemas/HalLinks"
+            },
+            "VersionJson": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "version": {
+                                "type": "string"
+                            },
+                            "major": {
+                                "type": "string"
+                            },
+                            "minor": {
+                                "type": "string"
+                            },
+                            "build": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/HalLinks"
+                    }
+                ]
+            },
+            "Health": {
+                "type": "object",
+                "properties": {
+                    "OpenText Core Viewing Viewer Service": {
+                        "type": "object",
+                        "properties": {
+                            "ok": {
+                                "type": "boolean"
+                            },
+                            "version": {
+                                "type": "string"
+                            },
+                            "uptime": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "Viewers": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "_embedded": {
+                                "type": "object",
+                                "properties": {
+                                    "otv:get_viewers": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/HalLinks"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,792 @@
+---
+openapi: 3.0.0
+info:
+  title: Core Transformation Publication Service
+  version: 1.1.0
+  description: Submits requests to publishing agents to perform document conversions (according to a specified description) and returns conversion status and links to the published artifacts. The requests are placed into a job queue served by Core Transformation Publishing Agents. For example, this service could convert CAD or Office documents to PDF, TIFF, or TXT files as well as files in formats required by the Brava viewer.
+tags:
+  - name: Admin
+  - name: Publications
+servers:
+  - url: https://api.developer.opentext.com/publication/api/v1
+    description: Default server
+paths:
+  /:
+    get:
+      tags:
+        - Admin
+      summary: Return the service root
+      operationId: getRoot
+      description: |
+        This returns the REST API's root resource. From here, clients can discover, via HAL links, all of the API's available resources and their operations.
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RootHal'
+  /version:
+    get:
+      tags:
+        - Admin
+      summary: Return the service version information
+      description: |
+        This returns the service's version information, including major, minor, and patch/build version numbers.
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionJson'
+  /health:
+    get:
+      tags:
+        - Admin
+      summary: Return the service health check
+      description: |
+        This returns the service's overall health status, along with additional diagnostic state for various components and subsystems. The root object is intended to be an end-user visible label for the service. At various levels of the health resource are "ok" properties that represent the overall Boolean health status. Additional properties may be present allowing clients to learn the health of subsystems and their configuration.
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /publications:
+    post:
+      summary: Create a new publication
+      description: |
+        Creates a new `Publication` resource. Publications transform arbitrary collections of source documents (including artifacts produced from prior publications). Once created, a `Publication` resource can not be modified again by the client.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - create_publications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPublicationsRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetPublicationsIdHalResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Returns all publications
+      description: |
+        Returns all of the publications in this service. The route supports RQL query filters and operators.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - search_publications
+            - search_all_publications
+      parameters:
+        - name: embed
+          in: query
+          description: |
+            For paginated artifacts, embed links to the content for individual pages in the corresponding descriptors. The only value for `embed` supported by the service is 'pageLinks'
+          schema:
+            type: string
+            enum:
+              - page_links
+        - name: startPage
+          in: query
+          description: |
+            Sets the starting page index to provide with embedded page links when the `embed=pageLinks` query parameter is provided. Page indexes start at 0. If not specified, the default is '0'.
+          schema:
+            type: integer
+            minimum: 0
+        - name: maxPages
+          in: query
+          description: |
+            Sets the maximum number of embedded page links to provide when the `embed=pageLinks` query parameter is used. If not specified, all page links will be embedded.
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetPublicationsHalResponse'
+  /publications/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: embed
+        in: query
+        description: |
+          For paginated artifacts, embed links to the content for individual pages in the corresponding descriptors. The only value for `embed` supported by the service is 'pageLinks'
+        schema:
+          type: string
+          enum:
+            - pageLinks
+      - name: startPage
+        in: query
+        description: |
+          Sets the starting page index to provide with embedded page links when the `embed=pageLinks` query parameter is provided. Page indexes start at 0. If not specified, the default is '0'.
+        schema:
+          type: integer
+          minimum: 0
+      - name: maxPages
+        in: query
+        description: |
+          Sets the maximum number of embedded page links to provide when the `embed=pageLinks` query parameter is used. If not specified, all page links will be embedded.
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      summary: Return a publication
+      description: Returns a specific publication by id
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publication'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetPublicationsIdHalResponse'
+    delete:
+      summary: Removes a publication
+      description: Removes a specific `Publication` resource.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - delete_publications
+            - delete_any_publication
+      responses:
+        '204':
+          description: No content
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /publications/{id}/artifacts:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: embed
+        in: query
+        description: |
+          For paginated artifacts, embed links to the content for individual pages in the corresponding descriptors. The only value for `embed` supported by the service is 'pageLinks'
+        schema:
+          type: string
+          enum:
+            - page_links
+      - name: startPage
+        in: query
+        description: |
+          Sets the starting page index to provide with embedded page links when the `embed=pageLinks` query parameter is provided. Page indexes start at 0. If not specified, the default is '0'.
+        schema:
+          type: integer
+          minimum: 0
+      - name: maxPages
+        in: query
+        description: |
+          Sets the maximum number of embedded page links to provide when the `embed=pageLinks` query parameter is used. If not specified, all page links will be embedded.
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      summary: Return available artifact descriptors
+      description: >
+        Returns a collection of `ArtifactDescriptor` objects, each of which describes one kind of artifact associated with this publication. Each `ArtifactDescriptor` provides the artifact name, its mime type(s), whether it is currently available, whether the artifact is paginated (and if it is, what the last available page index is), a 'variant path' for uniquely identifying artifacts of the same kind but with different properties (e.g. thumbnails with different dimensions) in url paths, and an
+        object with the variant properties suitable for querying.
+
+        ### Note:
+
+        Be aware that artifacts with variants share common names (for example, "svg" or "thumbnails") and so are only uniquely identifiable in a query with a combination of the name and variant property values. The HAL links will always uniquely identify both the `ArtifactDescriptor` to learn publishing status, the /artifacts/pageLinks url path for paginated artifacts, and the url path to acquire the actual published artifact itself.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetArtifactsHalResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /publications/{id}/artifacts/{artifactName}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: artifactName
+        in: path
+        required: true
+        description: The name of the artifact
+        schema:
+          type: string
+      - name: embed
+        in: query
+        description: |
+          For paginated artifacts, embed links to the content for individual pages in the corresponding descriptors. The only value for `embed` supported by the service is 'pageLinks'
+        schema:
+          type: string
+          enum:
+            - page_links
+      - name: startPage
+        in: query
+        description: |
+          Sets the starting page index to provide with embedded page links when the `embed=pageLinks` query parameter is provided. Page indexes start at 0. If not specified, the default is '0'.
+        schema:
+          type: integer
+          minimum: 0
+      - name: maxPages
+        in: query
+        description: |
+          Sets the maximum number of embedded page links to provide when the `embed=pageLinks` query parameter is used. If not specified, all page links will be embedded.
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      summary: Returns artifact descriptor for the named artifact
+      description: >
+        Returns the `ArtifactDescriptor` object for {artifactName}, which describes that artifact kind associated with this publication. The `ArtifactDescriptor` provides the artifact name, its mime type(s), whether it is currently available, whether the artifact is paginated (and if it is, what the last available page index is), a 'variant path' for uniquely identifying artifacts of the same kind but with different properties (e.g. thumbnails with different dimensions) in url paths, and an
+        object with the variant properties suitable for querying.
+
+        ### Note:
+
+        Be aware that artifacts with variants share common names (for example, "svg" or "thumbnails") and so are only uniquely identifiable in a query with a combination of the name and variant property values. The HAL links will always uniquely identify both the `ArtifactDescriptor` to learn publishing status, the /artifacts/pageLinks url path for paginated artifacts, and the url path to acquire the actual published artifact itself.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetArtifactHalResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /publications/{id}/artifacts/{artifactName}{variantPath}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: artifactName
+        in: path
+        required: true
+        description: The name of the artifact
+        schema:
+          type: string
+      - name: variantPath
+        in: path
+        required: true
+        description: |
+          If the artifact has variants, its descriptors will provide paths that uniquely identify each different variant available for the artifact. Variant paths always start with a leading `/` character
+        schema:
+          type: string
+      - name: embed
+        in: query
+        description: |
+          For paginated artifacts, embed links to the content for individual pages in the corresponding descriptors. The only value for `embed` supported by the service is 'pageLinks'
+        schema:
+          type: string
+          enum:
+            - page_links
+      - name: startPage
+        in: query
+        description: |
+          Sets the starting page index to provide with embedded page links when the `embed=pageLinks` query parameter is provided. Page indexes start at 0. If not specified, the default is '0'.
+        schema:
+          type: integer
+          minimum: 0
+      - name: maxPages
+        in: query
+        description: |
+          Sets the maximum number of embedded page links to provide when the `embed=pageLinks` query parameter is used. If not specified, all page links will be embedded.
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      summary: Returns artifact descriptor for the named artifact
+      description: >
+        Returns the `ArtifactDescriptor` object for {artifactName} with {variantPath}, which describes that artifact variant associated with this publication. The `ArtifactDescriptor` provides the artifact name, its mime type(s), whether it is currently available, whether the artifact is paginated (and if it is, what the last available page index is), a 'variant path' for uniquely identifying artifacts of the same kind but with different properties (e.g. thumbnails with different dimensions) in
+        url paths, and an object with the variant properties suitable for querying.
+
+        ### Note:
+
+        Be aware that artifacts with variants share common names (for example, "svg" or "thumbnails") and so are only uniquely identifiable in a query with a combination of the name and variant property values. The HAL links will always uniquely identify both the `ArtifactDescriptor` to learn publishing status, the /artifacts/pageLinks url path for paginated artifacts, and the url path to acquire the actual published artifact itself.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetArtifactHalResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /publications/{id}/artifacts/content/{artifactName}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: artifactName
+        in: path
+        required: true
+        description: The name of the artifact
+        schema:
+          type: string
+    get:
+      summary: Return published artifacts
+      description: |
+        Returns a published artifact if the provided path uniquely identifies an artifact whose content is managed by the service. If the request does not uniquely identify an artifact, then the server will return HTTP status 300 with an empty body. If the artifact's content is not managed by the service, then the server will return HTTP status 404. If the request provides a Content-Type header that does not match the published artifact's mime type the server will respond with 415.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+        '300':
+          description: Multiple choices
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /publications/{id}/artifacts/content/{artifactName}{variantPath}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the `Publication` resource
+        schema:
+          type: string
+      - name: artifactName
+        in: path
+        required: true
+        description: The name of the artifact
+        schema:
+          type: string
+      - name: variantPath
+        in: path
+        required: true
+        description: |
+          If the artifact has variants, its descriptors will provide paths that uniquely identify each different variant available for the artifact. Variant paths always start with a leading `/` character
+        schema:
+          type: string
+    get:
+      summary: Return published artifact variants
+      description: >
+        Returns a published artifact if the provided path uniquely identifies an artifact whose content is managed by the service including the desired artifact variant. If the request does not uniquely identify an artifact, then the server will return HTTP status 300 with an empty body. If the artifact's content is not managed by the service, then the server will return HTTP status 404. If the request provides a Content-Type header that does not match the published artifact's mime type the
+        server will respond with 415. 
+
+        ### Note:
+
+        Be aware that artifacts with variants share common names (for example, "svg" or "thumbnails") and can only be uniquely identified by providing one of the available variant paths. The HAL links acquired from the /publications/{id}/artifacts resource will always uniquely identify published artifacts that are managed by the service.
+      tags:
+        - Publications
+      security:
+        - OAuth2:
+            - view_publications
+            - view_any_publication
+      responses:
+        '200':
+          description: Ok
+        '300':
+          description: Multiple choices
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: This API uses OAuth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://otdsauth-highland.dev.bp-paas.otxlab.net/oauth2/auth
+          tokenUrl: https://otdsauth-highland.dev.bp-paas.otxlab.net/oauth2/token
+          scopes:
+            create_publications: Create a new publication
+            view_publications: Retrieve publications with known ids whose source documents accessible to the client
+            view_any_publication: Retrieve any publication in the system whose id is known, regardless of whether the source document is accessible to the client
+            search_publications: Search for publications matching some criteria and whose source documents are accessible to th eclient
+            search_all_publications: Search for publications matching some criteria, regardless of whether the source document is accessible to the client
+            delete_publications: Delete publications with known ids whose source documents are accessible to the client
+            delete_any_publication: Delete any publication in the system where the id is known, regardless of whether the source documents are accessible to the client
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        userMessage:
+          type: string
+        developerMessage:
+          type: string
+        code:
+          type: string
+        moreInfo:
+          type: string
+    HAL-LinkObject:
+      type: object
+      properties:
+        href:
+          type: string
+        templated:
+          type: boolean
+        type:
+          type: string
+        deprecation:
+          type: string
+        name:
+          type: string
+        profile:
+          type: string
+        title:
+          type: string
+        hreflang:
+          type: string
+    HAL-Curies:
+      type: array
+      items:
+        type: object
+        description: Curried link
+        properties:
+          href:
+            type: string
+          name:
+            type: string
+          templated:
+            type: boolean
+    HalLinks:
+      type: object
+      properties:
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/HAL-LinkObject'
+            curies:
+              $ref: '#/components/schemas/HAL-Curies'
+    Namespace:
+      type: string
+      pattern: ^[a-zA-Z_]([0-9a-zA-Z-_.])+[a-zA-Z0-9_]$
+    Name:
+      type: string
+      pattern: ^[a-zA-Z_]([0-9a-zA-Z-_])+[a-zA-Z0-9_]$
+    Version:
+      type: string
+      pattern: ^[0-9a-zA-Z<>=~\.|*\^]+$
+    FQName:
+      type: object
+      properties:
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        name:
+          $ref: '#/components/schemas/Name'
+        version:
+          $ref: '#/components/schemas/Version'
+      required:
+        - namespace
+        - name
+        - version
+    Href:
+      type: string
+    Root:
+      type: object
+    RootHal:
+      allOf:
+        - $ref: '#/components/schemas/Root'
+        - $ref: '#/components/schemas/HalLinks'
+    VersionJson:
+      type: object
+      properties:
+        major:
+          type: string
+        minor:
+          type: string
+        build:
+          type: string
+    Health:
+      type: object
+      properties:
+        OpenText Publication Service:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            version:
+              type: string
+            uptime:
+              type: number
+            enforceAccessTokens:
+              type: boolean
+    Tags:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          value:
+            type: string
+    PostPublicationsRequest:
+      required:
+        - publicationVersion
+        - policy
+      properties:
+        publicationVersion:
+          type: string
+        policy:
+          $ref: '#/components/schemas/FQName'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        priority:
+          type: string
+          enum:
+            - Background
+            - Low
+            - Medium
+            - High
+            - Critical
+          default: Medium
+        featureSettings:
+          type: array
+          items:
+            type: object
+            properties:
+              feature:
+                type: object
+                properties:
+                  namespace:
+                    type: string
+                  name:
+                    type: string
+                  versionRange:
+                    type: string
+                required:
+                  - namespace
+                  - name
+              path:
+                type: string
+              value:
+                type: string
+            required:
+              - feature
+              - path
+              - value
+    Publication:
+      properties:
+        id:
+          type: string
+        application:
+          $ref: '#/components/schemas/FQName'
+        policy:
+          $ref: '#/components/schemas/FQName'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        created:
+          type: number
+          format: date-time
+        publishRequest:
+          type: object
+          properties:
+            submittedAt:
+              type: integer
+              minimum: 0
+            enqueuedAt:
+              type: integer
+              minimum: 0
+            startedAt:
+              type: integer
+              minimum: 0
+            updatedAt:
+              type: integer
+              minimum: 0
+            finishedAt:
+              type: integer
+              minimum: 0
+        status:
+          type: string
+          enum:
+            - Pending
+            - Active
+            - Complete
+            - Failed
+        featureSettings:
+          type: array
+          items:
+            type: object
+            properties:
+              feature:
+                type: object
+                properties:
+                  namespace:
+                    type: string
+                  name:
+                    type: string
+                required:
+                  - namespace
+                  - name
+              path:
+                type: string
+              value:
+                type: string
+        errors:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        failureMessage:
+          type: string
+    GetPublicationsIdHalResponse:
+      allOf:
+        - $ref: '#/components/schemas/Publication'
+        - $ref: '#/components/schemas/HalLinks'
+    GetPublicationsHalResponse:
+      type: object
+      properties:
+        count:
+          type: number
+        total:
+          type: number
+        _embedded:
+          type: object
+          properties:
+            publications:
+              type: array
+              items:
+                $ref: '#/components/schemas/GetPublicationsIdHalResponse'
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/HAL-LinkObject'
+            curies:
+              $ref: '#/components/schemas/HAL-Curies'
+    ArtifactDescriptor:
+      properties:
+        name:
+          type: string
+        types:
+          type: array
+          items:
+            type: string
+        available:
+          type: boolean
+        paged:
+          type: boolean
+        lastIndex:
+          type: number
+        properties:
+          type: object
+    GetArtifactsHalResponse:
+      properties:
+        count:
+          type: number
+        total:
+          type: number
+        _embedded:
+          type: object
+          properties:
+            artifacts:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/ArtifactDescriptor'
+                  - $ref: '#/components/schemas/HalLinks'
+    GetArtifactHalResponse:
+      allOf:
+        - $ref: '#/components/schemas/ArtifactDescriptor'
+        - $ref: '#/components/schemas/HalLinks'
