@@ -1,0 +1,705 @@
+---
+openapi: 3.0.1
+info:
+  title: The LiveSite Content Services (LSCS) REST API Documentation
+  description: >-
+    LiveSite Content Services provides a rich set of application programming interfaces (APIs) for developing dynamic and interactive Web sites. The primary programming interface for LSCS is a network-based interface that follows the Representational State Transfer (REST) model of client-server interaction using the HTTP or HTTPS protocols. This REST API is neutral with respect to both programming languages and display technologies. This neutrality allows solution developers to use and mix
+    languages and technologies such as Java, C#, PHP, AJAX, Flash, Silverlight, Ruby, JSP, ASP and any other technology that supports HTTP. In addition to the REST API, the product includes a Java client library that builds on the REST API and provides an easy-to-use Java object model for interacting with an LSCS server. This document provides details on the resources, objects and methods provided by both API's.
+  version: v1
+servers:
+  - url: /lscs/v1
+security:
+  - oauth: []
+paths:
+  /document:
+    get:
+      tags:
+        - Results
+      summary: Performs document searches.
+      description: Returns a list of documents.
+      parameters:
+        - name: q
+          in: query
+          description: The search query.
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: Include metadata in the response. The wildcard * indicates all available metadata fields. A comma-separated list can be specified (e.g. title,path) to output only some fields. If empty no metadata is included in the response. This parameter should be used instead of the deprecated option to append the $ character to the path (e.g., document$*?q=...)
+          schema:
+            type: string
+        - name: lscsText
+          in: query
+          description: Used to query for text value only.
+          schema:
+            type: string
+        - name: lscsField
+          in: query
+          description: Used to query for field text value only.
+          schema:
+            type: string
+        - name: max
+          in: query
+          description: Maximum number of results to return. This parameter is required for applications that want more or less than the default number of results per request. Default is 10.
+          schema:
+            type: number
+            format: integer
+        - name: start
+          in: query
+          description: Index of the first returned document in the result set. Default is 0.
+          schema:
+            type: number
+            format: integer
+        - name: sort
+          in: query
+          description: A comma-separated list of fields by which to sort the results. To sort date and numeric fields in ascending order, prefix the field name with the plus (+) character. Note that the + character must be percent-encoded as %2B when included in the URL. To sort these fields in descending order, prefix the field name with the minus (-) character. By default, the fields will be sorted in alphabetical order. If sort=random, the result set will be in a random order.
+          schema:
+            type: string
+        - name: showFacet
+          in: query
+          description: A comma-separated list of fields for which to include value summaries.
+          schema:
+            type: string
+        - name: traverse
+          in: query
+          description: The name of a metadata field containing the area-relative paths of related documents to include in the result. The traverse parameter should include a metadata field list. Multiple fields can be specified in a semicolon-delimited list.
+          schema:
+            type: string
+        - name: streamUnique
+          in: query
+          description: When true, returns the content of the first asset instead of a content filter result. Cannot be used in conjunction with a metadata field list.
+          schema:
+            type: boolean
+        - name: maxFacet
+          in: query
+          description: The maximum number of facet values returned. By default, this is 100.
+          schema:
+            type: number
+            format: integer
+        - name: expandMVF
+          in: query
+          description: By default, multivalued fields are displayed as they were stored in TeamSite. To split these fields into separate values, set expandMVF to true.
+          schema:
+            type: boolean
+        - name: project
+          in: query
+          description: The project from which to select assets. If no parameter is not included in the request, then assets are selected from the default project. See description of the defaultProject setting in the lscs-conf.properties file.
+          schema:
+            type: string
+        - name: includeDCRContent
+          in: query
+          description: Boolean. If true, it will include the file content of DCR documents.
+          schema:
+            type: boolean
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Results'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /document/id/{assetId}:
+    get:
+      tags:
+        - Document
+      summary: Gets document content by using the alphanumeric assetId.
+      description: Returns the document object content.
+      parameters:
+        - name: assetId
+          in: path
+          description: Asset alphanumeric code.
+          required: true
+          schema:
+            type: string
+        - name: project
+          in: query
+          description: The project from which to select assets. If no parameter is not included in the request, then assets are selected from the default project. See description of the defaultProject setting in the lscs-conf.properties file.
+          schema:
+            type: string
+        - name: inlineLoad
+          in: query
+          description: Boolean. If true, it will stop the redirect to lscs-static and display DCR content directly.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Content'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /document/path/{path}:
+    get:
+      tags:
+        - Document
+      summary: Gets document content by using the area-relative path of a document in TeamSite.
+      description: Returns the document object content.
+      parameters:
+        - name: path
+          in: path
+          description: Area-relative path of a document.
+          required: true
+          schema:
+            type: string
+        - name: project
+          in: query
+          description: The project from which to select assets. If no parameter is not included in the request, then assets are selected from the default project. See description of the defaultProject setting in the lscs-conf.properties file.
+          schema:
+            type: string
+        - name: inlineLoad
+          in: query
+          description: Boolean. If true, it will stop the redirect to lscs-static and display DCR content directly.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Content'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /projects:
+    get:
+      tags:
+        - Project
+      summary: Gets the list of all deployed projects.
+      description: Gets the list of all deployed projects.
+      parameters:
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Projects'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /contexts:
+    get:
+      tags:
+        - Contexts
+      summary: Gets all deployment contexts for a default project.
+      description: Gets all deployment contexts for a default project. Values are asc sorted.
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Contexts'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /contexts/{order}:
+    get:
+      tags:
+        - Contexts
+      summary: Gets all deployment contexts for a default project.
+      description: Gets all deployment contexts for a default project.
+      parameters:
+        - name: order
+          in: path
+          description: Values are asc or desc per the desired sort output based upon the deployment time.
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Contexts'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /contexts/project/{projectName}:
+    get:
+      tags:
+        - Contexts
+      summary: Use the following resource to get all deployment contexts for a default project by given order (asc or desc) based upon the deployment time.
+      description: Gets all deployment contexts for a specific project by ascending order based upon the deployment time.
+      parameters:
+        - name: projectName
+          in: path
+          description: The name of the project.
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /contexts/{order}/project/{projectName}:
+    get:
+      tags:
+        - Contexts
+      summary: Use the following resource to get all deployment contexts for a default project by given order (asc or desc) based upon the deployment time.
+      description: Gets all deployment contexts for a specific project by given order (asc or desc) based upon the deployment time.
+      parameters:
+        - name: order
+          in: path
+          description: Order of result (asc or desc).
+          required: true
+          schema:
+            type: string
+        - name: projectName
+          in: path
+          description: The name of the project.
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Context'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /admin/status:
+    get:
+      tags:
+        - Admin
+      summary: XML response only. Clients can retrieve the operational status of the LSCS service asset content from LSCS using the admin/status resource.
+      description: XML response only. Clients can retrieve the operational status of the LSCS service asset content from LSCS using the admin/status resource.
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdminStatus'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /admin/diags:
+    get:
+      tags:
+        - Admin
+      summary: XML Response only. Clients can retrieve more detailed diagnostic information using the admin/diags resource.
+      description: XML Response only. Clients can retrieve more detailed diagnostic information using the admin/diags resource.
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SystemDiagnostic'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+  /metadata-info:
+    get:
+      tags:
+        - Metadata
+      summary: Clients can retrieve the list of all deployed extended attributes, including their type and whether they are faceted or multi-valued, using the metadata-info resource.
+      description: Clients can retrieve the list of all deployed extended attributes, including their type and whether they are faceted or multi-valued, using the metadata-info resource.
+      parameters:
+        - name: format
+          in: query
+          description: The response format, json or XML.
+          schema:
+            type: string
+            enum:
+              - XML
+              - json
+            default: XML
+      responses:
+        '200':
+          description: Request handled without error.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Metadata'
+        '400':
+          description: Resource identifier was provided, but it lacked the correct parameters.
+          content: {}
+        '403':
+          description: The requested resource access is not allowed.
+          content: {}
+        '404':
+          description: The requested resource does not exist on the server.
+          content: {}
+        '500':
+          description: The server requires administrative intervention.
+          content: {}
+components:
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://otds/otdsws/login
+          scopes: {}
+  schemas:
+    Results:
+      type: array
+      items:
+        $ref: '#/components/schemas/Assets'
+    Assets:
+      type: array
+      items:
+        $ref: '#/components/schemas/Document'
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Document identifier.
+          format: string
+        uri:
+          type: string
+          description: Resource path for the document.
+          format: string
+        path:
+          type: string
+          description: Area-relative path of the file in TeamSite.
+          format: string
+        context:
+          type: string
+          description: Transaction identifier for this version of the document.
+          format: string
+    Content:
+      type: object
+      description: Content data.
+    Metadata:
+      type: array
+      items:
+        $ref: '#/components/schemas/Field'
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Metadata field name. By default, field names are identical to TeamSite extended attribute names.
+    RelatedAssets:
+      type: array
+      items:
+        $ref: '#/components/schemas/RelatedAsset'
+    RelatedAsset:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the metadata field that was traversed.
+    Facets:
+      type: array
+      items:
+        $ref: '#/components/schemas/Facet'
+    Facet:
+      allOf:
+        - $ref: '#/components/schemas/FacetValue'
+        - type: object
+          properties:
+            field:
+              type: string
+              description: Metadata field name. By default, field names are identical to TeamSite extended attribute names.
+            count:
+              type: integer
+              description: Number of distinct values for this field.
+    FacetValue:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Number of assets in the content filter result with this field value.
+    Projects:
+      type: array
+      items:
+        $ref: '#/components/schemas/Project'
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the Project.
+        name:
+          type: string
+          description: Name of the Project.
+    Contexts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Context'
+    Context:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the Context.
+        deploymentTime:
+          type: string
+          description: The datetime of the Context deployment.
+        active:
+          type: string
+          description: Whether the Context is active.
+        projectName:
+          type: string
+          description: The name of the corresponding Project.
+    AdminStatus:
+      type: array
+      items:
+        $ref: '#/components/schemas/Repository'
+    Repository:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Repository.
+        status:
+          type: string
+          description: UP or DOWN.
+    Metaresource:
+      type: object
+    SystemDiagnostic:
+      type: object
+      properties:
+        diagnostics:
+          type: object
+          properties:
+            upTime:
+              type: object
+              properties:
+                hours:
+                  type: integer
+                  description: Number of hours since the service was started modulo 24.
+                seconds:
+                  type: integer
+                  description: Number of seconds since the service was started modulo 60.
+                minutes:
+                  type: integer
+                  description: Number of minutes since the service was started modulo 60.
+                days:
+                  type: integer
+                  description: Number of days since the service was started.
+              description: Elapsed time since the service was started
+            performance:
+              type: object
+              properties:
+                totalRequests:
+                  type: string
+                  description: Number of API service requests since the service was started.
+              description: Container for operational data.
+            maxResponseTime:
+              type: integer
+              description: Longest service time for an API request since the service was started.
+            beanconfigs:
+              type: object
+              properties:
+                errorResponseFormat:
+                  description: Contains item list of error formats and their associated mime types.
+                  allOf:
+                    - $ref: '#/components/schemas/Item'
+                contentResponseFormat:
+                  type: object
+                  description: Contains item list of response formats and their associated mime types.
+                  allOf:
+                    - $ref: '#/components/schemas/Item'
+              description: Configured response elements.
+            interval:
+              type: object
+              properties:
+                thruput:
+                  type: integer
+                  description: Number of operations per second.
+                minutes:
+                  type: integer
+                  description: Number of minutes in the interval.
+                aveOp:
+                  type: integer
+                  description: Average request processing time in seconds.
+              description: Information regarding performance in a specific time interval
+            startDate:
+              type: string
+              description: Date and time the service was started.
+            properties:
+              type: object
+              description: Operating configuration setting.
+              allOf:
+                - $ref: '#/components/schemas/Property'
+            products:
+              type: object
+              properties:
+                apiVersion:
+                  type: string
+                  description: Latest supported API version.
+                name:
+                  type: string
+                  description: Product identification. For LiveSite Content Services, always LSCS.
+                buildDate:
+                  type: string
+                  description: Product build date.
+                version:
+                  type: string
+                  description: Product release version.
+                buildNumber:
+                  type: string
+                  description: Product build identifier.
+              description: Container element for all information returned.
+          description: Container element for all information returned.
+    Item:
+      description: Response format item.
+      allOf:
+        - $ref: '#/components/schemas/Format'
+    Format:
+      type: object
+      description: Mime type.
+    Property:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Configuration setting name.
