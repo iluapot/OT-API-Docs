@@ -1,0 +1,5555 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Extended ECM REST API",
+    "description": "Extended ECM REST API (v1 and v2 calls).",
+    "version": "v1 and v2"
+  },
+  "host": "content_server_url",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "basicAuth": [
+      ]
+    }
+  ],
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authenticate user"
+    },
+    {
+      "name": "businessobjects",
+      "description": "Manage Business Attachments for Business Object"
+    },
+    {
+      "name": "businessworkspaces",
+      "description": "Manage Business Workspaces"
+    },
+    {
+      "name": "externalsystems",
+      "description": "Get external system info"
+    },
+    {
+      "name": "nodes",
+      "description": "Manage nodes"
+    },
+    {
+      "name": "eventactioncenter",
+      "description": "Executes action plans based on event types"
+    },
+    {
+      "name": "licenses",
+      "description": "Manage licensing and audit information"
+    }
+  ],
+  "paths": {
+    "/v1/auth": {
+      "post": {
+        "operationId": "authenticate",
+        "summary": "Authenticate user",
+        "description": "Authenticates user with the given credentials, returning an OTCS ticket if authorized.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "description": "Login name",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "password",
+            "description": "Login password",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "domain",
+            "description": "Login domain",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/AuthenticationInfo"
+            }
+          },
+          "400": {
+            "description": "Invalid parameter value"
+          },
+          "401": {
+            "description": "Invalid username/password specified"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v2/businessobjects/{ext_system_id}/{bo_type}/{bo_id}/businessattachments": {
+      "get": {
+        "operationId": "GetBusinessAttachments",
+        "summary": "Get Business Attachments",
+        "description": "Gets the business attachments for the specified business object.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "where_name",
+            "description": "Filter for name, e.g. like_%Customer%",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name or modified date",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Paging, e.g. 5, limit must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Paging, e.g. 5, page must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id, reserved_user_id, ancestors, ...} <br><br> parent_id - parent node info<br> reserved_user_id - reserved user info <br> ancestors - ancestors info",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/busobjs_GetBusinessAttachments"
+            }
+          },
+          "500": {
+            "description": "Could not get the attachments for {bo_id}"
+          }
+        },
+        "tags": [
+          "businessobjects"
+        ]
+      }
+    },
+    "/v2/businessobjects/{ext_system_id}/{bo_type}/{bo_id}/businessattachments/{node_id}": {
+      "post": {
+        "operationId": "AddBusinessAttachments",
+        "summary": "Add Business Attachments",
+        "description": "Adds the business attachments for the specified business object.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "node_id",
+            "description": "The content server object id/node Id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "comment",
+            "description": "comment",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id, reserved_user_id, ancestors, ...} <br><br> parent_id - parent node info<br> reserved_user_id - reserved user info <br> ancestors - ancestors info",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/busobjs_AddBusinessAttachments"
+            }
+          },
+          "400": {
+            "description": "Action is invalid for this object type"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Cannot insert link. id_bo_type = {id_bo_type}, sapObjectKey = {bo_id}, nodeID = {node_id}, comment = ad, error = Cannot add business attachment because duplicate records were found"
+          }
+        },
+        "tags": [
+          "businessobjects"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{node_id}/businessattachments": {
+      "get": {
+        "operationId": "GetWkspBusinessAttachments",
+        "summary": "Get Business Attachments",
+        "description": "Gets the business attachments for the specified business workspace.",
+        "produces": [
+          "application/json"
+        ],
+		"parameters": [
+          {
+            "name": "node_id",
+            "description": "The node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "where_name",
+            "description": "Filter for name, e.g. like_%Customer%",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name or modified date",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Paging, e.g. 5, limit must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Paging, e.g. 5, page must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id, reserved_user_id, ancestors, ....} <br><br> parent_id - parent node info<br> reserved_user_id - reserved user info <br> ancestors - ancestors info",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_GetBusinessAttachments"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Could not get a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{node_id}/businessattachments/{id_attachment}": {
+      "post": {
+        "operationId": "AddBusinessAttachment",
+        "summary": "Add Business Attachments",
+        "description": "Add  business attachments to the specified business workspace.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "id_attachment",
+            "description": "The node id of the attachment",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "comment",
+            "description": "comment",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_AddBusinessAttachment"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Could not add a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "put": {
+        "operationId": "UpdateBusinessAttachment",
+        "summary": "Update Business Attachments",
+        "description": "update the comment of  business attachments to the specified business workspace.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "id_attachment",
+            "description": "The node id of the attachment",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "comment",
+            "description": "comment",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_UpdateBusinessAttachment"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Could not update a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBusinessAttachment",
+        "summary": "Delete Business Attachments",
+        "description": "Delete business attachments to the specified business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "id_attachment",
+            "description": "The node id of the attachment",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_DeleteBusinessAttachment"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Could not delete a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/dossier": {
+      "get": {
+        "operationId": "DossierView",
+        "summary": "Dossier View",
+        "description": "Workspace document to show",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Workspace ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "group_by",
+            "description": "Group by create_date/classification",
+            "type": "string",
+            "in": "query",
+            "enum": [
+              "create_date",
+              "classification"
+            ],
+            "required": true
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name or modified date",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Paging, e.g. 5, limit must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Paging, e.g. 5, page must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id, reserved_user_id, ancestors, ....} <br><br> parent_id - parent node info<br> reserved_user_id - reserved user info <br> ancestors - ancestors info",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_DossierView"
+            }
+          },
+          "500": {
+            "description": "Could not get a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{bw_id}/missingdocuments": {
+      "get": {
+        "operationId": "Completenesscheck",
+        "summary": "Missing Documents",
+        "description": "Get the missing documents",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bw_id",
+            "description": "Workspace ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name or modified date",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Paging, e.g. 5, limit must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Paging, e.g. 5, page must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "expand",
+            "description": "Expand, e.g. properties{parent_id, reserved_user_id, ancestors, ....} <br><br> parent_id - parent node info<br> reserved_user_id - reserved user info <br> ancestors - ancestors info",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_Completenesscheck"
+            }
+          },
+          "500": {
+            "description": "Could not get a node for {node_id}"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/businessworkspaces/{node_id}/workspacereferences": {
+      "put": {
+        "operationId": "UpdateBusinessWorkspaceReference",
+        "summary": "Update Business Workspace Reference",
+        "description": "Updates the workspace reference to the specified business workspace.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The workspace node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object ID",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "bo_type_id",
+            "description": "The Business object type ID",
+            "type": "integer",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "The external System ID",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          },
+          {
+            "name": "bo_type",
+            "description": "The Business object type",
+            "type": "string",
+            "required": false,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_UpdateBusinessWorkspaceReference"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get business workspace {node_id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get a business workspace for {node_id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "RemoveBusinessWorkspaceReference",
+        "summary": "Remove Business Workspace Reference",
+        "description": "Removes the workspace reference from the specified business workspace.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The workspace node id",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object ID",
+            "type": "string",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "bo_type_id",
+            "description": "The Business object type ID",
+            "type": "integer",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "The external System ID",
+            "type": "string",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/businessworkspace_RemoveBusinessWorkspaceReference"
+            }
+          },
+          "400": {
+            "description": "Invalid datatype specified for argument {node_id}"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get business workspace {node_id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get a business workspace for {node_id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "businessworkspaces"
+        ]
+      }
+    },
+    "/v2/externalsystems/{ext_system_id}/botypes/{bo_type}": {
+      "get": {
+        "operationId": "GetBusinessObjectTypeInfo",
+        "summary": "Get business object type info",
+        "description": "Gets a variety of data about the business object type with the given external system id and bo type.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "expand_ext_system",
+            "description": "Expand External System Info",
+            "type": "boolean",
+            "required": false,
+            "in": "query",
+            "default": false
+          },
+          {
+            "name": "expand_wksp_type",
+            "description": "Expand Workspce Types Info",
+            "type": "boolean",
+            "required": false,
+            "in": "query",
+            "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/externalsystems_GetBusinessObjectTypeInfo"
+            }
+          },
+          "400": {
+            "description": "No configuration available or enabled for the given business application ID and business object type."
+          },
+          "401": {
+            "description": "Authentication Required"
+          }
+        },
+        "tags": [
+          "externalsystems"
+        ]
+      }
+    },
+    "/v2/externalsystems/{ext_system_id}/config": {
+      "get": {
+        "operationId": "GetExternalSystemsConfig",
+        "summary": "Get external systems configuration",
+        "description": "Gets a variety of data about the given external system id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/externalsystems_GetExternalSystemsConfig"
+            }
+          },
+          "400": {
+            "description": "No valid configuration available for business application"
+          },
+          "401": {
+            "description": "Authentication Required"
+          }
+        },
+        "tags": [
+          "externalsystems"
+        ]
+      }
+    },
+    "/v2/externalsystems/{ext_system_id}/botypes/{bo_type}/documentypes": {
+      "get": {
+        "operationId": "GetDocTypes",
+        "summary": "Get Document types",
+        "description": "Retrieves all the document types associated with a business object",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/externalsystems_GetDocTypes"
+            }
+          },
+          "400": {
+            "description": "No configuration available or enabled for the given business application ID and business object type."
+          },
+          "401": {
+            "description": "Authentication Required"
+          }
+        },
+        "tags": [
+          "externalsystems"
+        ]
+      }
+    },
+    "/v2/externalsystems/{ext_system_id}/botypes/{bo_type}/documentypes/{id}": {
+      "get": {
+        "operationId": "GetDocTypesInfo",
+        "summary": "Get Document type info",
+        "description": "Retrieves the information about the document type including the supported properties as configured in the attachment declaration.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "id",
+            "description": "The document type id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/externalsystems_GetDocTypesInfo"
+            }
+          },
+          "400": {
+            "description": "No configuration available or enabled for the given business application ID and business object type."
+          },
+          "401": {
+            "description": "Authentication Required"
+          }
+        },
+        "tags": [
+          "externalsystems"
+        ]
+      }
+    },
+    "/v2/externalsystems/{ext_system_id}/botypes/{bo_type}/boids/{bo_id}/attachments": {
+      "post": {
+        "operationId": "migrateattachments",
+        "summary": "Migrate Attachments",
+        "description": "Migrate Attachments from leading system",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ext_system_id",
+            "description": "The external system id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object id",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "description": "Json string, example: json string, example: \n {\n\"addVersion\":true, \n \"documentAttributes\":{\"name\": \"documentName\"}, \n \"documentType\":\"PurchaseOrder Miscellaneous\", \n \"properties\": {\"Created by\": \"Admin\"}, \n \"propertyGroups\": [{\"Name\": \"Requisition\",\"rows\": [{\"columns\": [{\"name\": \"Created By\",\"values\": \"Admin\"}]}]}]\n}",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+                        "name": "file",
+                        "description": "File content",
+                        "required": true,
+                        "type": "file",
+                        "in": "formData"
+                    }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/externalsystems_migrateattachments"
+            }
+          },
+          "400": {
+            "description": "No configuration available or enabled for the given business application ID and business object type."
+          },
+          "401": {
+            "description": "Authentication Required"
+          }
+        },
+        "tags": [
+          "externalsystems"
+        ]
+      }
+    },
+    "/v2/nodes/{id}/addablebotypes": {
+      "get": {
+        "operationId": "getAddableBusinessWorkspaceTypes",
+        "summary": "Addable Business Workspace Types Info",
+        "description": "Gets the Addable Business Workspace Types for the given node to create business attachment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The node ID",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_AddableBusinessWorkspaceTypesInfo"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get business workspace types for {id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get a business workspace types for {id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v2/nodes/{node_id}/businessattachments": {
+      "post": {
+        "operationId": "AddBusinessAttachments_Node",
+        "summary": "Adds Business Attachment to the specified node",
+        "description": "Adds the business attachment to specified content server Node ID.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "The business application (external system) ID.",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object ID",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "comment",
+            "description": "comment",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_AddBusinessAttachment"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get business workspace {node_id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get a business workspace for {node_id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      },
+      "get": {
+        "operationId": "getBusinessAttachments_Node",
+        "summary": "Get Business Atachments",
+        "description": "Gets the business attachments for a given Content Server node ID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "sort",
+            "description": "Sort, e.g. asc_name or desc_name or name or modified date",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "page",
+            "description": "Requested page, e.g. 5, limit must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "Maximum items per page, e.g. 5, page must also be provided",
+            "type": "integer",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_BusinessAttachmentsInfo"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get business attachments for {id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get business attachments for {id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v2/nodes/{parent_id}/snapshots": {
+      "post": {
+        "operationId": "CreateBusinessAttachmentsSnapshot",
+        "summary": "Creates Business Attachments Snapshot",
+        "description": "Creates the snapshot for the business attachments node IDs provided",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "parent_id",
+            "description": "The node ID where snapshot will store",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "snapshot_name",
+            "description": "The workspace node ID",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "bus_attach_ids",
+            "description": "The business Attachments node IDs <br> Ex: {node_id1,node_id2,..}",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_CreateBusinessAttachmentsSnapshot"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not get a node because the node does not exist"
+          },
+          "500": {
+            "description": "Could not get a node. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v2/nodes/{node_id}/businessattachments/{ext_system_id}/{bo_type}/{bo_id}": {
+      "put": {
+        "operationId": "updateBusinessAttachments",
+        "summary": "Update Business Atachments",
+        "description": "Updates the business attachments for a given Content Server Node ID.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "The business application (external system) ID.",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object ID",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "comment",
+            "description": "The comment",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_UpdateBusinessAttachments"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not update business attachments for {id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not update business attachments for {id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteBusinessAttachments",
+        "summary": "Delete Business Atachments",
+        "description": "Deletes the business attachments for a given Content Server Node ID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "node_id",
+            "description": "The node ID",
+            "type": "integer",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "ext_system_id",
+            "description": "The business application (external system) ID.",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_type",
+            "description": "The business object type",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "bo_id",
+            "description": "The business object ID",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/nodes_DeleteBusinessAttachments"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "404": {
+            "description": "Could not delete business attachments for {id} because the node does not exist"
+          },
+          "500": {
+            "description": "Could not delete business attachments for {id}. Server failed to process the request"
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/actionplan": {
+      "get": {
+        "operationId": "Action plans",
+        "summary": "Get Event Action Plans",
+        "description": "Get all action plans.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Eventactionplans"
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "500": {
+            "description": "Error occurred while getting the event action plan details"
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      },
+      "delete": {
+        "operationId": "Deleteactionplans",
+        "summary": "Delete Event Action Plan",
+        "description": "Delete the action plans for a particular event",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "rule_id",
+            "description": "Rule ID of the event.",
+            "type": "integer",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "plan_id",
+            "description": "Plan ID of the event.",
+            "type": "integer",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Deleteactionplans"
+            }
+          },
+          "500": {
+            "description": "Error occurred while deleting rule"
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      },
+      "put": {
+        "operationId": "Submitactionplans",
+        "summary": "Submit Action Plans",
+        "description": "Action plan submision for an event.",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "action_plan_items",
+            "description": "Json string, example: json string, example: \n [{\"rules\":[{\"from\":\"userId\",\n \"operator\":\"Equal to\",\"to\":\"jbaker\", \n \"conjunction\":\"And\"},{\"from\":\"seqNumber\", \n \"operator\":\"Equal to\",\"to\":\"82096\", \n \"conjunction\":\"\"}],\"actions\": \n [{\"action\":\"DocGenEventAction.Generate Document\", \n \"DocGenEventAction.Generate Document_fields\": \n {\"DocumentType\":{\"source\":\"evtProp\", \n \"evtProp_field\":\"seqNumber\"},\"UserId\": \n {\"source\":\"prevAct\",\"prevAct_field\": \n \"Result from previous action\"}}}, \n {\"action\":\"DocGenEventAction.Generate Document\", \n \"DocGenEventAction.Generate Document_fields\": \n {\"DocumentType\":{\"source\":\"evtProp\",\"evtProp_field\": \n \"seqNumber\"},\"UserId\":{\"source\":\"prevAct\", \n \"prevAct_field\":\"Result from previous action\"}}}], \n \"summary\":{\"run_as\":47276,\"process_mode\": \n \"Synchronously\"},\"gen_information\": \n {\"event_id\":\"com.successfactors.Employment. \n JobInformation.LocationChange\",\"namespace\": \n \"SucessFactors\",\"event_name\":\"Change in Employee Location\"}} \n ] here \"rules\" is optional, \"run_as\" is the userid ",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Submitactionplans"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/facets": {
+      "get": {
+        "operationId": "Facets",
+        "summary": "Get Event Action Facets",
+        "description": "Get all configured events based on filter.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "where_facet",
+            "description": "Facet filters eg: has_action_plan:false",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Facets"
+            }
+          },
+          "500": {
+            "description": "Could not get a node for {node_id}"
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/eventproperties": {
+      "get": {
+        "operationId": "Eventproperties",
+        "summary": "Get Event Properties",
+        "description": "Get the properties of  a particular event.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "event_name",
+            "description": "Event names eg: Change+in+Employee+Location",
+            "type": "string",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "system_name",
+            "description": "External system name",
+            "type": "string",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Eventproperties"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/actions": {
+      "get": {
+        "operationId": "Actiondetails",
+        "summary": "Get Action Details",
+        "description": "Get the list of actions for event.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Actiondetails"
+            }
+          },
+          "500": {
+            "description": "Error occurred while getting the action details"
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/systemnames": {
+      "get": {
+        "operationId": "Systemnames",
+        "summary": "Get System Names",
+        "description": "Get the list of systems for EAC",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Systemnames"
+            }
+          },
+          "500": {
+            "description": "Error occurred while getting the action details"
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v2/eventactioncenter/processevent": {
+      "post": {
+        "operationId": "Parseeacpayload",
+        "summary": "Parse Event Action Center PayLoad",
+        "description": "Parse Event Action Center PayLoad",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "description": "Json string , example:  \n [{\"eventsourcedetails\":{\"eventsourceattributes\":{\"leadingsystemname\":\"SuccessFactors\", \n \"effective\":\"current\", \n \"publishedBy\":\"sfadmin\", \n \"publishedAt\":\"1544097881135\", \n \"externalEventId\":\"3def2ef0-9984-4994 \n -bd7d-ca46c2c54737\", \n \"type\":\"com.successfactors. \n Employment.JobInformation.LocationChange\", \n \"repost\":\"false\"}}, \n \"events\":[{\"eventattributes\": \n {\"personIdExternal\":\"106044\", \n \"changedFields\":\"location\", \n \"seqNumber\":\"2\", \n \"perPersonUuid\":\"A51150AE0EE149E298EE72A69D40A50E\", \n \"userId\":\"106044\",\"startDate\":\"2018-12-06\"}, \n \"eventname\":\"com.successfactors.Employment. \n JobInformation.LocationChange\"}]}]",
+            "type": "string",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/eac_Parseeacpayload"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "eventactioncenter"
+        ]
+      }
+    },
+    "/v1/ecmlink/licenses": {
+      "get": {
+        "operationId": "getLicensingSummary",
+        "summary": "Licensing Summary",
+        "description": "Gets licensing summary and general Content Server information.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/LicensingSummary"
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Administrative rights are required"
+          },
+          "500": {
+            "description": "The server failed to process the request"
+          }
+        },
+        "tags": [
+          "licenses"
+        ]
+      }
+    },
+    "/v1/ecmlink/licenses/users": {
+      "get": {
+        "operationId": "getAllLicensingDetails",
+        "summary": "Licensing and Audit Details - all ecosystems",
+        "description": "Gets licensing and licensing audit details information.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/LicensingDetails"
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Administrative rights are required"
+          },
+          "500": {
+            "description": "The server failed to process the request"
+          }
+        },
+        "tags": [
+          "licenses"
+        ]
+      }
+    },
+    "/v1/ecmlink/licenses/ecosystems/{ecosystem_id}/users": {
+      "get": {
+        "operationId": "getLicensingDetails",
+        "summary": "Licensing and Audit Details - all ecosystems",
+        "description": "Gets licensing and licensing audit details information.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ecosystem_id",
+            "description": "The ID of the Extended ECM product",
+            "type": "string",
+            "required": true,
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/LicensingDetailsPerEcosystem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Administrative rights are required"
+          },
+          "500": {
+            "description": "The server failed to process the request"
+          }
+        },
+        "tags": [
+          "licenses"
+        ]
+      }
+    },
+    "/v1/ecmlink/licenses/audit": {
+      "post": {
+        "operationId": "AddLicensingAudit",
+        "summary": "Add licensing audit",
+        "description": "Add a licensing audit entry",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "audititem",
+            "description": "The audit item value",
+            "type": "integer",
+            "required": true,
+            "in": "formData"
+          },
+          {
+            "name": "audittype",
+            "description": "The audit type",
+            "type": "integer",
+            "required": true,
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/AddLicensingAudit"
+            }
+          },
+          "400": {
+            "description": "Bad request, either audititem or audittype is not defined or has invalid value"
+          },
+          "401": {
+            "description": "Unauthorized. Proper usage privileges are required"
+          },
+          "500": {
+            "description": "The server failed to process the request"
+          }
+        },
+        "tags": [
+          "licenses"
+        ]
+      }
+    }    
+  },
+  "definitions": {
+    "AuthenticationInfo": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "type": "string",
+          "description": "The valid authentication ticket"
+        }
+      }
+    },
+    "busobjs_GetBusinessAttachments": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "",
+          "allOf": [{
+            "$ref": "#/definitions/busobjs_action_def"
+          }]
+        },
+        "businessObjectActions": {
+          "type": "object",
+          "description": "Contains the business object actions",
+          "$ref": "#/definitions/busobjs_Actions_data"
+        },
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+          "$ref": "#/definitions/busobjs_links_data"
+        },
+        "meta_data": {
+          "type": "object",
+          "description": "",
+          "$ref": "#/definitions/busobjs_meta_data_def"
+        },
+        "paging": {
+          "description": "The paging information contains links to the next/previous nodes",
+          "type": "object",
+          "$ref": "#/definitions/busobjs_Actions_paging"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/busobjs_results"
+          }
+        }
+      }
+    },
+    "busobjs_AddBusinessAttachments": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+          "$ref": "#/definitions/busobjs_links_data"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/busobjs_results"
+          }
+        }
+      }
+    },
+    "busobjs_Actions_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "",
+          "$ref": "#/definitions/busobjs_actions"
+        },
+        "order": {
+          "type": "array",
+          "description": "Order of the actions",
+          "items": {
+            "type": "string",
+            "enum": [
+              "BOAttachmentsCreate"
+            ]
+          }
+        }
+      }
+    },
+    "busobjs_actions": {
+      "type": "object",
+      "properties": {
+        "BOAttachmentsCreate": {
+          "type": "object",
+          "description": "The Create Business Attachment action",
+          "$ref": "#/definitions/busobjs_Actions_open"
+        }
+      }
+    },
+    "busobjs_links_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node / self",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/busobjs_self_data"
+          }
+        }
+      }
+    },
+    "busobjs_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node / self",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/busobjs_Actions_links"
+          }
+        }
+      }
+    },
+    "busobjs_action_def": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "busobjs_meta_data_def": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "busobjs_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "busobjs_Actions_paging": {
+      "type": "object",
+      "properties": {
+        "next": {
+          "type": "array",
+          "description": "The url to be called to navigate to the next node",
+          "items": {
+            "$ref": "#/definitions/busobjs_Actions_links"
+          }
+        },
+        "previous": {
+          "type": "array",
+          "description": "The url to be called to navigate to the next node",
+          "items": {
+            "$ref": "#/definitions/busobjs_Actions_links"
+          }
+        },
+        "limit": {
+          "description": "Maximum number of items returned per page",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Number of the current page",
+          "type": "integer"
+        },
+        "page_total": {
+          "description": "Total number of pages available",
+          "type": "integer"
+        },
+        "range_max": {
+          "description": "Number of the ending item of this page",
+          "type": "integer"
+        },
+        "range_min": {
+          "description": "Number of the starting item of this page",
+          "type": "integer"
+        },
+        "total_count": {
+          "description": "Total number of items available",
+          "type": "integer"
+        }
+      }
+    },
+    "busobjs_results": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "The URL to be called on the action's execution",
+          "$ref": "#/definitions/busobjs_action_data"
+        },
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/busobjs_results_data_properties"
+        }
+      }
+    },
+    "busobjs_action_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Contains the action data",
+          "$ref": "#/definitions/busobjs_action_data_open"
+        },
+        "map": {
+          "type": "object",
+          "description": "Map to the default action",
+          "$ref": "#/definitions/busobjs_default_action"
+        },
+        "order": {
+          "type": "array",
+          "description": "Order of the actions possible in the node",
+          "items": {
+            "type": "string",
+            "enum": [
+              "open"
+            ]
+          }
+        }
+      }
+    },
+    "busobjs_action_data_open": {
+      "type": "object",
+      "properties": {
+        "open": {
+          "type": "object",
+          "description": "",
+          "$ref": "#/definitions/busobjs_Actions_open"
+        }
+      }
+    },
+    "busobjs_Actions_open": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "form_href": {
+          "type": "string",
+          "description": "The form HREF URL"
+        },
+        "href": {
+          "type": "string",
+          "description": "The base HREF URL"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": "The action's name (as shown in UI Representation)"
+        }
+      }
+    },
+    "busobjs_default_action": {
+      "type": "object",
+      "properties": {
+        "default_action": {
+          "type": "string",
+          "description": "The default action on the node"
+        }
+      }
+    },
+    "busobjs_results_data_properties": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/busobjs_Data"
+        }
+      }
+    },
+    "busobjs_Data": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "description": "TRUE if this object is a container",
+          "type": "boolean"
+        },
+        "create_date": {
+          "type": "string",
+          "description": "Creation date of this object"
+        },
+        "create_user_id": {
+          "type": "integer",
+          "description": "The ID of the user "
+        },
+        "createdby": {
+          "type": "integer",
+          "description": "The ID of the user who has created"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the object"
+        },
+        "favorite": {
+          "type": "boolean",
+          "description": "TRUE if the node is marked favorite"
+        },
+        "guid": {
+          "type": "string",
+          "description": "Global unique identifier"
+        },
+        "icon": {
+          "description": "Path to the type specific icon",
+          "type": "string"
+        },
+        "icon_large": {
+          "description": "Path to the type specific icon (larger sized)",
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "description": "A unique ID for this object"
+        },
+        "mime_type": {
+          "type": "integer",
+          "description": "The mime type"
+        },
+        "modifiedby": {
+          "type": "string",
+          "description": "The user ID who has modified the node"
+        },
+        "modify_date": {
+          "type": "string",
+          "description": "Date when this object was modified"
+        },
+        "modify_user_id": {
+          "type": "integer",
+          "description": "The ID of the user who modified this object"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the object"
+        },
+        "original_id": {
+          "type": "integer",
+          "description": "ID of original object if this object is a shortcut"
+        },
+        "owner_group_id": {
+          "type": "integer",
+          "description": "The ID of the group to which the owner of this object belongs"
+        },
+        "owner_user_id": {
+          "type": "integer",
+          "description": "The ID of the user who owns this object"
+        },
+        "parent_id": {
+          "type": "integer",
+          "description": "The ID of the parent object of which this object is a child"
+        },
+        "perm_add_major_version": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions of Add Major Version"
+        },
+        "perm_create": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Create"
+        },
+        "perm_delete": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Delete"
+        },
+        "perm_delete_versions": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Delete Version"
+        },
+        "perm_modify": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Modify"
+        },
+        "perm_modify_attributes": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Modify Attributes"
+        },
+        "perm_modify_permissions": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Modify"
+        },
+        "perm_reserve": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for Reserve"
+        },
+        "perm_see": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for See"
+        },
+        "perm_see_contents": {
+          "type": "boolean",
+          "description": "TRUE if the user has permissions for See Contents"
+        },
+        "reserved": {
+          "type": "boolean",
+          "description": "TRUE if this object is reserved"
+        },
+        "reserved_date": {
+          "type": "string",
+          "description": "Date when this object was reserved"
+        },
+        "reserved_user_id": {
+          "type": "integer",
+          "description": "The ID of the user or group that has reserverd this object"
+        },
+        "size": {
+          "type": "integer",
+          "description": "The size of the node"
+        },
+        "type": {
+          "type": "integer",
+          "description": "The node type"
+        },
+        "type_name": {
+          "type": "string",
+          "description": "The node type name"
+        },
+        "user_id": {
+          "type": "integer",
+          "description": "The ID of the user "
+        },
+        "version": {
+          "type": "integer",
+          "description": "The node version"
+        },
+        "volume_id": {
+          "type": "integer",
+          "description": "The ID of the volume"
+        },
+        "xecm_ba_comments": {
+          "type": "string",
+          "description": "Comments of the attachment"
+        },
+        "xecm_ba_createby": {
+          "type": "integer",
+          "description": "The ID of the user, who created the attachment"
+        },
+        "xecm_ba_createdate": {
+          "type": "string",
+          "description": "Date when business object is created"
+        }
+      }
+    },
+    "businessworkspace_DossierView": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "type": "object",
+          "description": "Contains the link to the current node",
+          "$ref": "#/definitions/businessworkspace_self_data_parent"
+        },
+        "results": {
+          "type": "array",
+          "description": "The result for the current request",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Dossier_results"
+          }
+        }
+      }
+    },
+    "businessworkspace_self_data_parent": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/businessworkspace_Dossier_self_data"
+        }
+      }
+    },
+    "businessworkspace_Dossier_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Dossier_Actions_links"
+          }
+        }
+      }
+    },
+    "businessworkspace_Dossier_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "businessworkspace_Dossier_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "description": "Describes the content of the Documents",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Dossier_data"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "description": "Describes the content of the Documents",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Dossier_properties"
+          }
+        }
+      }
+    },
+    "businessworkspace_Dossier_properties": {
+      "type": "object",
+      "properties": {
+        "group_by": {
+          "type": "string",
+          "description": ""
+        },
+        "total_count": {
+          "type": "string",
+          "description": ""
+        },
+        "total_documents": {
+          "type": "string",
+          "description": "GET"
+        }
+      }
+    },
+    "businessworkspace_Dossier_data": {
+      "type": "object",
+      "properties": {
+        "documents": {
+          "type": "array",
+          "description": "Describes the content of the Documents",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_documents"
+          }
+        }
+      }
+    },
+    "businessworkspace_documents": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A unique ID for this object",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the object"
+        },
+        "parent_id": {
+          "type": "integer",
+          "description": "Parent node ID"
+        },
+        "container": {
+          "type": "boolean",
+          "description": "TRUE if this object is a container"
+        },
+        "container_size": {
+          "type": "string",
+          "description": "size of the container"
+        },
+        "create_date": {
+          "type": "string",
+          "format": "string",
+          "description": "parent created date"
+        },
+        "create_user_id": {
+          "type": "integer",
+          "description": "Created user ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "description"
+        },
+        "description_multilingual": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_multilingual"
+          },
+          "description": "Multi language support"
+        },
+        "favorite": {
+          "type": "boolean",
+          "description": "Favorite icon details"
+        },
+        "guid": {
+          "type": "integer",
+          "description": "guid"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Document icon path"
+        },
+        "icon_large": {
+          "type": "string",
+          "description": "Document large icon path"
+        },
+        "metadata_categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_metadata_categories"
+          },
+          "description": "Metadata attributes"
+        },
+        "mime_type": {
+          "type": "string",
+          "description": "Document Type"
+        },
+        "modify_date": {
+          "type": "string",
+          "description": "Document modified date"
+        },
+        "modify_user_id": {
+          "type": "integer",
+          "description": "Document modified user id"
+        },
+        "owner_group_id": {
+          "type": "integer",
+          "description": "Owner group id"
+        },
+        "owner_user_id": {
+          "type": "integer",
+          "description": "Document user id"
+        },
+        "doc_parent_id": {
+          "type": "integer",
+          "description": "Document parent id"
+        },
+        "reserved": {
+          "type": "boolean",
+          "description": "Document reserved"
+        },
+        "reserved_date": {
+          "type": "string",
+          "description": "Document Reserve date"
+        },
+        "reserved_user_id": {
+          "type": "integer",
+          "description": "Document reserved user id"
+        },
+        "type": {
+          "type": "integer",
+          "description": "Document Type"
+        },
+        "type_name": {
+          "type": "string",
+          "description": "Document Type Name"
+        },
+        "versions_control_advanced": {
+          "type": "boolean",
+          "description": "Document versions_control_advanced"
+        },
+        "volume_id": {
+          "type": "integer",
+          "description": "Workspace ID"
+        }
+      }
+    },
+    "businessworkspace_metadata_categories": {
+      "type": "object",
+      "description": "Categories",
+      "properties": {
+        "category_id": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_category"
+          }
+        }
+      }
+    },
+    "businessworkspace_category": {
+      "type": "object",
+      "description": "Mate data category",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_category_data"
+          }
+        }
+      }
+    },
+    "businessworkspace_category_data": {
+      "type": "object",
+      "description": "Mate data category",
+      "properties": {
+        "category_attr_id": {
+          "type": "string",
+          "description": "category ID"
+        }
+      }
+    },
+    "businessworkspace_Completenesscheck": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "type": "array",
+          "description": "Contains the link to the current node",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_missing_data1"
+          }
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_missing_results"
+          }
+        }
+      }
+    },
+    "businessworkspace_missing_data1": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "description": "Contains the link to the current node",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_missing_self_data"
+          }
+        }
+      }
+    },
+    "businessworkspace_missing_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_missing_Actions_links"
+          }
+        }
+      }
+    },
+    "businessworkspace_missing_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "businessworkspace_missing_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "description": "Describes the content of the data",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_missing_Data"
+          }
+        }
+      }
+    },
+    "businessworkspace_missing_Data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A unique ID for this object",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the object"
+        },
+        "parent_id": {
+          "type": "integer",
+          "description": "Parent node ID"
+        },
+        "parent_id_expand": {
+          "type": "array",
+          "description": "Description of the object",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_parent_details"
+          }
+        }
+      }
+    },
+    "businessworkspace_parent_details": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "type": "boolean",
+          "description": "TRUE if this object is a container"
+        },
+        "container_size": {
+          "type": "string",
+          "description": "size of the container"
+        },
+        "create_date": {
+          "type": "string",
+          "description": "parent created date"
+        },
+        "create_user_id": {
+          "type": "integer",
+          "description": "Created user ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "description"
+        },
+        "description_multilingual": {
+          "items": {
+            "$ref": "#/definitions/businessworkspace_multilingual"
+          },
+          "description": "Multi language support"
+        }
+      }
+    },
+    "businessworkspace_multilingual": {
+      "type": "object",
+      "description": "Multi language support",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "en language name"
+        },
+        "en_US": {
+          "type": "string",
+          "description": "en_US language name"
+        }
+      }
+    },
+    "businessworkspace_GetBusinessAttachments": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "",
+          "$ref": "#/definitions/businessworkspace_action_def"
+        },
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/businessworkspace_links_data"
+        },
+        "meta_data": {
+          "type": "object",
+          "description": "",
+          "$ref": "#/definitions/businessworkspace_meta_data_def"
+        },
+        "paging": {
+          "description": "The paging information contains links to the next/previous nodes",
+          "type": "object",
+          "$ref": "#/definitions/businessworkspace_Actions_paging"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_results"
+          }
+        }
+      }
+    },
+    "businessworkspace_AddBusinessAttachment": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_links_data"
+          }
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_V2EmptyResults"
+          }
+        }
+      }
+    },
+    "businessworkspace_UpdateBusinessAttachment": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_links_data"
+          }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_V2EmptyResults"
+          }]
+        }
+      }
+    },
+    "businessworkspace_DeleteBusinessAttachment": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_links_data"
+          }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_V2EmptyResults"
+          }]
+        }
+      }
+    },
+    "businessworkspace_UpdateBusinessWorkspaceReference": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_links_data"
+          }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_V2EmptyResults"
+          }]
+        }
+      }
+    },
+    "businessworkspace_RemoveBusinessWorkspaceReference": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "allOf": [{
+            "$ref": "#/definitions/businessworkspace_links_data"
+          }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+		  "items": {
+			"$ref": "#/definitions/businessworkspace_V2EmptyResults"
+		  }
+        }
+      }
+    },
+    "businessworkspace_V2EmptyResults": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "businessworkspace_action_def": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "businessworkspace_links_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node / self",
+          "type": "array",
+		  "items": {
+			"$ref": "#/definitions/businessworkspace_self_data"
+		  }
+        }
+      }
+    },
+    "businessworkspace_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node / self",
+          "type": "array",
+		  "items": {
+			"$ref": "#/definitions/businessworkspace_Actions_links"
+		  }
+        }
+      }
+    },
+    "businessworkspace_meta_data_def": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "businessworkspace_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "businessworkspace_Actions_paging": {
+      "type": "object",
+      "properties": {
+        "next": {
+          "type": "array",
+          "description": "The url to be called to navigate to the next node",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Actions_links"
+          }
+        },
+        "previous": {
+          "type": "array",
+          "description": "The url to be called to navigate to the next node",
+          "items": {
+            "$ref": "#/definitions/businessworkspace_Actions_links"
+          }
+        },
+        "limit": {
+          "description": "Maximum number of items returned per page",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Number of the current page",
+          "type": "integer"
+        },
+        "page_total": {
+          "description": "Total number of pages available",
+          "type": "integer"
+        },
+        "range_max": {
+          "description": "Number of the ending item of this page",
+          "type": "integer"
+        },
+        "range_min": {
+          "description": "Number of the starting item of this page",
+          "type": "integer"
+        },
+        "total_count": {
+          "description": "Total number of items available",
+          "type": "integer"
+        }
+      }
+    },
+    "businessworkspace_results": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "object",
+          "description": "The url to be called on the action's execution",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_action_data"
+		  }]
+        },
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_results_data_properties"
+		  }]
+        }
+      }
+    },
+    "businessworkspace_action_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Contains the action data",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_action_data_open"
+		  }]
+        },
+        "map": {
+          "type": "object",
+          "description": "map to the default action",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_default_action"
+		  }]
+        },
+        "order": {
+          "type": "array",
+          "description": "order of the actions possible in the node",
+          "items": {
+            "type": "string",
+            "enum": [
+              "open"
+            ]
+          }
+        }
+      }
+    },
+    "businessworkspace_action_data_open": {
+      "type": "object",
+      "properties": {
+        "open": {
+          "type": "object",
+          "description": "",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_Actions_open"
+		  }]
+        }
+      }
+    },
+    "businessworkspace_Actions_open": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The url to be called on the action's execution"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": "The action's name (as shown in UI Representation)"
+        }
+      }
+    },
+    "businessworkspace_default_action": {
+      "type": "object",
+      "properties": {
+        "default_action": {
+          "type": "string",
+          "description": "The default action on the node"
+        }
+      }
+    },
+    "businessworkspace_results_data_properties": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/businessworkspace_Data"
+		  }]
+        }
+      }
+    },
+    "businessworkspace_Data": {
+      "properties": {
+        "container": {
+          "description": "TRUE if this object is a container",
+          "type": "boolean"
+        },
+        "create_date": {
+          "type": "string",
+          "description": "Creation date of this object"
+        },
+        "create_user_id": {
+          "type": "integer",
+          "description": "The ID of the user "
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the object"
+        },
+        "favorite": {
+          "type": "boolean",
+          "description": "TRUE if the node is marked favorite"
+        },
+        "guid": {
+          "type": "string",
+          "description": "Global unique identifier"
+        },
+        "icon": {
+          "description": "Path to the type specific icon",
+          "type": "string"
+        },
+        "icon_large": {
+          "description": "Path to the type specific icon (larger sized)",
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "description": "A unique ID for this object"
+        },
+        "mime_type": {
+          "type": "string",
+          "description": "The mime type"
+        },
+        "modify_date": {
+          "type": "string",
+          "description": "Date when this object was modified"
+        },
+        "modify_user_id": {
+          "type": "integer",
+          "description": "The ID of the user who modified this object"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the object"
+        },
+        "original_id": {
+          "type": "integer",
+          "description": "ID of original object if this object is a shortcut"
+        },
+        "owner_group_id": {
+          "type": "integer",
+          "description": "The ID of the group to which the owner of this object belongs"
+        },
+        "owner_user_id": {
+          "type": "integer",
+          "description": "The ID of the user who owns this object"
+        },
+        "parent_id": {
+          "type": "integer",
+          "description": "The ID of the parent object of which this object is a child"
+        },
+        "perm_add_major_version": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions of Add Major Version"
+        },
+        "perm_create": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Create"
+        },
+        "perm_delete": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Delete"
+        },
+        "perm_delete_versions": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Delete Version"
+        },
+        "perm_modify": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Modify"
+        },
+        "perm_modify_attributes": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Modify Attributes"
+        },
+        "perm_modify_permissions": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Modify"
+        },
+        "perm_reserve": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for Reserve"
+        },
+        "perm_see": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for See"
+        },
+        "perm_see_contents": {
+          "type": "boolean",
+          "description": "TRUE is the user has permissions for See Contents"
+        },
+        "reserved": {
+          "type": "boolean",
+          "description": "TRUE if this object is reserved, FALSE otherwise"
+        },
+        "reserved_date": {
+          "type": "string",
+          "description": "Date when this object was reserved"
+        },
+        "reserved_user_id": {
+          "type": "integer",
+          "description": "The ID of the user or group that has reserverd this object"
+        },
+        "size": {
+          "type": "integer",
+          "description": "The size of the node"
+        },
+        "type": {
+          "type": "integer",
+          "description": "The node type"
+        },
+        "type_name": {
+          "type": "string",
+          "description": "The node type name"
+        },
+        "user_id": {
+          "type": "integer",
+          "description": "The ID of the user "
+        },
+        "volume_id": {
+          "type": "integer",
+          "description": "The ID of the volume"
+        },
+        "wnd_comments": {
+          "description": "The comments",
+          "type": "string"
+        },
+        "wnd_comments_formatted": {
+          "description": "The comments",
+          "type": "string"
+        },
+        "wnf_bo_type_id": {
+          "description": "The business object type ID",
+          "type": "integer"
+        },
+        "wnf_bo_type_id_formatted": {
+          "description": "The business object type ID",
+          "type": "integer"
+        },
+        "wnf_readydate": {
+          "description": "Date when node is added to package",
+          "type": "string"
+        },
+        "wnf_readydate_formatted": {
+          "description": "Date when node is added to package",
+          "type": "string"
+        },
+        "wnf_wksp_name_en": {
+          "description": "The multilingual workspace name for en",
+          "type": "string"
+        },
+        "wnf_wksp_name_en_formatted": {
+          "description": "The multilingual workspace name for en",
+          "type": "string"
+        },
+        "wnf_wksp_template_id": {
+          "description": "The workspace template ID",
+          "type": "integer"
+        },
+        "wnf_wksp_type_id": {
+          "description": "The workspace type ID",
+          "type": "integer"
+        },
+        "wnf_wksp_type_id_formatted": {
+          "description": "The workspace type ID",
+          "type": "integer"
+        }
+      }
+    },
+    "externalsystems_GetDocTypes": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_links_data"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_doc_type"
+		  }]
+        }
+      }
+    },
+    "externalsystems_GetDocTypesInfo": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_links_data"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_doc_type_results"
+		  }]
+        }
+      }
+    },
+    "externalsystems_migrateattachments": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_links_data"
+		  }]
+        },
+        "results": {
+          "description": "The result for Attachment Migration",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_migrateattachments_results"
+		  }]
+        }
+      }
+    },
+    "externalsystems_doc_type": {
+      "type": "object",
+      "properties": {
+        "documenttypes": {
+          "type": "array",
+          "description": "returns business properties of attachment declaration",
+          "items":{ 
+            "$ref": "#/definitions/externalsystems_documenttypes"
+          }
+        }
+      }
+    },
+    "externalsystems_doc_type_results": {
+      "type": "object",
+      "properties": {
+        "Properties": {
+          "type": "object",
+          "description": "returns business properties of attachment declaration",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_properties"
+		  }]
+        },
+        "Property Groups": {
+          "type": "object",
+          "description": "returns business property groups of attachment declaration",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_propertygroups"
+		  }]
+        }
+      }
+    },
+    "externalsystems_migrateattachments_results": {
+      "type": "object",
+      "properties": {
+        "fStatusCode": {
+          "type" : "integer",
+          "description": "status code from server"
+        },
+        "nodeId": {
+          "type": "integer",
+          "description": "node Id of migrated document"
+        },
+        "ok": {
+          "type": "boolean",
+          "description": "true/false representing operation status"
+        }
+      }
+    },
+    "externalsystems_documenttypes": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "attachment declaration"
+        },
+        "id": {
+          "type": "string",
+          "description": "document type"
+        }
+      }
+    },
+    "externalsystems_properties": {
+      "type": "object",
+      "description": "list of pairs of doc type and  corresponding attributes",
+      "properties": {
+        "Business Property": {
+          "type": "array",
+          "description": "Assoc of document type and attributes",
+          "items":{
+            "$ref": "#/definitions/externalsystems_attributes"
+          }
+        }
+      }
+    },
+    "externalsystems_propertygroups": {
+      "type": "object",
+      "description": "list of pairs of doc type and  corresponding set attributes",
+      "properties": {
+        "Property Group": {
+          "type": "array",
+          "description": "Assoc of document type and attributes",
+          "items":{
+            "$ref": "#/definitions/externalsystems_set_attributes"
+          }
+        }
+      }
+    },
+    "externalsystems_attributes": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "attribute id"
+        },
+        "label": {
+          "type": "string",
+          "description": "attribute name"
+        },
+        "max_length": {
+          "type": "integer",
+          "description": "max values allowed for attribute"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "true if attribute is required one"
+        },
+        "type": {
+          "type": "string",
+          "description": "attribute type name"
+        }
+      }
+    },
+    "externalsystems_set_attributes": {
+      "properties": {
+        "columns": {
+          "type":"object",
+          "description":"array of set attributes",
+		  "allOf": [{
+			"$ref":"#/definitions/externalsystems_propertyname"
+		  }]
+        },
+        "label": {
+          "type": "string",
+          "description": "sample_set_name"
+        }
+      }
+    },
+    "externalsystems_propertyname": {
+      "type": "object",
+      "description": "list of pairs of doc type and  corresponding set attributes",
+      "properties": {
+        "Property Name": {
+          "type": "array",
+          "description": "Assoc of document type and set attributes",
+          "items":{
+            "$ref": "#/definitions/externalsystems_attributes"
+          }
+        }
+      }
+    },
+    "externalsystems_GetBusinessObjectTypeInfo": {
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_links_data"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_results"
+		  }]
+        }
+      }
+    },
+    "externalsystems_GetExternalSystemsConfig": {
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_links_data"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_ext_system_results"
+		  }]
+        }
+      }
+    },
+    "externalsystems_links_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node/self",
+          "type": "array",
+		  "items": {
+			"$ref": "#/definitions/externalsystems_self_data"
+		  }
+        }
+      }
+    },
+    "externalsystems_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node/self",
+          "type": "array",
+		  "items": {
+			"$ref": "#/definitions/externalsystems_Actions_links"
+		  }
+        }
+      }
+    },
+    "externalsystems_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "externalsystems_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_results_data"
+		  }]
+        }
+      }
+    },
+    "externalsystems_results_data": {
+      "type": "object",
+      "properties": {
+        "business_object_type": {
+          "type": "object",
+          "description": "",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_botype_data"
+		  }]
+        },
+        "external_system": {
+          "type": "object",
+          "description": "",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_ext_system_data"
+		  }]
+        },
+        "workspace_type": {
+          "type": "object",
+          "description": "",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_wksp_type_data"
+		  }]
+        }
+      }
+    },
+    "externalsystems_botype_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_botype_data_props"
+		  }]
+        }
+      }
+    },
+    "externalsystems_ext_system_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/externalsystems_ext_system_data_props"
+        }
+      }
+    },
+    "externalsystems_wksp_type_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/externalsystems_wksp_type_data_props"
+        }
+      }
+    },
+    "externalsystems_botype_data_props": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "description": "columns",
+          "items": {
+            "$ref": "#/definitions/externalsystems_V2Columns"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properites",
+		  "allOf": [{
+			"$ref": "#/definitions/externalsystems_V2Properties"
+		  }]
+        }
+      }
+    },
+    "externalsystems_ext_system_data_props": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "description": "columns",
+          "items": {
+            "$ref": "#/definitions/externalsystems_V2Columns"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properites",
+          "$ref": "#/definitions/externalsystems_V2Properties"
+        }
+      }
+    },
+    "externalsystems_wksp_type_data_props": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "description": "columns",
+          "items": {
+            "$ref": "#/definitions/externalsystems_V2Columns"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "description": "Properites",
+          "$ref": "#/definitions/externalsystems_V2Properties"
+        }
+      }
+    },
+    "externalsystems_V2Columns": {
+      "type": "object",
+      "properties": {
+        "data_type": {
+          "type": "integer",
+          "description": "data type"
+        },
+        "key": {
+          "type": "string",
+          "description": "key"
+        },
+        "name": {
+          "type": "string",
+          "description": "name"
+        },
+        "sort_key": {
+          "type": "string",
+          "description": "sort_key"
+        }
+      }
+    },
+    "externalsystems_V2Properties": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "description": "Whether or not this item is a container",
+          "type": "boolean"
+        },
+        "container_size": {
+          "description": "The number of items in this container",
+          "type": "integer"
+        },
+        "create_date": {
+          "description": "The date that the item was created",
+          "type": "string"
+        },
+        "create_user_id": {
+          "description": "The id of the user who created the item",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Description of the item",
+          "type": "string"
+        },
+        "description_multilingual": {
+          "description": "Locale specific item description. One entry per language enabled in Content Server",
+          "type": "object",
+          "$ref": "#/definitions/externalsystems_DescriptionMultilingual"
+        },
+        "external_create_date": {
+          "description": "External create date",
+          "type": "string"
+        },
+        "external_identity": {
+          "description": "External identity",
+          "type": "string"
+        },
+        "external_identity_type": {
+          "description": "External identity type",
+          "type": "string"
+        },
+        "external_modify_date": {
+          "description": "External modify date",
+          "type": "string"
+        },
+        "external_source": {
+          "description": "External source",
+          "type": "string"
+        },
+        "favorite": {
+          "description": "Indicates if this item has been favorited by the current user",
+          "type": "boolean"
+        },
+        "id": {
+          "description": "The item's unique object ID",
+          "type": "integer"
+        },
+        "mime_type": {
+          "description": "The item's mime type",
+          "type": "string"
+        },
+        "modify_date": {
+          "description": "The date on which the item was last modified",
+          "type": "string"
+        },
+        "modify_user_id": {
+          "description": "The id of the user who modified the item",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the item",
+          "type": "string"
+        },
+        "name_multilingual": {
+          "description": "Locale specific item name. One entry per language enabled in Content Server",
+          "type": "object",
+          "$ref": "#/definitions/externalsystems_NameMultilingual"
+        },
+        "owner": {
+          "description": "The name of the owner of this item",
+          "type": "string"
+        },
+        "owner_group_id": {
+          "description": "The group id of the owner of this item",
+          "type": "integer"
+        },
+        "owner_user_id": {
+          "description": "The user id of the owner of this item",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "The object id of the item's parent",
+          "type": "integer"
+        },
+        "permissions_model": {
+          "description": "The item's permission model",
+          "type": "string"
+        },
+        "reserved": {
+          "description": "Whether or not this item has been reserved",
+          "type": "boolean"
+        },
+        "reserved_date": {
+          "description": "The date on which the item was reserved",
+          "type": "string"
+        },
+        "reserved_user_id": {
+          "description": "The id of the user who has this item reserved",
+          "type": "integer"
+        },
+        "size": {
+          "description": "Size of this item",
+          "type": "integer"
+        },
+        "size_formatted": {
+          "description": "Size of this item with an appropriate units based on type (i.e. 11 items or 7 KB)",
+          "type": "string"
+        },
+        "type": {
+          "description": "The item's type (unique number)",
+          "type": "integer"
+        },
+        "type_name": {
+          "description": "The item's type",
+          "type": "string"
+        },
+        "versions_control_advanced": {
+          "description": "Whether or not newly added items to this item are added as advanced versioning (major/minor versioning)",
+          "type": "boolean"
+        },
+        "volume_id": {
+          "description": "The id of the volume to which this item belongs",
+          "type": "integer"
+        }
+      }
+    },
+    "externalsystems_DescriptionMultilingual": {
+      "type": "object",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "Description in English"
+        },
+        "de": {
+          "type": "string",
+          "description": "Beschreibung in Deutsch"
+        }
+      }
+    },
+    "externalsystems_NameMultilingual": {
+      "type": "object",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "Name in English"
+        },
+        "de": {
+          "type": "string",
+          "description": "Name auf Deutsch"
+        }
+      }
+    },
+    "externalsystems_ext_system_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/externalsystems_ext_system_data_props"
+        }
+      }
+    },
+    "nodes_AddableBusinessWorkspaceTypesInfo": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_results"
+          }
+        }
+      }
+    },
+    "nodes_AddBusinessAttachment": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "meta_data": {
+          "description": "The metadata of the result data properties",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties_object"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_addBusAttachment_results"
+          }
+        }
+      }
+    },
+    "nodes_CreateBusinessAttachmentsSnapshot": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "meta_data": {
+          "description": "The metadata of the result data properties",
+          "type": "object",
+          "$ref": "#/definitions/nodes_createSnapshot_meta_data_properties_object"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_createSnapshot_results"
+          }
+        }
+      }
+    },
+    "nodes_BusinessAttachmentsInfo": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "description": "Contains the actions possible on this node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_action"
+        },
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "meta_data": {
+          "description": "The metadata of the result data properties",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties_object"
+        },
+        "paging": {
+          "description": "The paging information contains links to the next/previous nodes",
+          "type": "object",
+          "$ref": "#/definitions/nodes_actions_paging"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_getBusAttachment_results"
+          }
+        }
+      }
+    },
+    "nodes_UpdateBusinessAttachments": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+          "$ref": "#/definitions/nodes_V2EmptyResults"
+        }
+      }
+    },
+    "nodes_DeleteBusinessAttachments": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data"
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "object",
+          "$ref": "#/definitions/nodes_V2EmptyResults"
+        }
+      }
+    },
+    "nodes_V2EmptyResults": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "nodes_links_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data_self"
+        }
+      }
+    },
+    "nodes_links_data_self": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_links_data_self_info"
+        }
+      }
+    },
+    "nodes_links_data_self_info": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "nodes_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/nodes_results_data"
+        }
+      }
+    },
+    "nodes_results_data": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+          "$ref": "#/definitions/nodes_results_data_properties"
+        }
+      }
+    },
+    "nodes_results_data_properties": {
+      "type": "object",
+      "properties": {
+        "bo_type": {
+          "description": "business object type",
+          "type": "string"
+        },
+        "bo_type_id": {
+          "type": "integer",
+          "description": "business object type id"
+        },
+        "bo_type_name": {
+          "type": "string",
+          "description": "business object type name"
+        },
+        "ext_system_id": {
+          "type": "string",
+          "description": "External System id"
+        },
+        "is_default_Search": {
+          "description": "True. if default search is enabled for Workspace Type",
+          "type": "boolean"
+        }
+      }
+    },
+    "nodes_meta_data_properties_object": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_meta_data"
+		  }]
+        }
+      }
+    },
+    "nodes_meta_data": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The node name",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "create_date": {
+          "description": "The node creation date",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "created_by": {
+          "description": "The id of the user who created the node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "created_by_name": {
+          "description": "The name of the user who created the node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "comment": {
+          "description": "The comment on the node",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "bo_id": {
+          "description": "The business object id",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "bo_type_id": {
+          "description": "The business object type id",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "bo_type": {
+          "description": "The business object type",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "bo_type_name": {
+          "description": "The business object type name",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "ext_system_id": {
+          "description": "The business application (external system) ID.",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "ext_system_name": {
+          "description": "The business application (external system) name",
+          "type": "object",
+          "$ref": "#/definitions/nodes_meta_data_properties"
+        },
+        "wksp_id": {
+          "description": "The workspace id",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_meta_data_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_meta_data_properties": {
+      "type": "object",
+      "properties": {
+        "align": {
+          "description": " Specifies the alignment",
+          "type": "string"
+        },
+        "name": {
+          "description": "specifies the name of result data property",
+          "type": "string"
+        },
+        "persona": {
+          "description": "The persona",
+          "type": "string"
+        },
+        "sort": {
+          "description": "specifies true if the result data property is sortable",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "The property type",
+          "type": "integer"
+        },
+        "width_weight": {
+          "description": "The width weight",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_actions_paging": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "description": "Maximum number of items returned per page",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Number of the current page",
+          "type": "integer"
+        },
+        "page_total": {
+          "description": "Total number of pages available",
+          "type": "integer"
+        },
+        "range_max": {
+          "description": "Number of the ending item of this page",
+          "type": "integer"
+        },
+        "range_min": {
+          "description": "Number of the starting item of this page",
+          "type": "integer"
+        },
+        "total_count": {
+          "description": "Total number of items available",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_action": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the action data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data"
+		  }]
+        },
+        "map": {
+          "description": "Contains the action map",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_map"
+		  }]
+        },
+        "order": {
+          "description": "Contains the order of actions",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_action_order"
+          }
+        }
+      }
+    },
+    "nodes_action_map": {
+      "type": "object",
+      "properties": {
+        "default_action": {
+          "description": "map to the default action",
+          "type": "string"
+        }
+      }
+    },
+    "nodes_action_order": {
+      "type": "object",
+      "properties": {
+        "add_business_attachment": {
+          "description": "The Add Business Attachment action",
+          "type": "string"
+        }
+      }
+    },
+    "nodes_action_data": {
+      "type": "object",
+      "properties": {
+        "add_business_attachment": {
+          "description": "The Add Business Attachment action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_action_data_properties": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "description": "",
+          "type": "string"
+        },
+        "content_type": {
+          "description": "",
+          "type": "string"
+        },
+        "form_href": {
+          "description": "",
+          "type": "string"
+        },
+        "href": {
+          "description": "",
+          "type": "string"
+        },
+        "method": {
+          "description": "",
+          "type": "string"
+        },
+        "name": {
+          "description": "",
+          "type": "string"
+        }
+      }
+    },
+    "nodes_getBusAttachment_results": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "description": "Specifies the actions possible on this node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_getBusAttachment_results_action"
+		  }]
+        },
+        "data": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_busAttachment_results_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_getBusAttachment_results_action": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the action data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_getBusAttachment_results_action_data"
+		  }]
+        },
+        "map": {
+          "description": "Contains the action map",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_map"
+		  }]
+        },
+        "order": {
+          "description": "Contains the order of actions",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_getBusAttachment_results_action_order"
+          }
+        }
+      }
+    },
+    "nodes_getBusAttachment_results_action_data": {
+      "type": "object",
+      "properties": {
+        "delete_business_attachment": {
+          "description": "The Delete Business Attachment action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        },
+        "edit_business_attachment": {
+          "description": "The Edit Business Attachment action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        },
+        "open_sap_object": {
+          "description": "Displays Business Attachment on SAP",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_getBusAttachment_results_action_order": {
+      "type": "object",
+      "properties": {
+        "open_sap_object": {
+          "description": "Displays Business Attachment on SAP",
+          "type": "string"
+        },
+        "edit_business_attachment": {
+          "description": "The Edit Business Attachment action",
+          "type": "string"
+        },
+        "delete_business_attachment": {
+          "description": "The Delete Business Attachment action",
+          "type": "string"
+        }
+      }
+    },
+    "nodes_busAttachment_results_properties": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_busAttachment_results_data_prop"
+		  }]
+        }
+      }
+    },
+    "nodes_busAttachment_results_data_prop": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The node name",
+          "type": "string"
+        },
+        "create_date": {
+          "description": "The node creation date",
+          "type": "string"
+        },
+        "created_by": {
+          "description": "The id of the user who created the node",
+          "type": "integer"
+        },
+        "created_by_name": {
+          "description": "The name of the user who created the node",
+          "type": "string"
+        },
+        "comment": {
+          "description": "The comment on the node",
+          "type": "string"
+        },
+        "bo_id": {
+          "description": "The business object id",
+          "type": "integer"
+        },
+        "bo_type_id": {
+          "description": "The business object type id",
+          "type": "integer"
+        },
+        "bo_type": {
+          "description": "The business object type",
+          "type": "string"
+        },
+        "bo_type_name": {
+          "description": "The business object type name",
+          "type": "string"
+        },
+        "ext_system_id": {
+          "description": "The business application (external system) ID.",
+          "type": "string"
+        },
+        "ext_system_name": {
+          "description": "The external system name",
+          "type": "string"
+        },
+        "wksp_id": {
+          "description": "The workspace id",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_addBusAttachment_results": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "description": "Specifies the actions possible on this node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_addBusAttachment_results_action"
+		  }]
+        },
+        "data": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_busAttachment_results_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_addBusAttachment_results_action": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the action data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_addBusAttachment_results_action_data"
+		  }]
+        },
+        "map": {
+          "description": "Contains the action map",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_map"
+		  }]
+        },
+        "order": {
+          "description": "Contains the order of actions",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodes_addBusAttachment_results_action_order"
+          }
+        }
+      }
+    },
+    "nodes_addBusAttachment_results_action_data": {
+      "type": "object",
+      "properties": {
+        "delete_business_attachment": {
+          "description": "The Delete Business Attachment action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        },
+        "edit_business_attachment": {
+          "description": "The Edit Business Attachment action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        },
+        "go_to_workspace": {
+          "description": "The Go to workspace action",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        },
+        "open_sap_object": {
+          "description": "Displays Business Attachment on SAP",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_action_data_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_addBusAttachment_results_action_order": {
+      "type": "object",
+      "properties": {
+        "open_sap_object": {
+          "description": "Displays Business Attachment on SAP",
+          "type": "string"
+        },
+        "edit_business_attachment": {
+          "description": "The Edit Business Attachment action",
+          "type": "string"
+        },
+        "delete_business_attachment": {
+          "description": "The Delete Business Attachment action",
+          "type": "string"
+        },
+        "go_to_workspace": {
+          "description": "The Go to workspace action",
+          "type": "string"
+        }
+      }
+    },
+    "nodes_createSnapshot_meta_data_properties_object": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data"
+		  }]
+        }
+      }
+    },
+    "nodes_createSnapshot_meta_data": {
+      "type": "object",
+      "properties": {
+        "create_date": {
+          "description": "The node creation date",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "create_user_id": {
+          "description": "The user ID of the creator",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "createdate": {
+          "description": "The creation date",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "creator": {
+          "description": "Created By",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "description": {
+          "description": "The description",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "favorite": {
+          "description": "TRUE if node is marked favorite",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "icon": {
+          "description": "Path to the type specific icon",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "id": {
+          "description": "The node ID",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "mime_type": {
+          "description": "The mime type",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "modify_date": {
+          "description": "The modified date",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "modify_user_id": {
+          "description": "The user ID who has modified",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "name": {
+          "description": "The node name",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "original_id": {
+          "description": "ID of original object if this object is a shortcut",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "owner": {
+          "description": "The owner of the node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "parent_id": {
+          "description": "The parent node ID",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "reserved": {
+          "description": "TRUE if the node is reserved",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "reserved_date": {
+          "description": "The node's reserved date",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "reserved_user_id": {
+          "description": "The user ID who reserved the node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "reservedby": {
+          "description": "The user who reserved the node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "size": {
+          "description": "The node size",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "type": {
+          "description": "The node type",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_meta_data_properties"
+		  }]
+        },
+        "volume_id": {
+          "description": "The volume ID in which the node exists",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_persona"
+		  }]
+        },
+        "wnd_comments": {
+          "description": "The comments",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "wnf_bo_type_id": {
+          "description": "The business object type ID",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "wnf_readydate": {
+          "description": "Date when node is added to package",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "wnf_wksp_name_en": {
+          "description": "The multilingual workspace name for en",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        },
+        "wnf_wksp_type_id": {
+          "description": "The workspace type ID",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_property_sort"
+		  }]
+        }
+      }
+    },
+    "nodes_createSnapshot_meta_data_properties": {
+      "type": "object",
+      "properties": {
+        "align": {
+          "description": " specifies the alignment",
+          "type": "string"
+        },
+        "name": {
+          "description": "specifies the name of result data property",
+          "type": "string"
+        },
+        "persona": {
+          "description": "The persona",
+          "type": "string"
+        },
+        "sort": {
+          "description": "specifies true if the result data property is sortable",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "The property type",
+          "type": "integer"
+        },
+        "width_weight": {
+          "description": "The width weight",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_createSnapshot_property_persona": {
+      "type": "object",
+      "properties": {
+        "align": {
+          "description": " specifies the alignment",
+          "type": "string"
+        },
+        "name": {
+          "description": "specifies the name of result data property",
+          "type": "string"
+        },
+        "persona": {
+          "description": "The persona",
+          "type": "string"
+        },
+        "type": {
+          "description": "The property type",
+          "type": "integer"
+        },
+        "width_weight": {
+          "description": "The widht weight",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_createSnapshot_property_sort": {
+      "type": "object",
+      "properties": {
+        "align": {
+          "description": " specifies the alignment",
+          "type": "string"
+        },
+        "name": {
+          "description": "specifies the name of result data property",
+          "type": "string"
+        },
+        "sort": {
+          "description": "specifies true if the result data property is sortable",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "The property type",
+          "type": "integer"
+        },
+        "width_weight": {
+          "description": "The widht weight",
+          "type": "integer"
+        }
+      }
+    },
+    "nodes_createSnapshot_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_results_properties"
+		  }]
+        },
+        "parent": {
+          "description": "Describes the content of the parent data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_results_properties"
+		  }]
+        }
+      }
+    },
+    "nodes_createSnapshot_results_properties": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Describes the content of the data",
+		  "allOf": [{
+			"$ref": "#/definitions/nodes_createSnapshot_results_data_prop"
+		  }]
+        }
+      }
+    },
+    "nodes_createSnapshot_results_data_prop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A unique ID for this object",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "The ID of the parent object of which this object is a child",
+          "type": "integer"
+        }
+      }
+    },
+    "eac_Eventactionplans": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to the current node",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Eventactionplans_results"
+          }
+        }
+      }
+    },
+    "eac_Eventactionplans_data1": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Contains the link to the current node/self",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_self_data"
+		  }]
+        }
+      }
+    },
+    "eac_Eventactionplans_self_data": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "object",
+          "description": "Contains the link to the current node/self",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_Actions_links"
+		  }]
+        }
+      }
+    },
+    "eac_Eventactionplans_Actions_links": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": ""
+        },
+        "content_type": {
+          "type": "string",
+          "description": ""
+        },
+        "href": {
+          "type": "string",
+          "description": "The link to the previous/next/current node"
+        },
+        "method": {
+          "type": "string",
+          "description": "GET"
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Eventactionplans_results": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Describes the content of the data",
+		  "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_Data"
+		  }]
+        }
+      }
+    },
+    "eac_Eventactionplans_Data": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": ""
+        },
+        "event_name": {
+          "type": "string",
+          "description": "Name of the event"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "System name"
+        },
+        "action_plan_count": {
+          "type": "string",
+          "description": "No.of action plans"
+        },
+        "action_plans": {
+          "description": "Describes the content of the data",
+          "type": "object",
+          "$ref": "#/definitions/eac_Action_plans_Data"
+        }
+      }
+    },
+    "eac_Action_plans_Data": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "description": "Describes the content of the data",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Actions_Data"
+          }
+        },
+        "plan_id": {
+          "type": "string",
+          "description": ""
+        },
+        "process_mode": {
+          "type": "string",
+          "description": "Process mode of event"
+        },
+        "rule_id": {
+          "type": "string",
+          "description": ""
+        },
+        "rules": {
+          "type": "string",
+          "description": ""
+        },
+        "run_as_key": {
+          "type": "string",
+          "description": "Run as user id"
+        },
+        "run_as_value": {
+          "type": "string",
+          "description": "Run as user name"
+        }
+      }
+    },
+    "eac_Actions_Data": {
+      "type": "object",
+      "properties": {
+        "attribute_mappings": {
+          "description": "Describes the content of the data",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Attribute_mappings_Data"
+          }
+        },
+        "action_key": {
+          "type": "string",
+          "description": ""
+        },
+        "position": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Attribute_mappings_Data": {
+      "type": "object",
+      "properties": {
+        "action_attr_id": {
+          "type": "string",
+          "description": ""
+        },
+        "action_attr_name": {
+          "type": "string",
+          "description": ""
+        },
+        "mapping_data": {
+          "type": "string",
+          "description": ""
+        },
+        "mapping_method": {
+          "type": "string",
+          "description": ""
+        },
+        "position": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Facets": {
+      "type": "object",
+      "properties": {
+        "available_values": {
+          "description": "Contains the link to facets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Facets_data1"
+          }
+        },
+        "properties": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Facets_results"
+          }
+        }
+      }
+    },
+    "eac_Facets_data1": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "description": "Contains the link to facets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Namespace_data1"
+          }
+        }
+      }
+    },
+    "eac_Namespace_data1": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "percentage": {
+          "type": "string",
+          "description": "Percentage of namespace of total."
+        },
+        "total": {
+          "type": "string",
+          "description": "Total count for namespace"
+        },
+        "value": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Facets_results": {
+      "type": "object",
+      "properties": {
+        "has_action_plan": {
+          "description": "Contains the link to facets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Facet_item_data"
+          }
+        },
+        "namespace": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Facet_item_data"
+          }
+        }
+      }
+    },
+    "eac_Facet_item_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": ""
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "name_multilingual": {
+          "description": "Contains the link to facets",
+		  "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Multilingual_data"
+          }
+        },
+        "show_as_numbers": {
+          "type": "string",
+          "description": ""
+        },
+        "show_text_in_more": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Multilingual_data": {
+      "type": "object",
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Eventproperties": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Contains the link to EAC",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Eventproperties_data"
+          }
+        }
+      }
+    },
+    "eac_Eventproperties_data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "Describes the content of the data",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Eventactionplans_result"
+          }
+        }
+      }
+    },
+    "eac_Eventactionplans_result": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Deleteactionplans": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Deleteactionplans_result"
+          }
+        }
+      }
+    },
+    "eac_Deleteactionplans_result": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string",
+          "description": ""
+        },
+        "ok": {
+          "type": "string",
+          "description": ""
+        },
+        "statusCode": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Actiondetails": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Actiondetails_result"
+          }
+        }
+      }
+    },
+    "eac_Actiondetails_result": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "description": "Contains the link to actiondetails_result",
+          "items": {
+            "$ref": "#/definitions/eac_Actiondetails_data"
+          }
+        },
+        "ok": {
+          "type": "string",
+          "description": ""
+        },
+        "statusCode": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Actiondetails_data": {
+      "type": "object",
+      "properties": {
+        "action_key": {
+          "type": "string",
+          "description": ""
+        },
+        "action_name": {
+          "type": "string",
+          "description": ""
+        },
+        "actions_attributes": {
+          "description": "Contains the link to facets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Actions_attributes_data"
+          }
+        },
+        "actions_attribute_count": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Actions_attributes_data": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": ""
+        },
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Systemnames": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Systemnames_result"
+          }
+        }
+      }
+    },
+    "eac_Systemnames_result": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "string",
+          "description": ""
+        },
+        "statusCode": {
+          "type": "string",
+          "description": ""
+        },
+        "systems": {
+          "description": "Contains the link to actiondetails_result",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Systems_data"
+          }
+        }
+      }
+    },
+    "eac_Systems_data": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Submitactionplans": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Submitactionplans_result"
+          }
+        }
+      }
+    },
+    "eac_Submitactionplans_result": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string",
+          "description": ""
+        },
+        "ok": {
+          "type": "string",
+          "description": ""
+        },
+        "statusCode": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "eac_Parseeacpayload": {
+      "properties": {
+        "links": {
+          "description": "Describes the content of the data",
+          "type": "object",
+		  "allOf": [{
+			"$ref": "#/definitions/eac_Eventactionplans_data1"
+		  }]
+        },
+        "results": {
+          "description": "The result for the current request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_Parseeacpayload_result"
+          }
+        }
+      }
+    },
+    "eac_Parseeacpayload_result": {
+      "properties": {
+        "responseArray": {
+          "description": "Describes the content of the data",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/eac_ResponseArray_data"
+          }
+        }
+      }
+    },
+    "eac_ResponseArray_data": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "description": ""
+        },
+        "message": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "EcosystemInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the Extended ECM product"
+        },
+        "users": {
+          "type": "array",
+          "description": "Users",
+          
+          "items": {
+            "$ref": "#/definitions/Licence_UserInfo"
+          }
+        }
+      }
+    },
+    "LicenseInfo": {
+      "type": "object",
+      "properties": {
+        "ecosystem_id": {
+          "type": "string",
+          "description": "ID of the Extended ECM product to which this license level belongs"
+        },
+        "is_valid": {
+          "type": "boolean",
+          "description": "Is a valid license level"
+        },
+        "license_display_name": {
+          "type": "string",
+          "description": "Description of this license level"
+        },
+        "license_type": {
+          "type": "string",
+          "description": "Short name of this license level"
+        }
+      }
+    },
+    "ModuleInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Module ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Module name"
+        },
+        "version": {
+          "type": "string",
+          "description": "Module version"
+        }
+      }
+    },
+    "LicensingSummary": {
+      "type": "object",
+      "properties": {
+        "ecosystems": {
+          "type": "array",
+          "description": "Ecosystems",
+          "items": {
+            "$ref": "#/definitions/LicensingSummary_EcosystemInfo"
+          }
+        },
+        "licenses": {
+          "type": "array",
+          "description": "License levels",
+          "items": {
+            "$ref": "#/definitions/LicenseInfo"
+          }
+        },
+        "module_infos": {
+          "type": "array",
+          "description": "Module infos",
+          "items": {
+            "$ref": "#/definitions/ModuleInfo"
+          }
+        },
+        "system_guid": {
+          "type": "string",
+          "description": "System GUID"
+        }
+      }
+    },
+    "Licence_UserInfo": {
+      "type": "object",
+      "properties": {
+        "access_days": {
+          "type": "integer",
+          "description": "Days of access during the last 365 days"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error evaluating user, if applicable"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "User first name"
+        },
+        "has_access": {
+          "type": "boolean",
+          "description": "Has privilege to access business workspaces"
+        },
+        "id": {
+          "type": "integer",
+          "description": "User ID"
+        },
+        "issue_id": {
+          "type": "string",
+          "description": "ID of licensing issue, if applicable"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "User last name"
+        },
+        "license_type": {
+          "type": "string",
+          "description": "Assigned license level (short name)"
+        },
+        "login": {
+          "type": "string",
+          "description": "User login"
+        },
+        "mail_address": {
+          "type": "string",
+          "description": "User e-mail address"
+        }
+      }
+    },
+    "LicensingSummary_EcosystemInfo": {
+      "type": "object",
+      "properties": {
+        "ecosystem_display_name": {
+          "type": "string",
+          "description": "Display name of the Extended ECM product"
+        },
+        "ecosystem_id": {
+          "type": "string",
+          "description": "ID of the Extended ECM product"
+        }
+      }
+    },
+    "LicensingDetails": {
+      "type": "object",
+      "properties": {
+        "ecosystems": {
+          "type": "array",
+          "description": "User information for all ecosystems",
+          "items": {
+            "$ref": "#/definitions/EcosystemInfo"
+          }
+        }
+      }
+    },
+    "LicensingDetailsPerEcosystem": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "description": "Users",
+          "items": {
+            "$ref": "#/definitions/Licence_UserInfo"
+          }
+        }
+      }
+    },
+    "AddLicensingAudit": {
+      "type": "object",
+      "properties": {
+        "auditable": {
+          "type": "boolean",
+          "description": "True if, a license model is associated with this audit item"
+        }
+      }
+    }
+  }
+}
