@@ -6,6 +6,10 @@
   },
   "servers": [
     {
+      "url": "/",
+      "description": "For demo server url"
+    },
+    {
       "url": "http://demo.com/api/v1",
       "description": "For demo server url"
     },
