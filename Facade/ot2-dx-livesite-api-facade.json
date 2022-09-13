@@ -20,7 +20,7 @@
     {
       "url": "dxls/api/v1",
       "description": "kubernetes server url"
-    },
+    }
   ],
   "tags": [
     {
